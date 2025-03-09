@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ExpenseTypeResponse, ExpenseType } from '../models/expense-type.model';
+import { ExpenseTypeResponse, ExpenseType, ExpenseTypeAll } from '../models/expense-type.model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -11,6 +11,10 @@ export class ExpenseTypeService {
   private apiUrl = `${environment.apiUrl}/api/v1/expense-types`;
 
   constructor(private http: HttpClient) { }
+
+  getAll(): Observable<ExpenseTypeAll> {
+    return this.http.get<ExpenseTypeAll>(`${this.apiUrl}`);
+  }
 
   getExpenseTypes(page: number = 1, limit: number = 50): Observable<ExpenseTypeResponse> {
     let params = new HttpParams()

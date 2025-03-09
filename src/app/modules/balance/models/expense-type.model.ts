@@ -4,6 +4,12 @@ export interface ExpenseTypeResponse {
   data: PaginatedResponse<ExpenseType[]>;
 }
 
+export interface ExpenseTypeAll {
+  success: boolean;
+  message: string;
+  data: ExpenseType[];
+}
+
 export interface PaginatedResponse<T> {
   items: T;
   pagination: PaginationInfo;

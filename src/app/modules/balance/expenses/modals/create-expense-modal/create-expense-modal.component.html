@@ -1,0 +1,120 @@
+<div class="modal-header">
+  <h3 class="modal-title">Crear Nuevo Gasto</h3>
+  <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="activeModal.dismiss()">
+    <app-keenicon name="cross" class="fs-1"></app-keenicon>
+  </div>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="expenseForm">
+    <div class="fv-row mb-7">
+      <label class="required fw-bold fs-6 mb-2">Tipo de Gasto</label>
+      <select class="form-select form-select-solid" formControlName="expenseTypeId">
+        <option [value]="null" disabled>Seleccione un tipo de gasto</option>
+        <option *ngFor="let expenseType of expenseTypes" [value]="expenseType.id">{{ expenseType.name }}</option>
+      </select>
+      <div class="fv-plugins-message-container" *ngIf="isControlTouched('expenseTypeId')">
+        <div class="fv-help-block" *ngIf="controlHasError('required', 'expenseTypeId')">
+          El tipo de gasto es requerido
+        </div>
+      </div>
+    </div>
+
+    <div class="fv-row mb-7">
+      <label class="required fw-bold fs-6 mb-2">Nombre</label>
+      <input
+        type="text"
+        class="form-control form-control-solid mb-3 mb-lg-0"
+        placeholder="Nombre del gasto"
+        formControlName="name"
+      />
+      <ng-container *ngIf="isControlTouched('name')">
+        <div class="fv-plugins-message-container">
+          <div class="fv-help-block" *ngIf="controlHasError('required', 'name')">
+            El nombre es requerido
+          </div>
+          <div class="fv-help-block" *ngIf="controlHasError('minlength', 'name')">
+            El nombre debe tener al menos 3 caracteres
+          </div>
+          <div class="fv-help-block" *ngIf="controlHasError('maxlength', 'name')">
+            El nombre no debe exceder los 100 caracteres
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="fv-row mb-7">
+      <label class="required fw-bold fs-6 mb-2">Monto Total</label>
+      <input
+        type="number"
+        class="form-control form-control-solid mb-3 mb-lg-0"
+        placeholder="Monto total del gasto"
+        formControlName="totalAmount"
+      />
+      <div class="fv-plugins-message-container" *ngIf="isControlTouched('totalAmount')">
+        <div class="fv-help-block" *ngIf="controlHasError('required', 'totalAmount')">
+          El monto total es requerido
+        </div>
+      </div>
+    </div>
+
+    <div class="fv-row mb-7">
+      <label class="required fw-bold fs-6 mb-2">Cantidad de Estudiantes</label>
+      <div class="form-check form-check-custom form-check-solid">
+        <input class="form-check-input" type="radio" name="studentQuantity" value="all" formControlName="studentQuantity" id="todos" checked />
+        <label class="form-check-label" for="todos">
+          Todos
+        </label>
+      </div>
+      <div class="form-check form-check-custom form-check-solid">
+        <input class="form-check-input" type="radio" name="studentQuantity" value="selected" formControlName="studentQuantity" id="seleccionados" />
+        <label class="form-check-label" for="seleccionados">
+          Seleccionados
+        </label>
+      </div>
+    </div>
+
+    <div class="fv-row mb-7">
+      <label class="required fw-bold fs-6 mb-2">Fecha de Pago</label>
+      <input
+        type="date"
+        class="form-control form-control-solid mb-3 mb-lg-0"
+        formControlName="date"
+      />
+      <div class="fv-plugins-message-container" *ngIf="isControlTouched('date')">
+        <div class="fv-help-block" *ngIf="controlHasError('required', 'date')">
+          La fecha de pago es requerida
+        </div>
+      </div>
+    </div>
+
+    <div class="fv-row mb-7">
+      <label class="required fw-bold fs-6 mb-2">Estado</label>
+      <select class="form-select form-select-solid" formControlName="status">
+        <option value=true>Activo</option>
+        <option value=false>Inactivo</option>
+      </select>
+      <div class="fv-plugins-message-container" *ngIf="isControlTouched('status')">
+        <div class="fv-help-block" *ngIf="controlHasError('required', 'status')">
+          El estado es requerido
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="activeModal.dismiss()">Cancelar</button>
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="save()"
+    [disabled]="expenseForm.invalid || isLoading"
+  >
+    <span *ngIf="!isLoading" class="indicator-label">Guardar</span>
+    <span *ngIf="isLoading" class="indicator-progress">
+      Guardando...
+      <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+    </span>
+  </button>
+</div>

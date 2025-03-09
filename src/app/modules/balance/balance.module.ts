@@ -18,6 +18,9 @@ import { ConnectedAccountsComponent } from './expense-types/forms/connected-acco
 import { CreateExpenseTypeModalComponent } from './expense-types/modals/create-expense-type-modal/create-expense-type-modal.component';
 import { UpdateExpenseTypeModalComponent } from './expense-types/modals/update-expense-type-modal/update-expense-type-modal.component';
 import { DeleteExpenseTypeModalComponent } from './expense-types/modals/delete-expense-type-modal/delete-expense-type-modal.component';
+import { CreateExpenseModalComponent } from './expenses/modals/create-expense-modal/create-expense-modal.component';
+import { UpdateExpenseModalComponent } from './expenses/modals/update-expense-modal/update-expense-modal.component';
+import { DeleteExpenseModalComponent } from './expenses/modals/delete-expense-modal/delete-expense-modal.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +36,9 @@ import { DeleteExpenseTypeModalComponent } from './expense-types/modals/delete-e
     CreateExpenseTypeModalComponent,
     UpdateExpenseTypeModalComponent,
     DeleteExpenseTypeModalComponent,
+    CreateExpenseModalComponent,
+    UpdateExpenseModalComponent,
+    DeleteExpenseModalComponent,
   ],
   imports: [
     CommonModule,
