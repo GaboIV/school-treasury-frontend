@@ -36,5 +36,5 @@ export interface Expense {
   images: { id: string; url: string }[];
   createdAt?: string;
   updatedAt?: string;
-  status?: boolean;
+  status: boolean;
 }

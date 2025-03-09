@@ -91,8 +91,8 @@
     <div class="fv-row mb-7">
       <label class="required fw-bold fs-6 mb-2">Estado</label>
       <select class="form-select form-select-solid" formControlName="status">
-        <option value=true>Activo</option>
-        <option value=false>Inactivo</option>
+        <option [value]="true">Activo</option>
+        <option [value]="false">Inactivo</option>
       </select>
       <div class="fv-plugins-message-container" *ngIf="isControlTouched('status')">
         <div class="fv-help-block" *ngIf="controlHasError('required', 'status')">

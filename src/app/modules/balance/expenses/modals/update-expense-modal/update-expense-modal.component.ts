@@ -62,6 +62,8 @@ export class UpdateExpenseModalComponent implements OnInit {
 
     this.isLoading = true;
     const expense = this.expenseForm.value;
+    // Convertir el campo status en bool antes de enviar a guardar
+    expense.status = expense.status === 'true';
 
     this.expenseService
       .updateExpense(expense)
@@ -73,7 +75,7 @@ export class UpdateExpenseModalComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          console.error('Error al actualizar el tipo de gasto:', error);
+          console.error('Error al actualizar el gasto:', error);
         }
       });
   }
