@@ -1,0 +1,49 @@
+<div class="modal-header">
+  <h3 class="modal-title">Actualizar Tipo de Gasto</h3>
+  <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="activeModal.dismiss()">
+    <app-keenicon name="cross" class="fs-1"></app-keenicon>
+  </div>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="expenseTypeForm">
+    <div class="fv-row mb-7">
+      <label class="required fw-bold fs-6 mb-2">Nombre</label>
+      <input
+        type="text"
+        class="form-control form-control-solid mb-3 mb-lg-0"
+        placeholder="Nombre del tipo de gasto"
+        formControlName="name"
+      />
+      <ng-container *ngIf="isControlTouched('name')">
+        <div class="fv-plugins-message-container">
+          <div class="fv-help-block" *ngIf="controlHasError('required', 'name')">
+            El nombre es requerido
+          </div>
+          <div class="fv-help-block" *ngIf="controlHasError('minlength', 'name')">
+            El nombre debe tener al menos 3 caracteres
+          </div>
+          <div class="fv-help-block" *ngIf="controlHasError('maxlength', 'name')">
+            El nombre no debe exceder los 100 caracteres
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="activeModal.dismiss()">Cancelar</button>
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="save()"
+    [disabled]="expenseTypeForm.invalid || isLoading"
+  >
+    <span *ngIf="!isLoading" class="indicator-label">Actualizar</span>
+    <span *ngIf="isLoading" class="indicator-progress">
+      Actualizando...
+      <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+    </span>
+  </button>
+</div>

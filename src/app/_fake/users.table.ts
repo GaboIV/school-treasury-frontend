@@ -3,8 +3,8 @@ export class UsersTable {
     {
       id: 1,
       username: 'admin',
-      password: 'demo',
-      email: 'admin@demo.com',
+      password: 'mica123',
+      email: 'carmenbompart22@gmail.com',
       authToken: 'auth-token-8f3ae836da744329a6f93bf20594b5cc',
       refreshToken: 'auth-token-f8c137a2c98743f48b643e71161d90aa',
       roles: [1], // Administrator

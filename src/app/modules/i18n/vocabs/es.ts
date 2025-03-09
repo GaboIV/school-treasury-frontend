@@ -22,6 +22,10 @@ export const locale = {
       INCOME: 'Ingresos',
       EXPENSES: 'Egresos'
     },
+    BILLS: {
+      EXPENSETYPES: 'Tipos de gastos',
+      EXPENSES: 'Gastos'
+    },
     ACCESS: {
       ROLES: 'Roles',
       STUDENTS: 'Estudiantes'

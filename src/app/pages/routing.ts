@@ -15,8 +15,8 @@ const Routing: Routes = [
     // data: { layout: 'light-sidebar' },
   },
   {
-    path: 'crafted/account',
-    loadChildren: () => import('../modules/account/account.module').then((m) => m.AccountModule),
+    path: 'balance',
+    loadChildren: () => import('../modules/balance/balance.module').then((m) => m.BalanceModule),
     // data: { layout: 'dark-header' },
   },
   {
