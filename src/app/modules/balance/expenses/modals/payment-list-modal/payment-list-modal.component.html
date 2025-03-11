@@ -18,7 +18,9 @@
       <thead>
         <tr class="fw-bolder text-muted">
           <th class="min-w-150px">Estudiante</th>
-          <th class="min-w-120px">Monto a Pagar</th>
+          <th class="min-w-120px">Monto Individual</th>
+          <th class="min-w-120px">Monto Ajustado</th>
+          <th class="min-w-120px">Excedente</th>
           <th class="min-w-120px">Monto Pagado</th>
           <th class="min-w-120px">Pendiente</th>
           <th class="min-w-100px">Estado</th>
@@ -31,8 +33,33 @@
         <tr *ngFor="let payment of payments">
           <td>{{ payment.studentName }}</td>
           <td>{{ payment.amountExpense | currency: 'S/ ' }}</td>
+          <td>
+            {{ (payment.adjustedAmountExpense || payment.amountExpense) | currency: 'S/ ' }}
+            <span *ngIf="payment.adjustedAmountExpense && payment.adjustedAmountExpense !== payment.amountExpense"
+                  [ngClass]="payment.adjustedAmountExpense < payment.amountExpense ? 'text-success' : 'text-danger'"
+                  class="fw-bold d-block fs-7">
+              {{ payment.adjustedAmountExpense < payment.amountExpense ? '↓' : '↑' }}
+              {{ getPercentageDifference(payment.amountExpense, payment.adjustedAmountExpense) }}%
+            </span>
+          </td>
+          <td>
+            <span *ngIf="payment.surplus && payment.surplus > 0" class="text-success fw-bold">
+              {{ payment.surplus | currency: 'S/ ' }}
+              <span class="text-muted fw-normal d-block fs-7">Caja chica</span>
+            </span>
+            <span *ngIf="!payment.surplus || payment.surplus <= 0" class="text-muted">
+              S/ 0.00
+            </span>
+          </td>
           <td>{{ payment.amountPaid | currency: 'S/ ' }}</td>
-          <td>{{ payment.pending | currency: 'S/ ' }}</td>
+          <td>
+            <span *ngIf="payment.adjustedAmountExpense">
+              {{ (payment.adjustedAmountExpense - payment.amountPaid) | currency: 'S/ ' }}
+            </span>
+            <span *ngIf="!payment.adjustedAmountExpense">
+              {{ payment.pending | currency: 'S/ ' }}
+            </span>
+          </td>
           <td>
             <span class="badge" [ngClass]="getPaymentStatusClass(payment.paymentStatus)">
               {{ getPaymentStatusText(payment.paymentStatus) }}
@@ -115,8 +142,32 @@
           <!-- Información del pago -->
           <div class="row g-2 mb-2">
             <div class="col-6">
-              <div class="text-muted small">Monto a Pagar</div>
+              <div class="text-muted small">Monto Individual</div>
               <div class="fw-bold">{{ payment.amountExpense | currency: 'S/ ' }}</div>
+            </div>
+            <div class="col-6">
+              <div class="text-muted small">Monto Ajustado</div>
+              <div class="fw-bold">
+                {{ (payment.adjustedAmountExpense || payment.amountExpense) | currency: 'S/ ' }}
+                <span *ngIf="payment.adjustedAmountExpense && payment.adjustedAmountExpense !== payment.amountExpense"
+                      [ngClass]="payment.adjustedAmountExpense < payment.amountExpense ? 'text-success' : 'text-danger'"
+                      class="small">
+                  {{ payment.adjustedAmountExpense < payment.amountExpense ? '↓' : '↑' }}
+                  {{ getPercentageDifference(payment.amountExpense, payment.adjustedAmountExpense) }}%
+                </span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="text-muted small">Excedente</div>
+              <div>
+                <span *ngIf="payment.surplus && payment.surplus > 0" class="text-success fw-bold">
+                  {{ payment.surplus | currency: 'S/ ' }}
+                  <span class="text-muted fw-normal d-block small">Caja chica</span>
+                </span>
+                <span *ngIf="!payment.surplus || payment.surplus <= 0" class="text-muted">
+                  S/ 0.00
+                </span>
+              </div>
             </div>
             <div class="col-6">
               <div class="text-muted small">Monto Pagado</div>
@@ -124,7 +175,14 @@
             </div>
             <div class="col-6">
               <div class="text-muted small">Pendiente</div>
-              <div class="fw-bold text-danger">{{ payment.pending | currency: 'S/ ' }}</div>
+              <div class="fw-bold text-danger">
+                <span *ngIf="payment.adjustedAmountExpense">
+                  {{ (payment.adjustedAmountExpense - payment.amountPaid) | currency: 'S/ ' }}
+                </span>
+                <span *ngIf="!payment.adjustedAmountExpense">
+                  {{ payment.pending | currency: 'S/ ' }}
+                </span>
+              </div>
             </div>
             <div class="col-6">
               <div class="text-muted small">Fecha de Pago</div>

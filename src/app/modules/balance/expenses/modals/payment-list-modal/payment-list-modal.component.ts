@@ -247,4 +247,13 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.images = images;
     modalRef.componentInstance.currentIndex = index;
   }
+
+  getPercentageDifference(originalValue: number, newValue: number): string {
+    if (!originalValue || !newValue) {
+      return '0';
+    }
+
+    const difference = ((newValue - originalValue) / originalValue) * 100;
+    return Math.abs(difference).toFixed(1);
+  }
 }

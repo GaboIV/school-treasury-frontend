@@ -25,6 +25,8 @@ export interface Expense {
   name?: string;
   totalAmount: number;
   individualAmount: number;
+  adjustedIndividualAmount?: number;
+  totalSurplus?: number;
   date: string;
   studentQuantity: string;
   percentagePaid: number;

@@ -6,6 +6,7 @@ import { DeleteExpenseModalComponent } from './modals/delete-expense-modal/delet
 import { UpdateExpenseModalComponent } from './modals/update-expense-modal/update-expense-modal.component';
 import { CreateExpenseModalComponent } from './modals/create-expense-modal/create-expense-modal.component';
 import { PaymentListModalComponent } from './modals/payment-list-modal/payment-list-modal.component';
+import { AdjustAmountModalComponent } from './modals/adjust-amount-modal/adjust-amount-modal.component';
 import { ScreenSizeService } from '../services/screen-size.service';
 import { Subscription } from 'rxjs';
 
@@ -224,6 +225,37 @@ export class ExpensesComponent implements OnInit, OnDestroy {
         // Modal dismissed
       }
     );
+  }
+
+  openAdjustAmountModal(expense: Expense): void {
+    const modalRef = this.modalService.open(AdjustAmountModalComponent, {
+      size: 'md',
+      centered: true,
+    });
+
+    modalRef.componentInstance.expense = expense;
+
+    modalRef.result.then(
+      (result) => {
+        // Si el modal se cierra con éxito (después de ajustar)
+        if (result) {
+          // Recargar la lista de gastos
+          this.loadExpenses();
+        }
+      },
+      () => {
+        // Si el modal se cierra sin ajustar (dismiss)
+      }
+    );
+  }
+
+  getPercentageDifference(originalValue: number, newValue: number): string {
+    if (!originalValue || !newValue) {
+      return '0';
+    }
+
+    const difference = ((newValue - originalValue) / originalValue) * 100;
+    return Math.abs(difference).toFixed(1);
   }
 
   getStatusClass(status: boolean): string {

@@ -21,8 +21,22 @@
           <span class="fw-bold">{{ payment.expenseName }}</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
-          <span class="text-muted">Monto a Pagar:</span>
+          <span class="text-muted">Monto Individual:</span>
           <span class="fw-bold">{{ payment.amountExpense | currency: 'S/ ' }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2" *ngIf="payment.adjustedAmountExpense && payment.adjustedAmountExpense !== payment.amountExpense">
+          <span class="text-muted">Monto Ajustado:</span>
+          <span class="fw-bold" [ngClass]="payment.adjustedAmountExpense < payment.amountExpense ? 'text-success' : 'text-danger'">
+            {{ payment.adjustedAmountExpense | currency: 'S/ ' }}
+            <span class="small">
+              {{ payment.adjustedAmountExpense < payment.amountExpense ? '↓' : '↑' }}
+              {{ getPercentageDifference(payment.amountExpense, payment.adjustedAmountExpense) }}%
+            </span>
+          </span>
+        </div>
+        <div class="d-flex justify-content-between mb-2" *ngIf="payment.surplus && payment.surplus > 0">
+          <span class="text-muted">Excedente (caja chica):</span>
+          <span class="fw-bold text-success">{{ payment.surplus | currency: 'S/ ' }}</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
           <span class="text-muted">Monto Pagado:</span>
@@ -30,7 +44,25 @@
         </div>
         <div class="d-flex justify-content-between mb-2">
           <span class="text-muted">Pendiente:</span>
-          <span class="fw-bold text-danger">{{ payment.pending | currency: 'S/ ' }}</span>
+          <span class="fw-bold text-danger">
+            {{ getPendingAmount() | currency: 'S/ ' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-info mb-3" *ngIf="payment.adjustedAmountExpense && payment.adjustedAmountExpense !== payment.amountExpense">
+      <div class="d-flex">
+        <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+        <div>
+          <p class="mb-0">
+            <strong>Nota:</strong> Este pago tiene un monto ajustado. El estudiante debe pagar
+            {{ payment.adjustedAmountExpense | currency: 'S/ ' }} en lugar de
+            {{ payment.amountExpense | currency: 'S/ ' }}.
+            <span *ngIf="payment.surplus && payment.surplus > 0">
+              La diferencia de {{ payment.surplus | currency: 'S/ ' }} irá a caja chica.
+            </span>
+          </p>
         </div>
       </div>
     </div>
@@ -53,7 +85,7 @@
         El monto debe ser mayor a 0
       </div>
       <div class="invalid-feedback" *ngIf="controlHasError('max', 'amountPaid')">
-        El monto no puede ser mayor al pendiente ({{ payment.pending | currency: 'S/ ' }})
+        El monto no puede ser mayor al pendiente ({{ getPendingAmount() | currency: 'S/ ' }})
       </div>
     </div>
 

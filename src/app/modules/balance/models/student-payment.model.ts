@@ -13,7 +13,9 @@ export interface StudentPayment {
   studentName: string;
   expenseName: string;
   amountExpense: number;
+  adjustedAmountExpense?: number;
   amountPaid: number;
+  surplus: number;
   paymentStatus: number;
   images: string[];
   voucher: string | null;

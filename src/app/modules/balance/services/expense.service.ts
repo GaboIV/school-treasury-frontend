@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ExpenseResponse } from '../models/expense.model';
+import { ApiResponse } from '../models/api-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -30,5 +31,9 @@ export class ExpenseService {
 
   deleteExpense(id: string): Observable<ExpenseResponse> {
     return this.http.delete<ExpenseResponse>(`${this.apiUrl}/${id}`);
+  }
+
+  updateExpenseAdjustedAmount(expense: { id: string, adjustedAmount: number, surplus: number }): Observable<ApiResponse<any>> {
+    return this.http.patch<ApiResponse<any>>(`${this.apiUrl}/${expense.id}/adjust-amount`, expense);
   }
 }

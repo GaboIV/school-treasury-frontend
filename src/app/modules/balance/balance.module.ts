@@ -24,6 +24,7 @@ import { DeleteExpenseModalComponent } from './expenses/modals/delete-expense-mo
 import { PaymentListModalComponent } from './expenses/modals/payment-list-modal/payment-list-modal.component';
 import { RegisterPaymentModalComponent } from './expenses/modals/register-payment-modal/register-payment-modal.component';
 import { ImagePreviewModalComponent } from './expenses/modals/image-preview-modal/image-preview-modal.component';
+import { AdjustAmountModalComponent } from './expenses/modals/adjust-amount-modal/adjust-amount-modal.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { ImagePreviewModalComponent } from './expenses/modals/image-preview-moda
     DeleteExpenseModalComponent,
     PaymentListModalComponent,
     RegisterPaymentModalComponent,
-    ImagePreviewModalComponent
+    ImagePreviewModalComponent,
+    AdjustAmountModalComponent
   ],
   imports: [
     CommonModule,

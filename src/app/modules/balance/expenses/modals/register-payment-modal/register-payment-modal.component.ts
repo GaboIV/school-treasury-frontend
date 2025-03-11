@@ -31,11 +31,34 @@ export class RegisterPaymentModalComponent implements OnInit {
   }
 
   initForm() {
+    // Usar el monto ajustado si existe, de lo contrario usar el monto individual
+    const pendingAmount = this.getPendingAmount();
+
     this.paymentForm = this.fb.group({
       id: [this.payment.id],
-      amountPaid: [0, [Validators.required, Validators.min(0.01), Validators.max(this.payment.pending)]],
+      amountPaid: [0, [Validators.required, Validators.min(0.01), Validators.max(pendingAmount)]],
       comment: ['']
     });
+  }
+
+  // Método para obtener el monto pendiente considerando el monto ajustado
+  getPendingAmount(): number {
+    // Si hay un monto ajustado, usar ese para calcular el pendiente
+    if (this.payment.adjustedAmountExpense) {
+      return this.payment.adjustedAmountExpense - this.payment.amountPaid;
+    }
+    // De lo contrario, usar el monto individual (pendiente original)
+    return this.payment.pending;
+  }
+
+  // Método para calcular el porcentaje de diferencia entre dos valores
+  getPercentageDifference(originalValue: number, newValue: number): string {
+    if (!originalValue || !newValue) {
+      return '0';
+    }
+
+    const difference = ((newValue - originalValue) / originalValue) * 100;
+    return Math.abs(difference).toFixed(1);
   }
 
   save() {
@@ -51,6 +74,16 @@ export class RegisterPaymentModalComponent implements OnInit {
     formData.append('id', paymentData.id);
     formData.append('amountPaid', paymentData.amountPaid.toString());
     formData.append('comment', paymentData.comment || '');
+
+    // Agregar información sobre el monto ajustado si existe
+    if (this.payment.adjustedAmountExpense) {
+      formData.append('adjustedAmountExpense', this.payment.adjustedAmountExpense.toString());
+    }
+
+    // Agregar información sobre el excedente si existe
+    if (this.payment.surplus) {
+      formData.append('surplus', this.payment.surplus.toString());
+    }
 
     // Agregar las imágenes al FormData
     this.uploadedImages.forEach((image, index) => {

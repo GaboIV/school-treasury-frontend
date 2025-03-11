@@ -26,6 +26,8 @@
             <th class="min-w-140px">Nombre</th>
             <th class="min-w-120px">Monto Total</th>
             <th class="min-w-120px">Monto Individual</th>
+            <th class="min-w-120px">Monto Ajustado</th>
+            <th class="min-w-120px">Excedente</th>
             <th class="min-w-120px">Fecha</th>
             <th class="min-w-100px">Estado</th>
             <th class="min-w-150px">Avance de Pago</th>
@@ -40,6 +42,23 @@
             </td>
             <td>{{ expense.totalAmount | currency: 'S/ ' }}</td>
             <td>{{ expense.individualAmount | currency: 'S/ ' }}</td>
+            <td>
+              {{ (expense.adjustedIndividualAmount || expense.individualAmount) | currency: 'S/ ' }}
+              <span *ngIf="expense.adjustedIndividualAmount && expense.adjustedIndividualAmount !== expense.individualAmount"
+                    [ngClass]="expense.adjustedIndividualAmount < expense.individualAmount ? 'text-success' : 'text-danger'"
+                    class="fw-bold d-block fs-7">
+                {{ expense.adjustedIndividualAmount < expense.individualAmount ? '↓' : '↑' }}
+                {{ getPercentageDifference(expense.individualAmount, expense.adjustedIndividualAmount) }}%
+              </span>
+            </td>
+            <td>
+              <span *ngIf="expense.totalSurplus && expense.totalSurplus > 0" class="text-success fw-bold">
+                {{ expense.totalSurplus | currency: 'S/ ' }}
+              </span>
+              <span *ngIf="!expense.totalSurplus || expense.totalSurplus <= 0" class="text-muted">
+                S/ 0.00
+              </span>
+            </td>
             <td>{{ expense.date | date: 'dd/MM/yyyy' }}</td>
             <td>
               <span class="badge" [ngClass]="expense.status ? 'badge-light-success' : 'badge-light-danger'">
@@ -61,6 +80,9 @@
               </div>
             </td>
             <td class="text-end">
+              <a href="javascript:;" class="btn btn-icon btn-bg-light btn-sm me-1" (click)="openAdjustAmountModal(expense)">
+                <app-keenicon name="setting-2" class="fs-3"></app-keenicon>
+              </a>
               <a href="javascript:;" class="btn btn-icon btn-bg-light btn-sm me-1" (click)="openPaymentListModal(expense)">
                 <app-keenicon name="dollar" class="fs-3"></app-keenicon>
               </a>
@@ -73,7 +95,7 @@
             </td>
           </tr>
           <tr *ngIf="expenses.length === 0">
-            <td colspan="7" class="text-center py-5">
+            <td colspan="9" class="text-center py-5">
               <span class="text-muted">No hay gastos registrados</span>
             </td>
           </tr>
@@ -124,6 +146,29 @@
                 <div class="fw-bold">{{ expense.individualAmount | currency: 'S/ ' }}</div>
               </div>
               <div class="col-6">
+                <div class="text-muted small">Monto Ajustado</div>
+                <div class="fw-bold">
+                  {{ (expense.adjustedIndividualAmount || expense.individualAmount) | currency: 'S/ ' }}
+                  <span *ngIf="expense.adjustedIndividualAmount && expense.adjustedIndividualAmount !== expense.individualAmount"
+                        [ngClass]="expense.adjustedIndividualAmount < expense.individualAmount ? 'text-success' : 'text-danger'"
+                        class="small">
+                    {{ expense.adjustedIndividualAmount < expense.individualAmount ? '↓' : '↑' }}
+                    {{ getPercentageDifference(expense.individualAmount, expense.adjustedIndividualAmount) }}%
+                  </span>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="text-muted small">Excedente</div>
+                <div>
+                  <span *ngIf="expense.totalSurplus && expense.totalSurplus > 0" class="text-success fw-bold">
+                    {{ expense.totalSurplus | currency: 'S/ ' }}
+                  </span>
+                  <span *ngIf="!expense.totalSurplus || expense.totalSurplus <= 0" class="text-muted">
+                    S/ 0.00
+                  </span>
+                </div>
+              </div>
+              <div class="col-6">
                 <div class="text-muted small">Fecha</div>
                 <div>{{ expense.date | date: 'dd/MM/yyyy' }}</div>
               </div>
@@ -149,6 +194,9 @@
 
             <!-- Botones de acción -->
             <div class="d-flex justify-content-end gap-2">
+              <button class="btn btn-primary btn-sm" (click)="openAdjustAmountModal(expense)">
+                <i class="bi bi-gear me-1"></i> Ajustar
+              </button>
               <button class="btn btn-primary btn-sm" (click)="openPaymentListModal(expense)">
                 <i class="bi bi-cash-coin me-1"></i> Pagos
               </button>
