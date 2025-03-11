@@ -1,0 +1,170 @@
+<div class="modal-header">
+  <h4 class="modal-title">Lista de Pagos - {{ expense.name }}</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <!-- Vista de escritorio (tabla) -->
+  <div class="table-responsive" *ngIf="!isLoading && !error && !isMobile">
+    <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
+      <thead>
+        <tr class="fw-bolder text-muted">
+          <th class="min-w-150px">Estudiante</th>
+          <th class="min-w-120px">Monto a Pagar</th>
+          <th class="min-w-120px">Monto Pagado</th>
+          <th class="min-w-120px">Pendiente</th>
+          <th class="min-w-100px">Estado</th>
+          <th class="min-w-120px">Fecha de Pago</th>
+          <th class="min-w-100px">Imágenes</th>
+          <th class="min-w-100px text-end">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payment of payments">
+          <td>{{ payment.studentName }}</td>
+          <td>{{ payment.amountExpense | currency: 'S/ ' }}</td>
+          <td>{{ payment.amountPaid | currency: 'S/ ' }}</td>
+          <td>{{ payment.pending | currency: 'S/ ' }}</td>
+          <td>
+            <span class="badge" [ngClass]="getPaymentStatusClass(payment.paymentStatus)">
+              {{ getPaymentStatusText(payment.paymentStatus) }}
+            </span>
+          </td>
+          <td>{{ payment.paymentDate | date: 'dd/MM/yyyy' }}</td>
+          <td>
+            <!-- Miniaturas de imágenes -->
+            <div class="d-flex gap-1" *ngIf="payment.images && payment.images.length > 0">
+              <div
+                *ngFor="let image of payment.images.slice(0, 3); let i = index"
+                class="position-relative cursor-pointer"
+                (click)="openImagePreview(payment.images, i)"
+              >
+                <img
+                  [src]="image"
+                  class="img-thumbnail"
+                  style="width: 40px; height: 40px; object-fit: cover;"
+                  [alt]="'Imagen ' + (i + 1)"
+                >
+              </div>
+              <div
+                *ngIf="payment.images.length > 3"
+                class="d-flex justify-content-center align-items-center bg-light rounded cursor-pointer"
+                style="width: 40px; height: 40px;"
+                (click)="openImagePreview(payment.images, 3)"
+              >
+                <span class="text-muted">+{{ payment.images.length - 3 }}</span>
+              </div>
+            </div>
+            <span *ngIf="!payment.images || payment.images.length === 0" class="text-muted">
+              Sin imágenes
+            </span>
+          </td>
+          <td class="text-end">
+            <a href="javascript:;" class="btn btn-icon btn-bg-light btn-sm" (click)="openRegisterPaymentModal(payment)">
+              <app-keenicon name="dollar" class="fs-3"></app-keenicon>
+            </a>
+          </td>
+        </tr>
+        <tr *ngIf="payments.length === 0">
+          <td colspan="8" class="text-center py-5">
+            <span class="text-muted">No hay pagos registrados</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Vista móvil (tarjetas) -->
+  <div *ngIf="!isLoading && !error && isMobile">
+    <div *ngIf="payments.length === 0" class="text-center py-5">
+      <span class="text-muted">No hay pagos registrados</span>
+    </div>
+
+    <!-- Indicador de desplazamiento -->
+    <div *ngIf="payments.length > 1" class="text-center mb-3 swipe-indicator">
+      <div class="d-flex flex-column align-items-center">
+        <i class="bi bi-chevron-down text-primary fs-4 mb-1"></i>
+        <span class="text-muted small">Desliza para ver más</span>
+      </div>
+    </div>
+
+    <div class="payment-cards">
+      <div
+        *ngFor="let payment of payments; let i = index"
+        class="card mb-3 payment-card"
+        [ngClass]="getCardStatusClass(payment.paymentStatus)"
+        [style.--animation-order]="i"
+      >
+        <div class="card-body p-3">
+          <!-- Encabezado de la tarjeta -->
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="card-title mb-0 text-truncate">{{ payment.studentName }}</h5>
+            <span class="badge" [ngClass]="getPaymentStatusClass(payment.paymentStatus)">
+              {{ getPaymentStatusText(payment.paymentStatus) }}
+            </span>
+          </div>
+
+          <!-- Información del pago -->
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <div class="text-muted small">Monto a Pagar</div>
+              <div class="fw-bold">{{ payment.amountExpense | currency: 'S/ ' }}</div>
+            </div>
+            <div class="col-6">
+              <div class="text-muted small">Monto Pagado</div>
+              <div class="fw-bold">{{ payment.amountPaid | currency: 'S/ ' }}</div>
+            </div>
+            <div class="col-6">
+              <div class="text-muted small">Pendiente</div>
+              <div class="fw-bold text-danger">{{ payment.pending | currency: 'S/ ' }}</div>
+            </div>
+            <div class="col-6">
+              <div class="text-muted small">Fecha de Pago</div>
+              <div>{{ payment.paymentDate ? (payment.paymentDate | date: 'dd/MM/yyyy') : 'No registrado' }}</div>
+            </div>
+          </div>
+
+          <!-- Imágenes -->
+          <div *ngIf="payment.images && payment.images.length > 0">
+            <div class="text-muted small mb-1">Imágenes</div>
+            <div class="card-images">
+              <div
+                *ngFor="let image of payment.images.slice(0, 3); let i = index"
+                class="card-image-container cursor-pointer"
+                (click)="openImagePreview(payment.images, i)"
+              >
+                <img [src]="image" class="card-image" [alt]="'Imagen ' + (i + 1)">
+              </div>
+              <div
+                *ngIf="payment.images.length > 3"
+                class="more-images cursor-pointer"
+                (click)="openImagePreview(payment.images, 3)"
+              >
+                +{{ payment.images.length - 3 }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Botón de acción -->
+          <div class="d-flex justify-content-end mt-3">
+            <button class="btn btn-primary btn-sm" (click)="openRegisterPaymentModal(payment)">
+              <i class="bi bi-cash-coin me-1"></i> Registrar Pago
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="activeModal.close()">Cerrar</button>
+</div>

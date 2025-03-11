@@ -21,6 +21,9 @@ import { DeleteExpenseTypeModalComponent } from './expense-types/modals/delete-e
 import { CreateExpenseModalComponent } from './expenses/modals/create-expense-modal/create-expense-modal.component';
 import { UpdateExpenseModalComponent } from './expenses/modals/update-expense-modal/update-expense-modal.component';
 import { DeleteExpenseModalComponent } from './expenses/modals/delete-expense-modal/delete-expense-modal.component';
+import { PaymentListModalComponent } from './expenses/modals/payment-list-modal/payment-list-modal.component';
+import { RegisterPaymentModalComponent } from './expenses/modals/register-payment-modal/register-payment-modal.component';
+import { ImagePreviewModalComponent } from './expenses/modals/image-preview-modal/image-preview-modal.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +42,9 @@ import { DeleteExpenseModalComponent } from './expenses/modals/delete-expense-mo
     CreateExpenseModalComponent,
     UpdateExpenseModalComponent,
     DeleteExpenseModalComponent,
+    PaymentListModalComponent,
+    RegisterPaymentModalComponent,
+    ImagePreviewModalComponent
   ],
   imports: [
     CommonModule,

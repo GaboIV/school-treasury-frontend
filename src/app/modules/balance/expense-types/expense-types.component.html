@@ -24,8 +24,8 @@
       {{ error }}
     </div>
 
-    <!-- begin::Table container -->
-    <div class="table-responsive" *ngIf="!isLoading && !error">
+    <!-- Vista de escritorio (tabla) -->
+    <div class="table-responsive" *ngIf="!isLoading && !error && !isMobile">
       <!-- begin::Table -->
       <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
         <!-- begin::Table head -->
@@ -183,6 +183,87 @@
       <!-- end::Pagination -->
     </div>
     <!-- end::Table container -->
+
+    <!-- Vista móvil (tarjetas) -->
+    <div *ngIf="!isLoading && !error && isMobile">
+      <div *ngIf="expenseTypes.length === 0" class="text-center py-5">
+        <span class="text-muted">No hay tipos de gastos disponibles</span>
+      </div>
+
+      <!-- Indicador de desplazamiento -->
+      <div *ngIf="expenseTypes.length > 1" class="text-center mb-3 swipe-indicator">
+        <div class="d-flex flex-column align-items-center">
+          <i class="bi bi-chevron-down text-primary fs-4 mb-1"></i>
+          <span class="text-muted small">Desliza para ver más</span>
+        </div>
+      </div>
+
+      <div class="expense-type-cards">
+        <div
+          *ngFor="let expenseType of expenseTypes; let i = index"
+          class="card expense-type-card"
+          [ngClass]="getStatusClass(expenseType.status)"
+          [style.--animation-order]="i"
+        >
+          <div class="card-body p-3">
+            <!-- Encabezado de la tarjeta -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="card-title mb-0 text-truncate">{{ expenseType.name }}</h5>
+              <span class="badge" [ngClass]="expenseType.status ? 'badge-light-success' : 'badge-light-danger'">
+                {{ expenseType.status ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+
+            <!-- Información del tipo de gasto -->
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <div class="text-muted small">Creación</div>
+                <div class="fw-bold">{{ formatDate(expenseType.createdAt) }}</div>
+                <div class="text-muted small">{{ formatTime(expenseType.createdAt) }}</div>
+              </div>
+              <div class="col-6">
+                <div class="text-muted small">Actualización</div>
+                <div class="fw-bold">{{ formatDate(expenseType.updatedAt) }}</div>
+                <div class="text-muted small">{{ formatTime(expenseType.updatedAt) }}</div>
+              </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="d-flex justify-content-end gap-2">
+              <button class="btn btn-light btn-sm" (click)="openUpdateModal(expenseType)">
+                <i class="bi bi-pencil me-1"></i> Editar
+              </button>
+              <button class="btn btn-light btn-sm" (click)="openDeleteModal(expenseType)">
+                <i class="bi bi-trash me-1"></i> Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paginación móvil simplificada -->
+      <div class="d-flex justify-content-between align-items-center mt-4" *ngIf="pagination.totalPages > 1">
+        <button
+          class="btn btn-sm btn-light"
+          [disabled]="pagination.currentPage === 1"
+          (click)="changePage(pagination.currentPage - 1)"
+        >
+          <i class="bi bi-chevron-left me-1"></i> Anterior
+        </button>
+
+        <span class="text-muted">
+          Página {{ pagination.currentPage }} de {{ pagination.totalPages }}
+        </span>
+
+        <button
+          class="btn btn-sm btn-light"
+          [disabled]="pagination.currentPage === pagination.totalPages"
+          (click)="changePage(pagination.currentPage + 1)"
+        >
+          Siguiente <i class="bi bi-chevron-right ms-1"></i>
+        </button>
+      </div>
+    </div>
   </div>
   <!-- begin::Body -->
 </div>
