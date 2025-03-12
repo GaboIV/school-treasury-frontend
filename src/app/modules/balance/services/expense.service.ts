@@ -34,6 +34,7 @@ export class ExpenseService {
   }
 
   updateExpenseAdjustedAmount(expense: { id: string, adjustedAmount: number, surplus: number }): Observable<ApiResponse<any>> {
+    console.log(`ID: ${expense.id}, Monto Ajustado: ${expense.adjustedAmount}, Excedente: ${expense.surplus}`);
     return this.http.patch<ApiResponse<any>>(`${this.apiUrl}/${expense.id}/adjust-amount`, expense);
   }
 }

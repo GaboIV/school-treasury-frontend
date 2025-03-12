@@ -91,8 +91,8 @@ export class AdjustAmountModalComponent implements OnInit {
     // Preparar los datos para actualizar
     const expenseData = {
       id: this.expense.id,
-      adjustedAmount: formValues.adjustedIndividualAmount,
-      surplus: formValues.totalSurplus
+      adjustedAmount: formValues.adjustedAmount,
+      surplus: formValues.surplus
     };
 
     this.expenseService.updateExpenseAdjustedAmount(expenseData).subscribe({

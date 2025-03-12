@@ -13,6 +13,8 @@ export const locale = {
       FEATURES: 'Features',
       APPS: 'Apps',
       DASHBOARD: 'Dashboard',
+      BALANCE: 'Balance',
+      ACCESS: 'Access'
     },
     AUTH: {
       GENERAL: {
@@ -100,6 +102,25 @@ export const locale = {
           ADD_MESSAGE: 'Customer has been created'
         }
       }
+    },
+    BALANCE: {
+      SUMMARY: 'Summary',
+      BILLS: 'Bills',
+      INCOME: 'Income',
+      EXPENSES: 'Expenses',
+      PETTY_CASH: 'Petty Cash',
+      PETTY_CASH_BALANCE: 'Balance',
+      PETTY_CASH_TRANSACTIONS: 'Transactions',
+      PETTY_CASH_INCOME: 'Income',
+      PETTY_CASH_EXPENSE: 'Expenses'
+    },
+    BILLS: {
+      EXPENSETYPES: 'Expense Types',
+      EXPENSES: 'Expenses'
+    },
+    ACCESS: {
+      ROLES: 'Roles',
+      STUDENTS: 'Students'
     }
   }
 };

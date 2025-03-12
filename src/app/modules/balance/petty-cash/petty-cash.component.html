@@ -1,0 +1,236 @@
+<!-- Tarjetas de resumen -->
+<div class="row g-5 g-xl-8 mb-5">
+  <div class="col-xl-4">
+    <!-- Saldo de Caja Chica -->
+    <div class="card bg-light-primary h-md-100">
+      <div class="card-body d-flex flex-column justify-content-between">
+        <div class="d-flex flex-column flex-grow-1">
+          <span class="text-primary fw-bold fs-3 mb-3">{{ 'BALANCE.PETTY_CASH_BALANCE' | translate }}</span>
+          <div *ngIf="transactionSummary" class="fw-bolder fs-2x mb-2">
+            {{ transactionSummary.balance | currencyPEN }}
+          </div>
+          <div *ngIf="!transactionSummary && loading" class="d-flex justify-content-center">
+            <span class="spinner-border spinner-border-sm text-primary"></span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center fw-bold">
+          <span class="badge badge-light-info fs-base">
+            <i class="bi bi-info-circle me-2"></i>Actualizado
+          </span>
+          <span class="text-gray-400 fs-7 ms-2" *ngIf="transactionSummary?.lastTransactionDate">
+            {{ transactionSummary?.lastTransactionDate | date:'dd/MM/yyyy HH:mm' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-4">
+    <!-- Total Ingresos -->
+    <div class="card bg-light-success h-md-100">
+      <div class="card-body d-flex flex-column justify-content-between">
+        <div class="d-flex flex-column flex-grow-1">
+          <span class="text-success fw-bold fs-3 mb-3">{{ 'BALANCE.PETTY_CASH_INCOME' | translate }}</span>
+          <div *ngIf="transactionSummary" class="fw-bolder fs-2x mb-2">
+            {{ transactionSummary.totalIncome | currencyPEN }}
+          </div>
+          <div *ngIf="!transactionSummary && loading" class="d-flex justify-content-center">
+            <span class="spinner-border spinner-border-sm text-success"></span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center fw-bold">
+          <span class="badge badge-success fs-base">
+            <i class="bi bi-arrow-up-right me-2"></i>Entrada
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-4">
+    <!-- Total Egresos -->
+    <div class="card bg-light-danger h-md-100">
+      <div class="card-body d-flex flex-column justify-content-between">
+        <div class="d-flex flex-column flex-grow-1">
+          <span class="text-danger fw-bold fs-3 mb-3">{{ 'BALANCE.PETTY_CASH_EXPENSE' | translate }}</span>
+          <div *ngIf="transactionSummary" class="fw-bolder fs-2x mb-2">
+            {{ transactionSummary.totalExpense | currencyPEN }}
+          </div>
+          <div *ngIf="!transactionSummary && loading" class="d-flex justify-content-center">
+            <span class="spinner-border spinner-border-sm text-danger"></span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center fw-bold">
+          <span class="badge badge-danger fs-base">
+            <i class="bi bi-arrow-down-right me-2"></i>Salida
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabla de transacciones -->
+<div class="card">
+  <!-- Encabezado de la tarjeta -->
+  <div class="card-header border-0 pt-6">
+    <div class="card-title">
+      <h3 class="fw-bolder mb-0">{{ 'BALANCE.PETTY_CASH_TRANSACTIONS' | translate }}</h3>
+    </div>
+    <div class="card-toolbar">
+      <button class="btn btn-primary" (click)="openNewTransactionModal()">
+        <i class="bi bi-plus-circle fs-4 me-2"></i>Nueva Transacción
+      </button>
+    </div>
+  </div>
+
+  <!-- Cuerpo de la tarjeta -->
+  <div class="card-body py-3">
+    <!-- Tabla -->
+    <div class="table-responsive" *ngIf="transactions.length > 0">
+      <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
+        <thead>
+          <tr class="fw-bolder text-muted">
+            <th class="min-w-100px">Fecha</th>
+            <th class="min-w-150px">Descripción</th>
+            <th class="min-w-100px">Tipo</th>
+            <th class="min-w-100px text-end">Monto</th>
+            <th class="min-w-100px" *ngIf="!isSmallScreen">Origen</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let transaction of transactions">
+            <td>
+              <span class="text-muted fw-bold text-hover-primary d-block fs-7">
+                {{ transaction.date | date:'dd/MM/yyyy HH:mm' }}
+              </span>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="d-flex justify-content-start flex-column">
+                  <span class="text-dark fw-bolder fs-6 mb-1">{{ transaction.description }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span [ngClass]="getTransactionTypeClass(transaction.type)">
+                {{ getTransactionTypeText(transaction.type) }}
+              </span>
+            </td>
+            <td class="text-end">
+              <span class="text-dark fw-bolder fs-6 mb-1"
+                [ngClass]="{'text-success': transaction.type === TransactionType.Income, 'text-danger': transaction.type === TransactionType.Expense}">
+                {{ transaction.amount | currencyPEN }}
+              </span>
+            </td>
+            <td *ngIf="!isSmallScreen">
+              <span *ngIf="transaction.relatedEntityType" class="badge badge-light-primary">
+                {{ transaction.relatedEntityType === 'StudentPayment' ? 'Pago de Estudiante' :
+                   transaction.relatedEntityType === 'Expense' ? 'Gasto' : transaction.relatedEntityType }}
+              </span>
+              <span *ngIf="!transaction.relatedEntityType" class="text-muted fw-bold d-block fs-7">
+                Manual
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Estado vacío -->
+    <div *ngIf="transactions.length === 0 && !loading" class="d-flex flex-column flex-center">
+      <img src="./assets/media/illustrations/sketchy-1/5.png" class="mw-400px" />
+      <div class="fs-1 fw-bolder text-dark mb-4">No hay transacciones</div>
+      <div class="fs-6">Comienza a registrar transacciones en tu caja chica</div>
+      <button class="btn btn-primary mt-6" (click)="openNewTransactionModal()">
+        Crear transacción
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="d-flex justify-content-center py-10">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <!-- Paginación -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap" *ngIf="paginatedResult && paginatedResult.totalCount > 0">
+      <div class="d-flex flex-wrap py-2 mr-3">
+        <ngb-pagination
+          [page]="pageIndex + 1"
+          [pageSize]="pageSize"
+          [collectionSize]="paginatedResult.totalCount"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="pageChanged($event)">
+        </ngb-pagination>
+      </div>
+      <div class="d-flex align-items-center py-3">
+        <span class="text-muted">Mostrando {{transactions.length}} de {{paginatedResult.totalCount}} registros</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para nueva transacción -->
+<ng-template #transactionModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Nueva Transacción</h5>
+    <button type="button" class="btn-close" aria-label="Cerrar" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="transactionForm">
+      <!-- Tipo de transacción -->
+      <div class="mb-4">
+        <label class="form-label required">Tipo de Transacción</label>
+        <div class="d-flex">
+          <div class="form-check form-check-custom form-check-solid form-check-success me-5">
+            <input class="form-check-input" type="radio" [value]="TransactionType.Income" formControlName="type" id="typeIncome" />
+            <label class="form-check-label" for="typeIncome">
+              Ingreso
+            </label>
+          </div>
+          <div class="form-check form-check-custom form-check-solid form-check-danger">
+            <input class="form-check-input" type="radio" [value]="TransactionType.Expense" formControlName="type" id="typeExpense" />
+            <label class="form-check-label" for="typeExpense">
+              Egreso
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monto -->
+      <div class="mb-4">
+        <label for="amount" class="form-label required">Monto</label>
+        <input type="number" class="form-control" id="amount" formControlName="amount" min="0.01" step="0.01" />
+        <div *ngIf="transactionForm.get('amount')?.invalid && transactionForm.get('amount')?.touched" class="fv-plugins-message-container">
+          <div class="fv-help-block">
+            <span *ngIf="transactionForm.get('amount')?.errors?.required">El monto es obligatorio</span>
+            <span *ngIf="transactionForm.get('amount')?.errors?.min">El monto debe ser mayor a 0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="mb-4">
+        <label for="description" class="form-label required">Descripción</label>
+        <textarea class="form-control" id="description" formControlName="description" rows="3"></textarea>
+        <div *ngIf="transactionForm.get('description')?.invalid && transactionForm.get('description')?.touched" class="fv-plugins-message-container">
+          <div class="fv-help-block">
+            <span *ngIf="transactionForm.get('description')?.errors?.required">La descripción es obligatoria</span>
+            <span *ngIf="transactionForm.get('description')?.errors?.maxlength">La descripción no puede tener más de 250 caracteres</span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="modal.dismiss()">Cancelar</button>
+    <button type="button" class="btn btn-primary" [disabled]="transactionForm.invalid || submitting" (click)="submitTransaction()">
+      <span *ngIf="!submitting">Guardar</span>
+      <span *ngIf="submitting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    </button>
+  </div>
+</ng-template>

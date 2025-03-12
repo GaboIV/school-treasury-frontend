@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { BalanceComponent } from './balance.component';
 import { ExpensesComponent } from './expenses/expenses.component';
 import { ExpenseTypesComponent } from './expense-types/expense-types.component';
+import { PettyCashComponent } from './petty-cash/petty-cash.component';
 
 const routes: Routes = [
   {
@@ -17,8 +18,12 @@ const routes: Routes = [
         path: 'gastos/tipos-de-gastos',
         component: ExpenseTypesComponent,
       },
-      { path: '', redirectTo: 'gastos/gastos', pathMatch: 'full' },
-      { path: '**', redirectTo: 'gastos/gastos', pathMatch: 'full' },
+      {
+        path: 'caja-chica',
+        component: PettyCashComponent,
+      },
+      { path: '', redirectTo: 'caja-chica', pathMatch: 'full' },
+      { path: '**', redirectTo: 'caja-chica', pathMatch: 'full' },
     ],
   },
 ];

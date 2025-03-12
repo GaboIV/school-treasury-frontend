@@ -25,6 +25,10 @@ import { PaymentListModalComponent } from './expenses/modals/payment-list-modal/
 import { RegisterPaymentModalComponent } from './expenses/modals/register-payment-modal/register-payment-modal.component';
 import { ImagePreviewModalComponent } from './expenses/modals/image-preview-modal/image-preview-modal.component';
 import { AdjustAmountModalComponent } from './expenses/modals/adjust-amount-modal/adjust-amount-modal.component';
+import { PettyCashComponent } from './petty-cash/petty-cash.component';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { TranslationModule } from '../../modules/i18n/translation.module';
+import { PipesModule } from './pipes/pipes.module';
 
 @NgModule({
   declarations: [
@@ -46,7 +50,8 @@ import { AdjustAmountModalComponent } from './expenses/modals/adjust-amount-moda
     PaymentListModalComponent,
     RegisterPaymentModalComponent,
     ImagePreviewModalComponent,
-    AdjustAmountModalComponent
+    AdjustAmountModalComponent,
+    PettyCashComponent
   ],
   imports: [
     CommonModule,
@@ -57,6 +62,9 @@ import { AdjustAmountModalComponent } from './expenses/modals/adjust-amount-moda
     SharedModule,
     ReactiveFormsModule,
     FormsModule,
+    NgbPaginationModule,
+    TranslationModule,
+    PipesModule,
   ],
 })
 export class BalanceModule {}

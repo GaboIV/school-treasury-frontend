@@ -20,7 +20,12 @@ export const locale = {
       SUMMARY: 'Resumen',
       BILLS: 'Gastos',
       INCOME: 'Ingresos',
-      EXPENSES: 'Egresos'
+      EXPENSES: 'Egresos',
+      PETTY_CASH: 'Caja Chica',
+      PETTY_CASH_BALANCE: 'Saldo',
+      PETTY_CASH_TRANSACTIONS: 'Transacciones',
+      PETTY_CASH_INCOME: 'Ingresos',
+      PETTY_CASH_EXPENSE: 'Egresos'
     },
     BILLS: {
       EXPENSETYPES: 'Tipos de gastos',
