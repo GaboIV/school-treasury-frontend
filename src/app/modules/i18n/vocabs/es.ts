@@ -18,18 +18,18 @@ export const locale = {
     },
     BALANCE: {
       SUMMARY: 'Resumen',
-      BILLS: 'Gastos',
+      BILLS: 'Cobros',
       INCOME: 'Ingresos',
-      EXPENSES: 'Egresos',
+      COLLECTIONS: 'Egresos',
       PETTY_CASH: 'Caja Chica',
       PETTY_CASH_BALANCE: 'Saldo',
       PETTY_CASH_TRANSACTIONS: 'Transacciones',
       PETTY_CASH_INCOME: 'Ingresos',
-      PETTY_CASH_EXPENSE: 'Egresos'
+      PETTY_CASH_COLLECTION: 'Egresos'
     },
     BILLS: {
-      EXPENSETYPES: 'Tipos de gastos',
-      EXPENSES: 'Gastos'
+      COLLECTIONTYPES: 'Tipos de cobros',
+      COLLECTIONS: 'Lista de cobros'
     },
     ACCESS: {
       ROLES: 'Roles',

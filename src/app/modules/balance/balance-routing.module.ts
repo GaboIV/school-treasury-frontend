@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { BalanceComponent } from './balance.component';
-import { ExpensesComponent } from './expenses/expenses.component';
-import { ExpenseTypesComponent } from './expense-types/expense-types.component';
+import { CollectionsComponent } from './collections/collections.component';
+import { CollectionTypesComponent } from './collection-types/collection-types.component';
 import { PettyCashComponent } from './petty-cash/petty-cash.component';
 
 const routes: Routes = [
@@ -11,12 +11,12 @@ const routes: Routes = [
     component: BalanceComponent,
     children: [
       {
-        path: 'gastos/gastos',
-        component: ExpensesComponent,
+        path: 'cobros/cobros',
+        component: CollectionsComponent,
       },
       {
-        path: 'gastos/tipos-de-gastos',
-        component: ExpenseTypesComponent,
+        path: 'cobros/tipos-de-cobros',
+        component: CollectionTypesComponent,
       },
       {
         path: 'caja-chica',

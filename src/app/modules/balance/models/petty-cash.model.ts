@@ -41,7 +41,7 @@ export interface CreateTransactionDto {
 export interface TransactionSummary {
   balance: number;
   totalIncome: number;
-  totalExpense: number;
+  totalCollection: number;
   lastTransactionDate: Date | null;
   recentTransactions?: Transaction[];
 }
@@ -49,13 +49,13 @@ export interface TransactionSummary {
 export interface TransactionSummaryDto {
   balance: number;
   totalIncome: number;
-  totalExpense: number;
+  totalCollection: number;
   lastTransactionDate: string | null;
 }
 
 export enum TransactionType {
   Income = 0,
-  Expense = 1
+  Collection = 1
 }
 
 export interface PaginatedResult<T> {

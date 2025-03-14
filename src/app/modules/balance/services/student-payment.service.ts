@@ -13,8 +13,8 @@ export class StudentPaymentService {
 
   constructor(private http: HttpClient) { }
 
-  getPaymentsByExpense(expenseId: string): Observable<StudentPaymentResponse> {
-    return this.http.get<StudentPaymentResponse>(`${this.apiUrl}/expense/${expenseId}`);
+  getPaymentsByCollection(collectionId: string): Observable<StudentPaymentResponse> {
+    return this.http.get<StudentPaymentResponse>(`${this.apiUrl}/collection/${collectionId}`);
   }
 
   registerPayment(payment: {

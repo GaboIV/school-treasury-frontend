@@ -107,16 +107,16 @@ export const locale = {
       SUMMARY: 'Summary',
       BILLS: 'Bills',
       INCOME: 'Income',
-      EXPENSES: 'Expenses',
+      COLLECTIONS: 'Collections',
       PETTY_CASH: 'Petty Cash',
       PETTY_CASH_BALANCE: 'Balance',
       PETTY_CASH_TRANSACTIONS: 'Transactions',
       PETTY_CASH_INCOME: 'Income',
-      PETTY_CASH_EXPENSE: 'Expenses'
+      PETTY_CASH_COLLECTION: 'Collections'
     },
     BILLS: {
-      EXPENSETYPES: 'Expense Types',
-      EXPENSES: 'Expenses'
+      COLLECTIONTYPES: 'Collection Types',
+      COLLECTIONS: 'Collections'
     },
     ACCESS: {
       ROLES: 'Roles',

@@ -36,7 +36,7 @@ function getChartOptions() {
         data: [20, 20, 25, 30, 30, 20],
       },
       {
-        name: 'Expenses',
+        name: 'Collections',
         type: 'area',
         data: [50, 80, 60, 90, 50, 70],
       },

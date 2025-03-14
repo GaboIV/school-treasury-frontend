@@ -1,4 +1,4 @@
-import { Expense } from './expense.model';
+import { Collection } from './collection.model';
 
 export interface StudentPaymentResponse {
   success: boolean;
@@ -8,12 +8,12 @@ export interface StudentPaymentResponse {
 
 export interface StudentPayment {
   id: string;
-  expenseId: string;
+  collectionId: string;
   studentId: string;
   studentName: string;
-  expenseName: string;
-  amountExpense: number;
-  adjustedAmountExpense?: number;
+  collectionName: string;
+  amountCollection: number;
+  adjustedAmountCollection?: number;
   amountPaid: number;
   surplus: number;
   paymentStatus: number;

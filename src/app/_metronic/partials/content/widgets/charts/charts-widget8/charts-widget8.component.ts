@@ -40,7 +40,7 @@ function getChartOptions(height: number) {
         data: [55, 20, 20, 20, 70, 70],
       },
       {
-        name: 'Expenses',
+        name: 'Collections',
         data: [60, 60, 40, 40, 30, 30],
       },
     ],

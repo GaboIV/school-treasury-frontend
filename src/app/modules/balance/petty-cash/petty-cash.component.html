@@ -52,9 +52,9 @@
     <div class="card bg-light-danger h-md-100">
       <div class="card-body d-flex flex-column justify-content-between">
         <div class="d-flex flex-column flex-grow-1">
-          <span class="text-danger fw-bold fs-3 mb-3">{{ 'BALANCE.PETTY_CASH_EXPENSE' | translate }}</span>
+          <span class="text-danger fw-bold fs-3 mb-3">{{ 'BALANCE.PETTY_CASH_COLLECTION' | translate }}</span>
           <div *ngIf="transactionSummary" class="fw-bolder fs-2x mb-2">
-            {{ transactionSummary.totalExpense | currencyPEN }}
+            {{ transactionSummary.totalCollection | currencyPEN }}
           </div>
           <div *ngIf="!transactionSummary && loading" class="d-flex justify-content-center">
             <span class="spinner-border spinner-border-sm text-danger"></span>
@@ -119,14 +119,14 @@
             </td>
             <td class="text-end">
               <span class="text-dark fw-bolder fs-6 mb-1"
-                [ngClass]="{'text-success': transaction.type === TransactionType.Income, 'text-danger': transaction.type === TransactionType.Expense}">
+                [ngClass]="{'text-success': transaction.type === TransactionType.Income, 'text-danger': transaction.type === TransactionType.Collection}">
                 {{ transaction.amount | currencyPEN }}
               </span>
             </td>
             <td *ngIf="!isSmallScreen">
               <span *ngIf="transaction.relatedEntityType" class="badge badge-light-primary">
                 {{ transaction.relatedEntityType === 'StudentPayment' ? 'Pago de Estudiante' :
-                   transaction.relatedEntityType === 'Expense' ? 'Gasto' : transaction.relatedEntityType }}
+                   transaction.relatedEntityType === 'Collection' ? 'Cobro' : transaction.relatedEntityType }}
               </span>
               <span *ngIf="!transaction.relatedEntityType" class="text-muted fw-bold d-block fs-7">
                 Manual
@@ -193,8 +193,8 @@
             </label>
           </div>
           <div class="form-check form-check-custom form-check-solid form-check-danger">
-            <input class="form-check-input" type="radio" [value]="TransactionType.Expense" formControlName="type" id="typeExpense" />
-            <label class="form-check-label" for="typeExpense">
+            <input class="form-check-input" type="radio" [value]="TransactionType.Collection" formControlName="type" id="typeCollection" />
+            <label class="form-check-label" for="typeCollection">
               Egreso
             </label>
           </div>
