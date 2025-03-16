@@ -127,7 +127,10 @@ export const locale = {
       CREATE_STUDENT: 'Create student',
       UPDATE_STUDENT: 'Update student',
       DELETE_STUDENT: 'Delete student',
-      DELETE_STUDENT_CONFIRMATION: 'Are you sure you want to delete this student? This action cannot be undone.'
+      DELETE_STUDENT_CONFIRMATION: 'Are you sure you want to delete this student? This action cannot be undone.',
+      GENERATE_USER: 'Generate User',
+      GENERATE_USER_SUCCESS: 'User generated successfully',
+      GENERATE_USER_ERROR: 'Error generating user'
     },
     GENERAL: {
       ADD: 'Add',

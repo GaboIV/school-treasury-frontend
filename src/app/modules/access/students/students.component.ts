@@ -75,6 +75,23 @@ export class StudentsComponent implements OnInit {
     );
   }
 
+  generateUser(student: Student) {
+    // Aquí iría la lógica para generar un usuario para el estudiante
+    // Por ahora, solo mostraremos un mensaje en la consola
+    console.log(`Generando usuario para el estudiante: ${student.name}`);
+
+    // Ejemplo de cómo podría ser la implementación real:
+    // this.studentService.generateUser(student.id).subscribe({
+    //   next: (response) => {
+    //     // Mostrar mensaje de éxito o realizar alguna acción
+    //     console.log('Usuario generado exitosamente', response);
+    //   },
+    //   error: (error) => {
+    //     console.error('Error al generar usuario', error);
+    //   }
+    // });
+  }
+
   getAvatarPath(avatar: string): string {
     return `./assets/media/svg/avatars/${avatar}`;
   }

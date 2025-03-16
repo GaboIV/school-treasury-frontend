@@ -40,7 +40,10 @@ export const locale = {
       CREATE_STUDENT: 'Crear estudiante',
       UPDATE_STUDENT: 'Actualizar estudiante',
       DELETE_STUDENT: 'Eliminar estudiante',
-      DELETE_STUDENT_CONFIRMATION: '¿Está seguro que desea eliminar este estudiante? Esta acción no se puede deshacer.'
+      DELETE_STUDENT_CONFIRMATION: '¿Está seguro que desea eliminar este estudiante? Esta acción no se puede deshacer.',
+      GENERATE_USER: 'Generar Usuario',
+      GENERATE_USER_SUCCESS: 'Usuario generado exitosamente',
+      GENERATE_USER_ERROR: 'Error al generar usuario'
     },
     GENERAL: {
       ADD: 'Agregar',
