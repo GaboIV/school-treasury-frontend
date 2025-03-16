@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, BehaviorSubject, of, Subscription } from 'rxjs';
-import { map, catchError, switchMap, finalize } from 'rxjs/operators';
+import { map, catchError, switchMap, finalize, tap } from 'rxjs/operators';
 import { UserModel } from '../models/user.model';
 import { AuthModel } from '../models/auth.model';
 import { AuthHTTPService } from './auth-http';
@@ -44,19 +44,30 @@ export class AuthService implements OnDestroy {
   }
 
   // public methods
-  login(email: string, password: string): Observable<UserType> {
+  login(username: string, password: string): Observable<UserType> {
+    console.log("AuthService: Iniciando login con username:", username);
     this.isLoadingSubject.next(true);
-    return this.authHttpService.login(email, password).pipe(
+    return this.authHttpService.login(username, password).pipe(
+      tap((auth: AuthModel) => {
+        console.log("AuthService: Respuesta de login recibida:", auth);
+      }),
       map((auth: AuthModel) => {
         const result = this.setAuthFromLocalStorage(auth);
+        console.log("AuthService: Token guardado en localStorage:", result);
         return result;
       }),
-      switchMap(() => this.getUserByToken()),
+      switchMap(() => {
+        console.log("AuthService: Obteniendo usuario por token");
+        return this.getUserByToken();
+      }),
       catchError((err) => {
-        console.error('err', err);
+        console.error('AuthService: Error en login:', err);
         return of(undefined);
       }),
-      finalize(() => this.isLoadingSubject.next(false))
+      finalize(() => {
+        console.log("AuthService: Finalizando proceso de login");
+        this.isLoadingSubject.next(false);
+      })
     );
   }
 
@@ -70,49 +81,32 @@ export class AuthService implements OnDestroy {
   getUserByToken(): Observable<UserType> {
     const auth = this.getAuthFromLocalStorage();
     if (!auth || !auth.authToken) {
+      console.log("AuthService: No hay token en localStorage");
       return of(undefined);
     }
 
+    console.log("AuthService: Obteniendo usuario con token:", auth.authToken);
     this.isLoadingSubject.next(true);
     return this.authHttpService.getUserByToken(auth.authToken).pipe(
+      tap((user: UserType) => {
+        console.log("AuthService: Usuario obtenido por token:", user);
+      }),
       map((user: UserType) => {
         if (user) {
+          console.log("AuthService: se validó el usuario y se continuará");
           this.currentUserSubject.next(user);
         } else {
+          console.log("AuthService: Usuario no encontrado, cerrando sesión");
           this.logout();
         }
+        console.log("AuthService: Retornando usuario:", user);
         return user;
       }),
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
 
-  // need create new user then login
-  registration(user: UserModel): Observable<any> {
-    this.isLoadingSubject.next(true);
-    return this.authHttpService.createUser(user).pipe(
-      map(() => {
-        this.isLoadingSubject.next(false);
-      }),
-      switchMap(() => this.login(user.email, user.password)),
-      catchError((err) => {
-        console.error('err', err);
-        return of(undefined);
-      }),
-      finalize(() => this.isLoadingSubject.next(false))
-    );
-  }
-
-  forgotPassword(email: string): Observable<boolean> {
-    this.isLoadingSubject.next(true);
-    return this.authHttpService
-      .forgotPassword(email)
-      .pipe(finalize(() => this.isLoadingSubject.next(false)));
-  }
-
-  // private methods
   private setAuthFromLocalStorage(auth: AuthModel): boolean {
-    // store auth authToken/refreshToken/epiresIn in local storage to keep user logged in between page refreshes
     if (auth && auth.authToken) {
       localStorage.setItem(this.authLocalStorageToken, JSON.stringify(auth));
       return true;

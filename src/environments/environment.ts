@@ -6,8 +6,8 @@ export const environment = {
   production: false,
   appVersion: 'v8.2.4',
   USERDATA_KEY: 'authf649fc9a5f55',
-  isMockEnabled: true,
-  apiUrl: 'http://192.168.18.137:5200',
+  isMockEnabled: false,
+  apiUrl: 'http://192.168.18.137:5200/api/v1',
   apiUrlFake: 'api',
   appThemeName: 'Metronic',
   appPurchaseUrl: 'https://1.envato.market/EA4JP',
@@ -21,10 +21,10 @@ export const environment = {
     'https://preview.keenthemes.com/metronic8/angular/docs/changelog',
   // Configuración de logs
   logging: {
-    enableDetailedLogs: false, // Establecer a true para ver logs detallados
+    enableDetailedLogs: true,
     logPatterns: {
-      include: ['Se obtuvieron', 'RESPONSE', 'PERFORMANCE', 'MONGODB'], // Patrones a incluir
-      exclude: ['Executed', 'Executing', 'HTTP GET', 'Route matched'] // Patrones a excluir
+      include: ['Se obtuvieron', 'RESPONSE', 'PERFORMANCE', 'MONGODB', 'AuthService', 'AuthHTTPService'],
+      exclude: ['Executed', 'Executing', 'HTTP GET', 'Route matched']
     }
   },
   appDemos: {

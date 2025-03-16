@@ -12,13 +12,14 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  // KeenThemes mock, change it to:
+  // Credenciales por defecto
   defaultAuth: any = {
-    email: 'carmenbompart22@gmail.com',
-    password: 'mica123',
+    username: 'Alonso',
+    password: 'Alonso',
   };
   loginForm: FormGroup;
   hasError: boolean;
+  errorMessage: string = 'Los datos de inicio de sesión son incorrectos';
   returnUrl: string;
   isLoading$: Observable<boolean>;
 
@@ -52,13 +53,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   initForm() {
     this.loginForm = this.fb.group({
-      email: [
-        this.defaultAuth.email,
+      username: [
+        this.defaultAuth.username,
         Validators.compose([
           Validators.required,
-          Validators.email,
           Validators.minLength(3),
-          Validators.maxLength(320), // https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address
+          Validators.maxLength(100),
         ]),
       ],
       password: [
@@ -74,16 +74,36 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   submit() {
     this.hasError = false;
+    const username = this.f.username.value;
+    const password = this.f.password.value;
+
+    console.log("LoginComponent: Enviando credenciales", { username, password });
+
     const loginSubscr = this.authService
-      .login(this.f.email.value, this.f.password.value)
+      .login(username, password)
       .pipe(first())
-      .subscribe((user: UserModel | undefined) => {
-        if (user) {
-          this.router.navigate([this.returnUrl]);
-        } else {
+      .subscribe(
+        (user: UserModel | undefined) => {
+          if (user) {
+            console.log("LoginComponent: Login exitoso, redirigiendo a", this.returnUrl);
+            this.router.navigate([this.returnUrl]);
+          } else {
+            console.log("LoginComponent: Login fallido, usuario indefinido");
+            this.hasError = true;
+          }
+        },
+        (error) => {
+          console.error("LoginComponent: Error en la solicitud de login", error);
           this.hasError = true;
+          if (error.status === 401) {
+            this.errorMessage = 'Usuario o contraseña incorrectos';
+          } else if (error.status === 0) {
+            this.errorMessage = 'No se pudo conectar con el servidor. Verifique su conexión.';
+          } else {
+            this.errorMessage = `Error: ${error.message || 'Desconocido'}`;
+          }
         }
-      });
+      );
     this.unsubscribe.push(loginSubscr);
   }
 

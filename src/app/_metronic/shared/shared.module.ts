@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {KeeniconComponent} from './keenicon/keenicon.component';
 import {CommonModule} from "@angular/common";
+import {AuthModule} from "../../modules/auth/auth.module";
 
 @NgModule({
   declarations: [
@@ -8,9 +9,11 @@ import {CommonModule} from "@angular/common";
   ],
   imports: [
     CommonModule,
+    AuthModule
   ],
   exports: [
-    KeeniconComponent
+    KeeniconComponent,
+    AuthModule
   ]
 })
 export class SharedModule {

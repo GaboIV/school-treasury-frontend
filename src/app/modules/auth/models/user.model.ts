@@ -3,13 +3,11 @@ import { AddressModel } from './address.model';
 import { SocialNetworksModel } from './social-networks.model';
 
 export class UserModel extends AuthModel {
-  id: number;
-  username: string;
   password: string;
   fullname: string;
-  email: string;
   pic: string;
-  roles: number[] = [];
+  // La propiedad role ya está definida en AuthModel
+  roles: number[] = []; // Array de roles para compatibilidad
   occupation: string;
   companyName: string;
   phone: string;
@@ -56,6 +54,7 @@ export class UserModel extends AuthModel {
     this.fullname = user.fullname || '';
     this.email = user.email || '';
     this.pic = user.pic || './assets/media/avatars/blank.png';
+    this.role = user.role || 0;
     this.roles = user.roles || [];
     this.occupation = user.occupation || '';
     this.companyName = user.companyName || '';
