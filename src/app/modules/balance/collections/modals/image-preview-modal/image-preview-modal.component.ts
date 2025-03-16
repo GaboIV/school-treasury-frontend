@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { LocationStrategy } from '@angular/common';
 
 @Component({
   selector: 'app-image-preview-modal',
@@ -99,11 +100,14 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
     }
   `]
 })
-export class ImagePreviewModalComponent implements OnInit {
+export class ImagePreviewModalComponent implements OnInit, OnDestroy {
   @Input() images: string[] = [];
   @Input() currentIndex: number = 0;
 
-  constructor(public activeModal: NgbActiveModal) {}
+  constructor(
+    public activeModal: NgbActiveModal,
+    private locationStrategy: LocationStrategy
+  ) {}
 
   ngOnInit(): void {
     // Añadir clase al body para prevenir scroll
@@ -111,6 +115,31 @@ export class ImagePreviewModalComponent implements OnInit {
 
     // Añadir event listener para teclas de navegación
     document.addEventListener('keydown', this.handleKeyDown.bind(this));
+
+    // Agregar una entrada al historial para manejar el botón de retroceso
+    // Usamos un identificador único para este modal
+    this.locationStrategy.pushState(
+      { modal: 'image-preview' },
+      '',
+      window.location.pathname,
+      ''
+    );
+  }
+
+  // Manejar el evento de navegación hacia atrás
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+    // Verificar si el estado del evento contiene información sobre el modal
+    const state = window.history.state;
+
+    // Solo cerrar este modal si el estado actual no tiene el identificador de este modal
+    // o si el evento de popstate fue generado por el botón de atrás
+    if (!state || !state.modal || state.modal !== 'image-preview') {
+      // Cerrar el modal en lugar de navegar hacia atrás
+      this.activeModal.dismiss('back');
+      // Prevenir la navegación predeterminada
+      event.preventDefault();
+    }
   }
 
   ngOnDestroy(): void {

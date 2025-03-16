@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ExpenseService } from '../../../services/expense.service';
@@ -6,12 +6,13 @@ import { CollectionService } from '../../../services/collection.service';
 import { CollectionType } from '../../../models/collection-type.model';
 import { first } from 'rxjs/operators';
 import { CollectionTypeService } from '../../../services/collection-type.service';
+import { LocationStrategy } from '@angular/common';
 
 @Component({
   selector: 'app-create-expense-modal',
   templateUrl: './create-expense-modal.component.html',
 })
-export class CreateExpenseModalComponent implements OnInit {
+export class CreateExpenseModalComponent implements OnInit, OnDestroy {
   expenseForm: FormGroup;
   isLoading: boolean = false;
   error: string = '';
@@ -26,11 +27,40 @@ export class CreateExpenseModalComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private expenseService: ExpenseService,
     private collectionService: CollectionService,
-    private collectionTypeService: CollectionTypeService
+    private collectionTypeService: CollectionTypeService,
+    private locationStrategy: LocationStrategy
   ) {}
 
   ngOnInit(): void {
     this.initForm();
+
+    // Agregar una entrada al historial para manejar el botón de retroceso
+    this.locationStrategy.pushState(
+      { modal: 'create-expense' },
+      '',
+      window.location.pathname,
+      ''
+    );
+  }
+
+  // Manejar el evento de navegación hacia atrás
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+    // Verificar si el estado del evento contiene información sobre el modal
+    const state = window.history.state;
+
+    // Solo cerrar este modal si el estado actual no tiene el identificador de este modal
+    // o si el evento de popstate fue generado por el botón de atrás
+    if (!state || !state.modal || state.modal !== 'create-expense') {
+      // Cerrar el modal en lugar de navegar hacia atrás
+      this.activeModal.dismiss('back');
+      // Prevenir la navegación predeterminada
+      event.preventDefault();
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Limpiar cualquier recurso si es necesario
   }
 
   initForm() {

@@ -217,9 +217,11 @@ export class CollectionsComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.collection = collection;
 
     modalRef.result.then(
-      () => {
-        // Modal closed
-        this.loadCollections(); // Recargar para actualizar el avance de pago
+      (result) => {
+        // Si el resultado es true o contiene un indicador para refrescar, recargar las colecciones
+        if (result === true || (typeof result === 'object' && result.refreshCollections)) {
+          this.loadCollections(); // Recargar para actualizar el avance de pago
+        }
       },
       () => {
         // Modal dismissed

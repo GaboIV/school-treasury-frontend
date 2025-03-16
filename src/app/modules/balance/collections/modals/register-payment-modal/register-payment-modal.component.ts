@@ -1,15 +1,16 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { StudentPaymentService } from '../../../services/student-payment.service';
 import { StudentPayment } from '../../../models/student-payment.model';
 import { first } from 'rxjs/operators';
+import { LocationStrategy } from '@angular/common';
 
 @Component({
   selector: 'app-register-payment-modal',
   templateUrl: './register-payment-modal.component.html',
 })
-export class RegisterPaymentModalComponent implements OnInit {
+export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
   @Input() payment: StudentPayment;
   paymentForm: FormGroup;
   isLoading: boolean = false;
@@ -20,14 +21,51 @@ export class RegisterPaymentModalComponent implements OnInit {
   imagePreviewUrls: string[] = [];
   isDragging: boolean = false;
 
+  // Variable para controlar el historial
+  private historyState: any = null;
+
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    private studentPaymentService: StudentPaymentService
+    private studentPaymentService: StudentPaymentService,
+    private locationStrategy: LocationStrategy
   ) {}
 
   ngOnInit(): void {
     this.initForm();
+
+    // Guardar el estado actual del historial antes de modificarlo
+    this.historyState = window.history.state;
+
+    // Agregar una entrada al historial para manejar el botón de retroceso
+    // Usamos un identificador único para este modal
+    this.locationStrategy.pushState(
+      { modal: 'register-payment' },
+      '',
+      window.location.pathname,
+      ''
+    );
+  }
+
+  // Manejar el evento de navegación hacia atrás
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+    // Verificar si el estado del evento contiene información sobre el modal anterior
+    const state = window.history.state;
+
+    // Solo cerrar este modal si el estado actual no tiene el identificador de este modal
+    // o si el evento de popstate fue generado por el botón de atrás
+    if (!state || !state.modal || state.modal !== 'register-payment') {
+      // Cerrar el modal en lugar de navegar hacia atrás
+      this.activeModal.dismiss('back');
+
+      // Prevenir la navegación predeterminada
+      event.preventDefault();
+    }
+  }
+
+  ngOnDestroy(): void {
+    // Limpiar cualquier recurso si es necesario
   }
 
   initForm() {
@@ -100,9 +138,18 @@ export class RegisterPaymentModalComponent implements OnInit {
         next: (response: any) => {
           this.isLoading = false;
           if (response && response.data) {
-            this.activeModal.close(response.data);
+            // Cerrar el modal y pasar true para indicar que se debe refrescar
+            this.activeModal.close({
+              success: true,
+              data: response.data,
+              refreshCollections: true // Indicador para refrescar la pantalla de cobros
+            });
           } else {
-            this.activeModal.close(response);
+            this.activeModal.close({
+              success: true,
+              data: response,
+              refreshCollections: true // Indicador para refrescar la pantalla de cobros
+            });
           }
         },
         error: (error: any) => {

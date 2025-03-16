@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, HostListener } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { StudentPaymentService } from '../../../services/student-payment.service';
 import { StudentPayment, PaymentStatus } from '../../../models/student-payment.model';
@@ -7,6 +7,7 @@ import { RegisterPaymentModalComponent } from '../register-payment-modal/registe
 import { ImagePreviewModalComponent } from '../image-preview-modal/image-preview-modal.component';
 import { ScreenSizeService } from '../../../services/screen-size.service';
 import { Subscription } from 'rxjs';
+import { LocationStrategy } from '@angular/common';
 
 @Component({
   selector: 'app-payment-list-modal',
@@ -139,25 +140,59 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
   PaymentStatus = PaymentStatus;
   isMobile: boolean = false;
   private subscription: Subscription = new Subscription();
+  refreshCollections: boolean = false;
+
+  // Variable para controlar si hay un modal hijo abierto
+  private childModalOpen: boolean = false;
 
   constructor(
     public activeModal: NgbActiveModal,
     private studentPaymentService: StudentPaymentService,
     private modalService: NgbModal,
-    private screenSizeService: ScreenSizeService
+    private screenSizeService: ScreenSizeService,
+    private locationStrategy: LocationStrategy
   ) {}
 
   ngOnInit(): void {
-    this.loadPayments();
     this.subscription.add(
-      this.screenSizeService.isMobile$.subscribe(isMobile => {
-        this.isMobile = isMobile;
-      })
+      this.screenSizeService.isMobile$.subscribe(
+        result => {
+          this.isMobile = result;
+        }
+      )
+    );
+
+    this.loadPayments();
+
+    // Agregar una entrada al historial para manejar el botón de retroceso
+    // Usamos un identificador único para este modal
+    this.locationStrategy.pushState(
+      { modal: 'payment-list' },
+      '',
+      window.location.pathname,
+      ''
     );
   }
 
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  // Manejar el evento de navegación hacia atrás
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+    // Verificar si el estado del evento contiene información sobre el modal
+    const state = window.history.state;
+
+    // Solo cerrar este modal si no hay un modal hijo abierto y
+    // si el estado actual no tiene el identificador de este modal o si fue generado por el botón de atrás
+    if (!this.childModalOpen && (!state || !state.modal || state.modal !== 'payment-list')) {
+      // Cerrar el modal en lugar de navegar hacia atrás
+      this.closeModal();
+      // Prevenir la navegación predeterminada
+      event.preventDefault();
+    }
+  }
+
+  closeModal() {
+    // Cerrar el modal y pasar el indicador de refresco si es necesario
+    this.activeModal.close(this.refreshCollections);
   }
 
   loadPayments(): void {
@@ -180,47 +215,49 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
     });
   }
 
-  getPaymentStatusClass(status: number): string {
+  getPaymentStatusText(status: PaymentStatus): string {
     switch (status) {
-      case PaymentStatus.Paid:
-        return 'badge-light-success';
-      case PaymentStatus.Partial:
-        return 'badge-light-warning';
-      case PaymentStatus.Excedent:
-        return 'badge-light-info';
       case PaymentStatus.Pending:
-      default:
-        return 'badge-light-danger';
-    }
-  }
-
-  getCardStatusClass(status: number): string {
-    switch (status) {
-      case PaymentStatus.Paid:
-        return 'status-paid';
-      case PaymentStatus.Partial:
-        return 'status-partial';
-      case PaymentStatus.Pending:
-      default:
-        return 'status-pending';
-    }
-  }
-
-  getPaymentStatusText(status: number): string {
-    switch (status) {
-      case PaymentStatus.Paid:
-        return 'Pagado';
+        return 'Pendiente';
       case PaymentStatus.Partial:
         return 'Parcial';
+      case PaymentStatus.Paid:
+        return 'Pagado';
       case PaymentStatus.Excedent:
         return 'Excedente';
-      case PaymentStatus.Pending:
       default:
-        return 'Pendiente';
+        return 'Desconocido';
     }
+  }
+
+  getPaymentStatusClass(status: PaymentStatus): string {
+    switch (status) {
+      case PaymentStatus.Pending:
+        return 'badge-light-danger';
+      case PaymentStatus.Partial:
+        return 'badge-light-warning';
+      case PaymentStatus.Paid:
+        return 'badge-light-success';
+      case PaymentStatus.Excedent:
+        return 'badge-light-info';
+      default:
+        return 'badge-light-dark';
+    }
+  }
+
+  getPercentageDifference(originalValue: number, newValue: number): string {
+    if (!originalValue || !newValue) {
+      return '0';
+    }
+
+    const difference = ((newValue - originalValue) / originalValue) * 100;
+    return Math.abs(difference).toFixed(1);
   }
 
   openRegisterPaymentModal(payment: StudentPayment): void {
+    // Marcar que se está abriendo un modal hijo
+    this.childModalOpen = true;
+
     const modalRef = this.modalService.open(RegisterPaymentModalComponent, {
       size: 'md',
       centered: true,
@@ -230,17 +267,30 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
 
     modalRef.result.then(
       (result) => {
+        // Marcar que el modal hijo se ha cerrado
+        this.childModalOpen = false;
+
         if (result) {
+          // Verificar si el resultado contiene un indicador para refrescar las colecciones
+          if (typeof result === 'object' && result.refreshCollections) {
+            this.refreshCollections = true;
+          }
+          // Recargar los pagos
           this.loadPayments();
         }
       },
       () => {
         // Modal dismissed
+        // Marcar que el modal hijo se ha cerrado
+        this.childModalOpen = false;
       }
     );
   }
 
   openImagePreview(images: string[], index: number): void {
+    // Marcar que se está abriendo un modal hijo
+    this.childModalOpen = true;
+
     const modalRef = this.modalService.open(ImagePreviewModalComponent, {
       fullscreen: true,
       centered: true,
@@ -251,14 +301,14 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
 
     modalRef.componentInstance.images = images;
     modalRef.componentInstance.currentIndex = index;
+
+    modalRef.result.finally(() => {
+      // Marcar que el modal hijo se ha cerrado
+      this.childModalOpen = false;
+    });
   }
 
-  getPercentageDifference(originalValue: number, newValue: number): string {
-    if (!originalValue || !newValue) {
-      return '0';
-    }
-
-    const difference = ((newValue - originalValue) / originalValue) * 100;
-    return Math.abs(difference).toFixed(1);
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }
