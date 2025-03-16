@@ -66,17 +66,35 @@
               </span>
             </td>
             <td>
-              <div class="progress" style="height: 20px;">
-                <div
-                  class="progress-bar bg-primary"
-                  role="progressbar"
-                  [ngStyle]="{ 'width': (collection.advance.completed / collection.advance.total * 100) + '%' }"
-                  [attr.aria-valuenow]="collection.advance.completed"
-                  [attr.aria-valuemin]="0"
-                  [attr.aria-valuemax]="collection.advance.total"
-                >
-                  {{ (collection.advance.completed / collection.advance.total * 100) | number: '1.0-0' }}%
+              <div class="d-flex align-items-center">
+                <div class="progress flex-grow-1 me-2" style="height: 10px;">
+                  <div
+                    class="progress-bar"
+                    role="progressbar"
+                    [ngClass]="{
+                      'bg-success': (collection.advance.completed / collection.advance.total * 100) >= 75,
+                      'bg-primary': (collection.advance.completed / collection.advance.total * 100) >= 25 && (collection.advance.completed / collection.advance.total * 100) < 75,
+                      'bg-warning': (collection.advance.completed / collection.advance.total * 100) > 0 && (collection.advance.completed / collection.advance.total * 100) < 25,
+                      'bg-danger': (collection.advance.completed / collection.advance.total * 100) === 0
+                    }"
+                    [ngStyle]="{ 'width': (collection.advance.completed / collection.advance.total * 100) + '%' }"
+                    [attr.aria-valuenow]="collection.advance.completed"
+                    [attr.aria-valuemin]="0"
+                    [attr.aria-valuemax]="collection.advance.total"
+                  ></div>
                 </div>
+                <span class="badge fs-7"
+                      [ngClass]="{
+                        'badge-light-success': (collection.advance.completed / collection.advance.total * 100) >= 75,
+                        'badge-light-primary': (collection.advance.completed / collection.advance.total * 100) >= 25 && (collection.advance.completed / collection.advance.total * 100) < 75,
+                        'badge-light-warning': (collection.advance.completed / collection.advance.total * 100) > 0 && (collection.advance.completed / collection.advance.total * 100) < 25,
+                        'badge-light-danger': (collection.advance.completed / collection.advance.total * 100) === 0
+                      }">
+                  {{ (collection.advance.completed / collection.advance.total * 100) | number: '1.0-0' }}%
+                </span>
+              </div>
+              <div class="text-muted fs-8 mt-1">
+                {{ collection.advance.completed }}/{{ collection.advance.total }}
               </div>
             </td>
             <td class="text-end">
@@ -178,17 +196,34 @@
             <div class="mb-3">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <span class="text-muted small">Avance de Pago</span>
-                <span class="small fw-bold">{{ (collection.advance.completed / collection.advance.total * 100) | number: '1.0-0' }}%</span>
+                <span class="small fw-bold">{{ collection.advance.completed }}/{{ collection.advance.total }}</span>
               </div>
-              <div class="progress" style="height: 10px;">
-                <div
-                  class="progress-bar bg-primary"
-                  role="progressbar"
-                  [ngStyle]="{ 'width': (collection.advance.completed / collection.advance.total * 100) + '%' }"
-                  [attr.aria-valuenow]="collection.advance.completed"
-                  [attr.aria-valuemin]="0"
-                  [attr.aria-valuemax]="collection.advance.total"
-                ></div>
+              <div class="d-flex align-items-center gap-2">
+                <div class="progress flex-grow-1" style="height: 10px;">
+                  <div
+                    class="progress-bar"
+                    role="progressbar"
+                    [ngClass]="{
+                      'bg-success': (collection.advance.completed / collection.advance.total * 100) >= 75,
+                      'bg-primary': (collection.advance.completed / collection.advance.total * 100) >= 25 && (collection.advance.completed / collection.advance.total * 100) < 75,
+                      'bg-warning': (collection.advance.completed / collection.advance.total * 100) > 0 && (collection.advance.completed / collection.advance.total * 100) < 25,
+                      'bg-danger': (collection.advance.completed / collection.advance.total * 100) === 0
+                    }"
+                    [ngStyle]="{ 'width': (collection.advance.completed / collection.advance.total * 100) + '%' }"
+                    [attr.aria-valuenow]="collection.advance.completed"
+                    [attr.aria-valuemin]="0"
+                    [attr.aria-valuemax]="collection.advance.total"
+                  ></div>
+                </div>
+                <span class="badge"
+                      [ngClass]="{
+                        'badge-light-success': (collection.advance.completed / collection.advance.total * 100) >= 75,
+                        'badge-light-primary': (collection.advance.completed / collection.advance.total * 100) >= 25 && (collection.advance.completed / collection.advance.total * 100) < 75,
+                        'badge-light-warning': (collection.advance.completed / collection.advance.total * 100) > 0 && (collection.advance.completed / collection.advance.total * 100) < 25,
+                        'badge-light-danger': (collection.advance.completed / collection.advance.total * 100) === 0
+                      }">
+                  {{ (collection.advance.completed / collection.advance.total * 100) | number: '1.0-0' }}%
+                </span>
               </div>
             </div>
 

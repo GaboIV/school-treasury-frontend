@@ -186,6 +186,8 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
         return 'badge-light-success';
       case PaymentStatus.Partial:
         return 'badge-light-warning';
+      case PaymentStatus.Excedent:
+        return 'badge-light-info';
       case PaymentStatus.Pending:
       default:
         return 'badge-light-danger';
@@ -210,6 +212,8 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
         return 'Pagado';
       case PaymentStatus.Partial:
         return 'Parcial';
+      case PaymentStatus.Excedent:
+        return 'Excedente';
       case PaymentStatus.Pending:
       default:
         return 'Pendiente';
