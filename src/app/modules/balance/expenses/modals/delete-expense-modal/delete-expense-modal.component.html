@@ -1,0 +1,51 @@
+<div class="modal-header">
+  <h4 class="modal-title">Eliminar Gasto</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div class="alert alert-warning">
+    <div class="d-flex">
+      <i class="bi bi-exclamation-triangle-fill me-2 fs-3"></i>
+      <div>
+        <p class="mb-0">¿Está seguro que desea eliminar este gasto?</p>
+        <p class="mb-0 mt-2"><strong>{{ expense.name }}</strong></p>
+        <p class="mb-0 text-muted">Esta acción no se puede deshacer.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <div class="d-flex flex-column">
+      <div class="d-flex justify-content-between mb-2">
+        <span class="text-muted">Monto:</span>
+        <span class="fw-bold">{{ expense.amount | currency: 'S/ ' }}</span>
+      </div>
+      <div class="d-flex justify-content-between mb-2">
+        <span class="text-muted">Fecha:</span>
+        <span class="fw-bold">{{ expense.date | date: 'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="d-flex justify-content-between mb-2" *ngIf="expense.description">
+        <span class="text-muted">Descripción:</span>
+        <span class="fw-bold">{{ expense.description }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="activeModal.dismiss()">Cancelar</button>
+  <button
+    type="button"
+    class="btn btn-danger"
+    (click)="deleteExpense()"
+    [disabled]="isLoading"
+  >
+    <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+    Eliminar
+  </button>
+</div>

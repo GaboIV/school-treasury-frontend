@@ -1,30 +1,29 @@
-import { Component, OnInit, Input, OnDestroy, HostListener } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { CollectionService } from '../../../services/collection.service';
-import { Collection } from '../../../models/collection.model';
-import { Subscription } from 'rxjs';
+import { ExpenseService } from '../../../services/expense.service';
+import { Expense } from '../../../models/expense.model';
 import { first } from 'rxjs/operators';
 import { LocationStrategy } from '@angular/common';
 
 @Component({
-  selector: 'app-delete-collection-modal',
-  templateUrl: './delete-collection-modal.component.html',
+  selector: 'app-delete-expense-modal',
+  templateUrl: './delete-expense-modal.component.html',
 })
-export class DeleteCollectionModalComponent implements OnInit, OnDestroy {
-  @Input() collection: Collection;
-  isLoading: boolean = false;
-  private unsubscribe: Subscription[] = [];
+export class DeleteExpenseModalComponent implements OnInit, OnDestroy {
+  @Input() expense!: Expense;
+  isLoading = false;
+  error = '';
 
   constructor(
     public activeModal: NgbActiveModal,
-    private collectionService: CollectionService,
+    private expenseService: ExpenseService,
     private locationStrategy: LocationStrategy
   ) {}
 
   ngOnInit(): void {
     // Agregar una entrada al historial para manejar el botón de retroceso
     this.locationStrategy.pushState(
-      { modal: 'delete-collection' },
+      { modal: 'delete-expense' },
       '',
       window.location.pathname,
       ''
@@ -39,7 +38,7 @@ export class DeleteCollectionModalComponent implements OnInit, OnDestroy {
 
     // Solo cerrar este modal si el estado actual no tiene el identificador de este modal
     // o si el evento de popstate fue generado por el botón de atrás
-    if (!state || !state.modal || state.modal !== 'delete-collection') {
+    if (!state || !state.modal || state.modal !== 'delete-expense') {
       // Cerrar el modal en lugar de navegar hacia atrás
       this.activeModal.dismiss('back');
       // Prevenir la navegación predeterminada
@@ -47,25 +46,30 @@ export class DeleteCollectionModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteCollection() {
+  ngOnDestroy(): void {
+    // Limpiar cualquier recurso si es necesario
+  }
+
+  deleteExpense(): void {
     this.isLoading = true;
 
-    this.collectionService
-      .deleteCollection(this.collection.id!)
+    if (!this.expense.id) {
+      this.error = 'ID de gasto no válido';
+      this.isLoading = false;
+      return;
+    }
+
+    this.expenseService.deleteExpense(this.expense.id)
       .pipe(first())
       .subscribe({
-        next: (response) => {
+        next: () => {
           this.isLoading = false;
           this.activeModal.close(true);
         },
-        error: (error) => {
+        error: (error: any) => {
           this.isLoading = false;
-          console.error('Error al eliminar el tipo de cobro:', error);
+          this.error = error.message || 'Error al eliminar el gasto';
         }
       });
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe.forEach((sb) => sb.unsubscribe());
   }
 }

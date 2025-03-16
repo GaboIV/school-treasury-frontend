@@ -127,7 +127,7 @@
       <div
         *ngFor="let payment of payments; let i = index"
         class="card mb-3 payment-card"
-        [ngClass]="getCardStatusClass(payment.paymentStatus)"
+        [ngClass]="getPaymentStatusClass(payment.paymentStatus)"
         [style.--animation-order]="i"
       >
         <div class="card-body p-3">

@@ -1,11 +1,12 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { CreateTransactionDto, PaginatedResult, Transaction, TransactionSummary, TransactionType } from '../models/petty-cash.model';
 import { PettyCashService } from '../services/petty-cash.service';
 import { ScreenSizeService } from '../services/screen-size.service';
 import { CurrencyFormatService } from '../services/currency-format.service';
+import { LocationStrategy } from '@angular/common';
 
 @Component({
   selector: 'app-petty-cash',
@@ -34,12 +35,17 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   // Para responsive design
   isSmallScreen = false;
 
+  // Para manejar el modal
+  private activeModalRef: NgbModalRef | null = null;
+  private modalOpen = false;
+
   constructor(
     private pettyCashService: PettyCashService,
     private formBuilder: FormBuilder,
     private modalService: NgbModal,
     private screenSizeService: ScreenSizeService,
-    private currencyFormatService: CurrencyFormatService
+    private currencyFormatService: CurrencyFormatService,
+    private locationStrategy: LocationStrategy
   ) {
     this.transactionForm = this.formBuilder.group({
       amount: [0, [Validators.required, Validators.min(0.01)]],
@@ -58,58 +64,51 @@ export class PettyCashComponent implements OnInit, OnDestroy {
     );
   }
 
+  // Manejar el evento de navegación hacia atrás
+  @HostListener('window:popstate', ['$event'])
+  onPopState(event: PopStateEvent) {
+    // Si el modal está abierto, cerrarlo
+    if (this.modalOpen && this.activeModalRef) {
+      this.activeModalRef.dismiss('back');
+      event.preventDefault();
+    }
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   loadSummary(): void {
     this.loading = true;
-    this.subscriptions.push(
-      this.pettyCashService.getSummary().subscribe(
-        (summary) => {
-          this.transactionSummary = summary;
-
-          // Si el resumen incluye transacciones recientes, las usamos directamente
-          if (summary.recentTransactions && summary.recentTransactions.length > 0) {
-            this.transactions = summary.recentTransactions;
-            this.paginatedResult = {
-              items: this.transactions,
-              totalCount: this.transactions.length,
-              pageIndex: 0,
-              pageSize: this.transactions.length
-            };
-          } else {
-            // Si no hay transacciones recientes, cargamos las transacciones normalmente
-            this.loadTransactions();
-          }
-
-          this.loading = false;
-        },
-        (error) => {
-          console.error('Error al cargar el resumen:', error);
-          this.loading = false;
-          // Si falla el resumen, intentamos cargar las transacciones de todos modos
-          this.loadTransactions();
-        }
-      )
+    this.pettyCashService.getSummary().subscribe(
+      (summary: TransactionSummary) => {
+        this.transactionSummary = summary;
+        this.loadTransactions(this.pageIndex);
+      },
+      (error: any) => {
+        console.error('Error al cargar el resumen:', error);
+        this.loading = false;
+      }
     );
   }
 
-  loadTransactions(pageIndex: number = this.pageIndex): void {
+  loadTransactions(pageIndex: number): void {
     this.loading = true;
-    this.subscriptions.push(
-      this.pettyCashService.getTransactions(pageIndex, this.pageSize).subscribe(
-        (result) => {
-          this.paginatedResult = result;
-          this.transactions = result.items;
-          this.loading = false;
-        },
-        (error) => {
-          console.error('Error al cargar las transacciones:', error);
-          this.loading = false;
-        }
-      )
+    this.pettyCashService.getTransactions(pageIndex, this.pageSize).subscribe(
+      (result) => {
+        this.paginatedResult = result;
+        this.transactions = result.items;
+        this.loading = false;
+      },
+      (error) => {
+        console.error('Error al cargar las transacciones:', error);
+        this.loading = false;
+      }
     );
+  }
+
+  getTransactionTypeText(type: TransactionType): string {
+    return type === TransactionType.Income ? 'Ingreso' : 'Egreso';
   }
 
   openNewTransactionModal(): void {
@@ -118,7 +117,24 @@ export class PettyCashComponent implements OnInit, OnDestroy {
       description: '',
       type: TransactionType.Income
     });
-    this.modalService.open(this.transactionModal, { centered: true });
+
+    // Guardar referencia al modal y marcar como abierto
+    this.activeModalRef = this.modalService.open(this.transactionModal, { centered: true });
+    this.modalOpen = true;
+
+    // Agregar una entrada al historial para manejar el botón de retroceso
+    this.locationStrategy.pushState(
+      { modal: 'transaction-modal' },
+      '',
+      window.location.pathname,
+      ''
+    );
+
+    // Cuando el modal se cierre, actualizar el estado
+    this.activeModalRef.result.finally(() => {
+      this.modalOpen = false;
+      this.activeModalRef = null;
+    });
   }
 
   submitTransaction(): void {
@@ -131,7 +147,9 @@ export class PettyCashComponent implements OnInit, OnDestroy {
     this.submitting = true;
     this.pettyCashService.createTransaction(transaction).subscribe(
       (result) => {
-        this.modalService.dismissAll();
+        if (this.activeModalRef) {
+          this.activeModalRef.dismiss();
+        }
         this.loadSummary(); // Recargamos el resumen y las transacciones
         this.submitting = false;
       },
@@ -145,10 +163,6 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   pageChanged(event: any): void {
     this.pageIndex = event - 1;
     this.loadTransactions(this.pageIndex);
-  }
-
-  getTransactionTypeText(type: TransactionType): string {
-    return type === TransactionType.Income ? 'Ingreso' : 'Egreso';
   }
 
   getTransactionTypeClass(type: TransactionType): string {

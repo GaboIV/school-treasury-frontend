@@ -1,0 +1,77 @@
+<div class="card">
+  <div class="card-header border-0 pt-5">
+    <h3 class="card-title align-items-start flex-column">
+      <span class="card-label fw-bolder fs-3 mb-1">Configuración de Logs</span>
+      <span class="text-muted mt-1 fw-bold fs-7">
+        Personaliza qué mensajes de log quieres ver en la consola
+      </span>
+    </h3>
+  </div>
+
+  <div class="card-body">
+    <form [formGroup]="logSettingsForm" (ngSubmit)="saveSettings()">
+      <!-- Habilitar logs detallados -->
+      <div class="form-check form-switch mb-5">
+        <input class="form-check-input" type="checkbox" id="enableDetailedLogs" formControlName="enableDetailedLogs">
+        <label class="form-check-label" for="enableDetailedLogs">
+          Mostrar todos los logs (sin filtrar)
+        </label>
+        <div class="text-muted fs-7 mt-1">
+          Si esta opción está activada, se mostrarán todos los mensajes de log sin aplicar filtros.
+        </div>
+      </div>
+
+      <!-- Patrones a incluir -->
+      <div class="mb-5">
+        <label class="form-label fw-bold">Patrones a incluir</label>
+        <div class="text-muted fs-7 mb-3">
+          Los mensajes que contengan estos patrones siempre se mostrarán en la consola.
+        </div>
+
+        <div formArrayName="includePatterns">
+          <div class="d-flex align-items-center mb-2" *ngFor="let pattern of includePatterns.controls; let i = index">
+            <input type="text" class="form-control form-control-solid me-3" [formControlName]="i" placeholder="Patrón a incluir">
+            <button type="button" class="btn btn-icon btn-light-danger" (click)="removeIncludePattern(i)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-light-primary btn-sm mt-2" (click)="addIncludePattern()">
+          <i class="bi bi-plus"></i> Agregar patrón
+        </button>
+      </div>
+
+      <!-- Patrones a excluir -->
+      <div class="mb-5">
+        <label class="form-label fw-bold">Patrones a excluir</label>
+        <div class="text-muted fs-7 mb-3">
+          Los mensajes que contengan estos patrones no se mostrarán en la consola.
+        </div>
+
+        <div formArrayName="excludePatterns">
+          <div class="d-flex align-items-center mb-2" *ngFor="let pattern of excludePatterns.controls; let i = index">
+            <input type="text" class="form-control form-control-solid me-3" [formControlName]="i" placeholder="Patrón a excluir">
+            <button type="button" class="btn btn-icon btn-light-danger" (click)="removeExcludePattern(i)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-light-primary btn-sm mt-2" (click)="addExcludePattern()">
+          <i class="bi bi-plus"></i> Agregar patrón
+        </button>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-light" (click)="resetSettings()">
+          Restablecer valores predeterminados
+        </button>
+        <button type="submit" class="btn btn-primary">
+          Guardar configuración
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

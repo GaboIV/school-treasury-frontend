@@ -29,6 +29,7 @@ export interface StudentPayment {
 
 export enum PaymentStatus {
   Pending = 0,
-  Paid = 1,
-  Partial = 2
+  Partial = 1,
+  Paid = 2,
+  Excedent = 3
 }

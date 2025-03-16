@@ -1,46 +1,44 @@
 import { Component, OnInit, Input, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { StudentPaymentService } from '../../../services/student-payment.service';
-import { StudentPayment } from '../../../models/student-payment.model';
+import { ExpenseService } from '../../../services/expense.service';
+import { CollectionService } from '../../../services/collection.service';
+import { Expense } from '../../../models/expense.model';
 import { first } from 'rxjs/operators';
+import { Collection } from '../../../models/collection.model';
 import { LocationStrategy } from '@angular/common';
 
 @Component({
-  selector: 'app-register-payment-modal',
-  templateUrl: './register-payment-modal.component.html',
+  selector: 'app-update-expense-modal',
+  templateUrl: './update-expense-modal.component.html',
 })
-export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
-  @Input() payment: StudentPayment;
-  paymentForm: FormGroup;
+export class UpdateExpenseModalComponent implements OnInit, OnDestroy {
+  @Input() expense: Expense;
+  expenseForm: FormGroup;
   isLoading: boolean = false;
   error: string = '';
+  loadingTypes: boolean = false;
 
-  // Propiedades para manejo de imágenes
   uploadedImages: File[] = [];
   imagePreviewUrls: string[] = [];
+  existingImages: { id: string; url: string }[] = [];
   isDragging: boolean = false;
-
-  // Variable para controlar el historial
-  private historyState: any = null;
 
   constructor(
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
-    private studentPaymentService: StudentPaymentService,
+    private expenseService: ExpenseService,
+    private collectionService: CollectionService,
     private locationStrategy: LocationStrategy
   ) {}
 
   ngOnInit(): void {
     this.initForm();
-
-    // Guardar el estado actual del historial antes de modificarlo
-    this.historyState = window.history.state;
+    this.loadExistingImages();
 
     // Agregar una entrada al historial para manejar el botón de retroceso
-    // Usamos un identificador único para este modal
     this.locationStrategy.pushState(
-      { modal: 'register-payment' },
+      { modal: 'update-expense' },
       '',
       window.location.pathname,
       ''
@@ -50,15 +48,14 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
   // Manejar el evento de navegación hacia atrás
   @HostListener('window:popstate', ['$event'])
   onPopState(event: PopStateEvent) {
-    // Verificar si el estado del evento contiene información sobre el modal anterior
+    // Verificar si el estado del evento contiene información sobre el modal
     const state = window.history.state;
 
     // Solo cerrar este modal si el estado actual no tiene el identificador de este modal
     // o si el evento de popstate fue generado por el botón de atrás
-    if (!state || !state.modal || state.modal !== 'register-payment') {
+    if (!state || !state.modal || state.modal !== 'update-expense') {
       // Cerrar el modal en lugar de navegar hacia atrás
       this.activeModal.dismiss('back');
-
       // Prevenir la navegación predeterminada
       event.preventDefault();
     }
@@ -69,93 +66,66 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
   }
 
   initForm() {
-    // Usar el monto ajustado si existe, de lo contrario usar el monto individual
-    const pendingAmount = this.getPendingAmount();
-
-    this.paymentForm = this.fb.group({
-      id: [this.payment.id],
-      amountPaid: [0, [Validators.required, Validators.min(0.01), Validators.max(pendingAmount)]],
-      comment: ['']
+    this.expenseForm = this.fb.group({
+      id: [this.expense.id],
+      name: [this.expense.name, [Validators.required]],
+      amount: [this.expense.amount, [Validators.required, Validators.min(0.01)]],
+      date: [this.formatDate(new Date(this.expense.date)), [Validators.required]],
+      description: [this.expense.description || ''],
+      status: [this.expense.status]
     });
   }
 
-  // Método para obtener el monto pendiente considerando el monto ajustado
-  getPendingAmount(): number {
-    // Si hay un monto ajustado, usar ese para calcular el pendiente
-    if (this.payment.adjustedAmountCollection) {
-      return this.payment.adjustedAmountCollection - this.payment.amountPaid;
+  loadExistingImages() {
+    if (this.expense.images && this.expense.images.length > 0) {
+      this.existingImages = [...this.expense.images];
     }
-    // De lo contrario, usar el monto individual (pendiente original)
-    return this.payment.pending;
-  }
-
-  // Método para calcular el porcentaje de diferencia entre dos valores
-  getPercentageDifference(originalValue: number, newValue: number): string {
-    if (!originalValue || !newValue) {
-      return '0';
-    }
-
-    const difference = ((newValue - originalValue) / originalValue) * 100;
-    return Math.abs(difference).toFixed(1);
   }
 
   save() {
-    if (this.paymentForm.invalid) {
+    if (this.expenseForm.invalid) {
       return;
     }
 
     this.isLoading = true;
-    const paymentData = this.paymentForm.value;
+    const expenseData = this.expenseForm.value;
 
     // Crear FormData para enviar archivos
     const formData = new FormData();
-    formData.append('id', paymentData.id);
-    formData.append('amountPaid', paymentData.amountPaid.toString());
-    formData.append('comment', paymentData.comment || '');
+    formData.append('id', expenseData.id);
+    formData.append('name', expenseData.name);
+    formData.append('expenseTypeId', expenseData.expenseTypeId);
+    formData.append('amount', expenseData.amount.toString());
+    formData.append('date', expenseData.date);
+    formData.append('description', expenseData.description || '');
+    formData.append('status', expenseData.status.toString());
 
-    // Agregar información sobre el monto ajustado si existe
-    if (this.payment.adjustedAmountCollection) {
-      formData.append('adjustedAmountCollection', this.payment.adjustedAmountCollection.toString());
-    }
-
-    // Agregar información sobre el excedente si existe
-    if (this.payment.surplus) {
-      formData.append('surplus', this.payment.surplus.toString());
-    }
-
-    // Agregar las imágenes al FormData
-    this.uploadedImages.forEach((image, index) => {
-      formData.append('images', image, image.name);
-      console.log(`Adjuntando imagen: ${image.name}, tamaño: ${image.size} bytes, tipo: ${image.type}`);
+    // Agregar IDs de imágenes existentes que no se eliminaron
+    this.existingImages.forEach(image => {
+      formData.append('existingImageIds', image.id);
     });
 
-    console.log('Número total de imágenes adjuntas:', this.uploadedImages.length);
+    // Agregar las nuevas imágenes al FormData
+    this.uploadedImages.forEach((image) => {
+      formData.append('images', image, image.name);
+    });
 
-    this.studentPaymentService
-      .registerPaymentWithImages(formData)
+    this.expenseService
+      .updateExpense(formData)
       .pipe(first())
       .subscribe({
         next: (response: any) => {
           this.isLoading = false;
           if (response && response.data) {
-            // Cerrar el modal y pasar true para indicar que se debe refrescar
-            this.activeModal.close({
-              success: true,
-              data: response.data,
-              refreshCollections: true // Indicador para refrescar la pantalla de cobros
-            });
+            this.activeModal.close(response.data);
           } else {
-            this.activeModal.close({
-              success: true,
-              data: response,
-              refreshCollections: true // Indicador para refrescar la pantalla de cobros
-            });
+            this.activeModal.close(response);
           }
         },
         error: (error: any) => {
           this.isLoading = false;
-          this.error = 'Error al registrar el pago';
-          console.error('Error al registrar el pago:', error);
+          this.error = 'Error al actualizar el gasto';
+          console.error('Error al actualizar el gasto:', error);
         }
       });
   }
@@ -222,6 +192,10 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
     this.imagePreviewUrls.splice(index, 1);
   }
 
+  removeExistingImage(index: number) {
+    this.existingImages.splice(index, 1);
+  }
+
   isDuplicate(file: File): boolean {
     return this.uploadedImages.some(existingFile =>
       existingFile.name === file.name &&
@@ -230,23 +204,31 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
     );
   }
 
+  // Formatear fecha para el input date
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   // helpers for View
   isControlValid(controlName: string): boolean {
-    const control = this.paymentForm.controls[controlName];
+    const control = this.expenseForm.controls[controlName];
     return control.valid && (control.dirty || control.touched);
   }
 
   isControlInvalid(controlName: string): boolean {
-    const control = this.paymentForm.controls[controlName];
+    const control = this.expenseForm.controls[controlName];
     return control.invalid && (control.dirty || control.touched);
   }
 
   controlHasError(validation: string, controlName: string): boolean {
-    const control = this.paymentForm.controls[controlName];
+    const control = this.expenseForm.controls[controlName];
     return control.hasError(validation) && (control.dirty || control.touched);
   }
 
   isControlTouched(controlName: string): boolean {
-    return this.paymentForm.controls[controlName].touched;
+    return this.expenseForm.controls[controlName].touched;
   }
 }

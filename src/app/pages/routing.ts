@@ -20,6 +20,10 @@ const Routing: Routes = [
     // data: { layout: 'dark-header' },
   },
   {
+    path: 'settings',
+    loadChildren: () => import('../modules/settings/settings.module').then((m) => m.SettingsModule),
+  },
+  {
     path: 'crafted/pages/wizards',
     loadChildren: () => import('../modules/wizards/wizards.module').then((m) => m.WizardsModule),
     // data: { layout: 'light-header' },
