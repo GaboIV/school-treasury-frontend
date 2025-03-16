@@ -12,6 +12,7 @@ import { AppComponent } from './app.component';
 import { AuthService } from './modules/auth/services/auth.service';
 import { environment } from 'src/environments/environment';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+import { LoggerService } from './services/logger.service';
 // #fake-start#
 import { FakeAPIService } from './_fake/fake-api.service';
 // #fake-end#
@@ -22,6 +23,14 @@ function appInitializer(authService: AuthService) {
       //@ts-ignore
       authService.getUserByToken().subscribe().add(resolve);
     });
+  };
+}
+
+// Inicializador para el servicio de logging
+function loggerInitializer(loggerService: LoggerService) {
+  return () => {
+    // El constructor del servicio ya se encarga de sobrescribir los métodos de console
+    return Promise.resolve();
   };
 }
 
@@ -52,6 +61,12 @@ function appInitializer(authService: AuthService) {
       useFactory: appInitializer,
       multi: true,
       deps: [AuthService],
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: loggerInitializer,
+      multi: true,
+      deps: [LoggerService],
     },
   ],
   bootstrap: [AppComponent],

@@ -1,0 +1,29 @@
+// Estilos específicos para el componente de configuración de logs
+.form-check-input:checked {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+.btn-icon {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Animación para los elementos de la lista
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.d-flex.align-items-center {
+  animation: fadeIn 0.3s ease-in-out;
+}

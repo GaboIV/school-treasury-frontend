@@ -15,6 +15,14 @@ export const environment = {
   appPreviewAngularUrl: 'https://preview.keenthemes.com/metronic8/angular/demo1',
   appPreviewDocsUrl: 'https://preview.keenthemes.com/metronic8/angular/docs',
   appPreviewChangelogUrl: 'https://preview.keenthemes.com/metronic8/angular/docs/changelog',
+  // Configuración de logs
+  logging: {
+    enableDetailedLogs: false, // Establecer a true para ver logs detallados
+    logPatterns: {
+      include: ['Se obtuvieron', 'RESPONSE', 'PERFORMANCE', 'MONGODB'], // Patrones a incluir
+      exclude: ['Executed', 'Executing', 'HTTP GET', 'Route matched'] // Patrones a excluir
+    }
+  },
   appDemos: {
     'demo1': {
       'title': 'Demo 1',

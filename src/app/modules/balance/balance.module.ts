@@ -29,6 +29,10 @@ import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslationModule } from '../../modules/i18n/translation.module';
 import { PipesModule } from './pipes/pipes.module';
 import { UpdateCollectionModalComponent } from './collections/modals/update-collection-modal/update-collection-modal.component';
+import { ExpensesComponent } from './expenses/expenses.component';
+import { DeleteExpenseModalComponent } from './expenses/modals/delete-expense-modal/delete-expense-modal.component';
+import { CreateExpenseModalComponent } from './expenses/modals/create-expense-modal/create-expense-modal.component';
+import { UpdateExpenseModalComponent } from './expenses/modals/update-expense-modal/update-expense-modal.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +55,11 @@ import { UpdateCollectionModalComponent } from './collections/modals/update-coll
     RegisterPaymentModalComponent,
     ImagePreviewModalComponent,
     AdjustAmountModalComponent,
-    PettyCashComponent
+    PettyCashComponent,
+    ExpensesComponent,
+    CreateExpenseModalComponent,
+    DeleteExpenseModalComponent,
+    UpdateExpenseModalComponent
   ],
   imports: [
     CommonModule,

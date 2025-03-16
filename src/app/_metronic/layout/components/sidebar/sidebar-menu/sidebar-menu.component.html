@@ -31,14 +31,53 @@
       </a>
     </div>
 
+    <div class="menu-item">
+      <a class="menu-link without-sub" routerLinkActive="active" routerLink="balance/cobros">
+        <span class="menu-icon">
+          <app-keenicon name="profile-circle" class="fs-2"></app-keenicon>
+        </span>
+        <span
+          class="menu-title" translate="BALANCE.COLLECTIONS">
+        </span>
+      </a>
+    </div>
+
+    <div class="menu-item">
+      <a class="menu-link without-sub" routerLinkActive="active" routerLink="balance/gastos">
+        <span class="menu-icon">
+          <app-keenicon name="dollar" class="fs-2"></app-keenicon>
+        </span>
+        <span
+          class="menu-title" translate="BALANCE.EXPENSES">
+        </span>
+      </a>
+    </div>
+
+    <!-- Separator -->
+    <div class="menu-item">
+      <div class="menu-content pt-8 pb-2">
+        <span class="menu-section text-muted text-uppercase fs-8 ls-1">Configuración</span>
+      </div>
+    </div>
+
+    <!-- Configuración de Logs -->
+    <div class="menu-item">
+      <a class="menu-link without-sub" routerLinkActive="active" routerLink="/settings/logs">
+        <span class="menu-icon">
+          <app-keenicon name="code" class="fs-2"></app-keenicon>
+        </span>
+        <span class="menu-title">Filtros de Logs</span>
+      </a>
+    </div>
+
     <!-- Accounts -->
-    <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
+    <!-- <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
       <span class="menu-link">
         <span class="menu-icon">
           <app-keenicon name="profile-circle" class="fs-2"></app-keenicon>
         </span>
         <span class="menu-title"
-              data-link="/crafted/account" translate="BALANCE.BILLS">
+              data-link="/crafted/account" translate="BALANCE.COLLECTIONS">
         </span>
         <span class="menu-arrow"></span>
       </span>
@@ -50,7 +89,7 @@
               <span class="bullet bullet-dot"></span>
             </span>
             <span
-              class="menu-title" translate="BILLS.COLLECTIONTYPES">
+              class="menu-title" translate="COLLECTIONS.COLLECTIONTYPES">
             </span>
           </a>
         </div>
@@ -61,58 +100,21 @@
               <span class="bullet bullet-dot"></span>
             </span>
             <span
-              class="menu-title" translate="BILLS.COLLECTIONS">
+              class="menu-title" translate="COLLECTIONS.COLLECTIONS">
             </span>
           </a>
         </div>
       </div>
-    </div>
-
-    <!-- Errors -->
-    <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
-      <span class="menu-link">
-        <span class="menu-icon">
-          <app-keenicon name="phone" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title"
-              data-link="/error" translate="BALANCE.INCOME">
-        </span>
-        <span class="menu-arrow"></span>
-      </span>
-      <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLink="/error/404" routerLinkActive="active">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Error
-              404
-            </span>
-          </a>
-        </div>
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLink="/error/500" routerLinkActive="active">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Error
-              500
-            </span>
-          </a>
-        </div>
-      </div>
-    </div>
+    </div> -->
 
     <!-- Widgets -->
-    <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
+    <!-- <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
       <span class="menu-link">
         <span class="menu-icon">
           <app-keenicon name="element-7" class="fs-2"></app-keenicon>
         </span>
         <span class="menu-title"
-              data-link="/crafted/widgets" translate="BALANCE.COLLECTIONS">
+              data-link="/crafted/widgets" translate="BALANCE.EXPENSES">
         </span>
         <span class="menu-arrow"></span>
       </span>
@@ -184,7 +186,7 @@
           </a>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Separator -->
     <div class="menu-item">

@@ -1,11 +1,11 @@
 <div class="modal-fullscreen image-preview-modal">
-  <div class="modal-content bg-dark bg-opacity-90">
+  <div class="modal-content bg-dark bg-opacity-95">
     <!-- Botón de cierre -->
     <button
       type="button"
       class="btn btn-icon btn-sm btn-light position-absolute top-0 end-0 m-3 rounded-circle"
       (click)="activeModal.dismiss()"
-      style="width: 40px; height: 40px; z-index: 1050;"
+      style="width: 40px; height: 40px; z-index: 1060;"
     >
       <i class="bi bi-x-lg"></i>
     </button>
@@ -15,49 +15,71 @@
       type="button"
       class="btn btn-icon btn-sm btn-primary position-absolute top-0 start-0 m-3 rounded-circle"
       (click)="downloadImage()"
-      style="width: 40px; height: 40px; z-index: 1050;"
+      style="width: 40px; height: 40px; z-index: 1060;"
     >
       <i class="bi bi-download"></i>
     </button>
 
-    <!-- Contenedor de la imagen -->
-    <div class="d-flex justify-content-center align-items-center h-100">
-      <!-- Botón anterior -->
-      <button
-        *ngIf="images.length > 1 && currentIndex > 0"
-        type="button"
-        class="btn btn-icon btn-light btn-lg position-absolute start-0 ms-3 rounded-circle"
-        (click)="prevImage()"
-        style="width: 50px; height: 50px; z-index: 1050;"
-      >
-        <i class="bi bi-chevron-left"></i>
-      </button>
-
-      <!-- Imagen -->
-      <div class="text-center" style="max-height: 90vh; max-width: 90vw;">
-        <img
-          [src]="images[currentIndex]"
-          class="img-fluid"
-          style="max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.3);"
-          alt="Imagen de comprobante"
+    <!-- Contenedor principal que ocupa todo el espacio disponible -->
+    <div class="d-flex flex-column justify-content-center align-items-center" style="height: 100vh; padding-bottom: 100px; padding-top: 60px;">
+      <!-- Contenedor de la imagen principal -->
+      <div class="d-flex justify-content-center align-items-center position-relative" style="width: 100%; height: 100%;">
+        <!-- Botón anterior -->
+        <button
+          *ngIf="images.length > 1 && currentIndex > 0"
+          type="button"
+          class="btn btn-icon btn-light btn-lg position-absolute start-0 ms-3 rounded-circle"
+          (click)="prevImage()"
+          style="width: 50px; height: 50px; z-index: 1060;"
         >
+          <i class="bi bi-chevron-left"></i>
+        </button>
 
-        <!-- Contador de imágenes -->
-        <div *ngIf="images.length > 1" class="text-white mt-2">
-          {{ currentIndex + 1 }} / {{ images.length }}
+        <!-- Imagen principal -->
+        <div class="text-center" style="max-height: 100%; max-width: 100%;">
+          <img
+            [src]="images[currentIndex]"
+            class="img-fluid main-image"
+            style="border-radius: 8px; box-shadow: 0 0 30px rgba(0,0,0,0.5);"
+            alt="Imagen de comprobante"
+          >
+
+          <!-- Contador de imágenes -->
+          <div *ngIf="images.length > 1" class="text-white mt-2">
+            {{ currentIndex + 1 }} / {{ images.length }}
+          </div>
+        </div>
+
+        <!-- Botón siguiente -->
+        <button
+          *ngIf="images.length > 1 && currentIndex < images.length - 1"
+          type="button"
+          class="btn btn-icon btn-light btn-lg position-absolute end-0 me-3 rounded-circle"
+          (click)="nextImage()"
+          style="width: 50px; height: 50px; z-index: 1060;"
+        >
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Miniaturas de imágenes en la parte inferior -->
+    <div *ngIf="images.length > 1" class="position-fixed bottom-0 start-0 end-0 py-3 px-4 bg-dark bg-opacity-75" style="z-index: 1060;">
+      <div class="d-flex justify-content-center align-items-center gap-2 overflow-auto thumbnails-container">
+        <div
+          *ngFor="let image of images; let i = index"
+          class="thumbnail-wrapper"
+          [ngClass]="{'active': i === currentIndex}"
+          (click)="currentIndex = i"
+        >
+          <img
+            [src]="image"
+            class="thumbnail-image"
+            [ngClass]="{'active': i === currentIndex}"
+            alt="Miniatura"
+          >
         </div>
       </div>
-
-      <!-- Botón siguiente -->
-      <button
-        *ngIf="images.length > 1 && currentIndex < images.length - 1"
-        type="button"
-        class="btn btn-icon btn-light btn-lg position-absolute end-0 me-3 rounded-circle"
-        (click)="nextImage()"
-        style="width: 50px; height: 50px; z-index: 1050;"
-      >
-        <i class="bi bi-chevron-right"></i>
-      </button>
     </div>
   </div>
 </div>

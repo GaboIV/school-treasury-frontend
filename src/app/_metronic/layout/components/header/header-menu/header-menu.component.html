@@ -23,13 +23,25 @@
         <span class="menu-title" translate="BALANCE.PETTY_CASH"></span>
       </a>
     </div>
-    <div class="menu-item menu-lg-down-accordion me-lg-1" data-kt-menu-trigger="{default:'click', lg: 'hover'}"
+    <div class="menu-item menu-lg-down-accordion me-lg-1">
+      <a class="menu-link py-3" routerLinkActive="active" routerLink="balance/cobros">
+        <span class="menu-icon"><i class="bi fs-3 bi-cash-coin"></i></span>
+        <span class="menu-title" translate="BALANCE.COLLECTIONS"></span>
+      </a>
+    </div>
+    <div class="menu-item menu-lg-down-accordion me-lg-1">
+      <a class="menu-link py-3" routerLinkActive="active" routerLink="balance/gastos">
+        <span class="menu-icon"><i class="bi fs-3 bi-cash-coin"></i></span>
+        <span class="menu-title" translate="BALANCE.EXPENSES"></span>
+      </a>
+    </div>
+    <!-- <div class="menu-item menu-lg-down-accordion me-lg-1" data-kt-menu-trigger="{default:'click', lg: 'hover'}"
          data-kt-menu-placement="right-start">
       <span class="menu-link py-3" [ngClass]="calculateMenuItemCssClass('/crafted/account')">
         <span class="menu-icon"><i
           class="bi fs-3 bi-person"></i></span>
         <span class="menu-title"
-              data-link="/crafted/account" translate="BALANCE.BILLS">
+              data-link="/crafted/account" translate="COLLECTIONS.COLLECTIONS">
         </span>
         <span class="menu-arrow"></span>
       </span>
@@ -48,7 +60,7 @@
               <span class="bullet bullet-dot"></span>
             </span>
             <span
-              class="menu-title" translate="BILLS.COLLECTIONTYPES">
+              class="menu-title" translate="COLLECTIONS.COLLECTIONTYPES">
             </span>
           </a>
         </div>
@@ -59,45 +71,8 @@
               <span class="bullet bullet-dot"></span>
             </span>
             <span
-              class="menu-title" translate="BILLS.COLLECTIONS">
+              class="menu-title" translate="COLLECTIONS.COLLECTIONS">
             </span>
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="menu-item menu-lg-down-accordion me-lg-1" data-kt-menu-trigger="{default:'click', lg: 'hover'}"
-         data-kt-menu-placement="right-start">
-      <span class="menu-link py-3" [ngClass]="calculateMenuItemCssClass('/error')">
-        <span class="menu-icon"><i
-          class="bi fs-3 bi-sticky"></i></span>
-        <span class="menu-title" data-link="/error" translate="BALANCE.INCOME"></span>
-        <span
-          class="menu-arrow"></span>
-      </span>
-      <div class="
-          menu-sub
-          menu-sub-lg-down-accordion
-          menu-sub-lg-dropdown
-          menu-rounded-0
-          py-lg-4
-          w-lg-225px
-        " data-kt-menu-dismiss="true">
-        <div class="menu-item me-lg-1">
-          <a class="menu-link py-3" routerLinkActive="active" routerLink="/error/404">
-            <span class="menu-bullet">
-              <span
-                class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Error 404</span>
-          </a>
-        </div>
-        <div class="menu-item me-lg-1">
-          <a class="menu-link py-3" routerLinkActive="active" routerLink="/error/500">
-            <span class="menu-bullet">
-              <span
-                class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Error 500</span>
           </a>
         </div>
       </div>
@@ -108,7 +83,7 @@
         <span class="menu-icon"><i
           class="bi fs-3 bi-layers"></i></span>
         <span class="menu-title"
-              data-link="/crafted/widgets" translate="BALANCE.COLLECTIONS">
+              data-link="/crafted/widgets" translate="BALANCE.EXPENSES">
         </span>
         <span class="menu-arrow"></span>
       </span>
@@ -187,7 +162,7 @@
           </a>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </div>
 

@@ -240,8 +240,9 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
     const modalRef = this.modalService.open(ImagePreviewModalComponent, {
       fullscreen: true,
       centered: true,
-      windowClass: 'image-preview-modal',
+      windowClass: 'image-preview-modal-container',
       backdropClass: 'image-preview-backdrop',
+      animation: true
     });
 
     modalRef.componentInstance.images = images;
