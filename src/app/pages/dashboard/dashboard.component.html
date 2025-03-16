@@ -43,7 +43,7 @@
         <!--end::Title-->
         <div class="card-toolbar">
           <span class="badge badge-light-primary">
-            Total: {{dashboardData.pendingPayments.totalPendingAmount | currency}}
+            Total: {{dashboardData.pendingPayments.totalPendingAmount | currency:'S/ ':'symbol':'1.2-2'}}
           </span>
         </div>
       </div>
@@ -84,7 +84,7 @@
                 </td>
                 <td>
                   <span class="text-dark fw-bold d-block fs-6">
-                    {{payment.pendingAmount | currency}}
+                    {{payment.pendingAmount | currency:'S/ ':'symbol':'1.2-2'}}
                   </span>
                 </td>
                 <td class="text-end">
@@ -157,10 +157,10 @@
                 </td>
                 <td>
                   <span class="text-dark fw-bold d-block fs-6">
-                    {{collection.pendingAmount | currency}}
+                    {{collection.pendingAmount | currency:'S/ ':'symbol':'1.2-2'}}
                   </span>
                   <span class="text-muted fw-semibold text-muted d-block fs-8">
-                    de {{collection.totalAmount | currency}}
+                    de {{collection.totalAmount | currency:'S/ ':'symbol':'1.2-2'}}
                   </span>
                 </td>
                 <td class="text-end">

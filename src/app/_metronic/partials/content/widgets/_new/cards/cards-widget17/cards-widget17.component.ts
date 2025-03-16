@@ -20,72 +20,79 @@ export class CardsWidget17Component implements OnInit {
 
   ngOnInit(): void {
     setTimeout(() => {
-      initChart(this.chartSize, this.chartLine, this.chartRotate);
+      this.initChart();
     }, 10);
   }
-}
 
-const initChart = function (
-  chartSize: number = 70,
-  chartLine: number = 11,
-  chartRotate: number = 145
-) {
-  const el = document.getElementById('kt_card_widget_17_chart');
+  initChart() {
+    const el = document.getElementById('kt_card_widget_17_chart');
 
-  if (!el) {
-    return;
-  }
-
-  var options = {
-    size: chartSize,
-    lineWidth: chartLine,
-    rotate: chartRotate,
-    //percent:  el.getAttribute('data-kt-percent') ,
-  };
-
-  const canvas = document.createElement('canvas');
-  const span = document.createElement('span');
-
-  // @ts-ignore
-  if (typeof G_vmlCanvasManager !== 'undefined') {
-    // @ts-ignore
-    G_vmlCanvasManager.initElement(canvas);
-  }
-
-  const ctx = canvas.getContext('2d');
-  canvas.width = canvas.height = options.size;
-
-  el.appendChild(span);
-  el.appendChild(canvas);
-
-  // @ts-ignore
-  ctx.translate(options.size / 2, options.size / 2); // change center
-  // @ts-ignore
-  ctx.rotate((-1 / 2 + options.rotate / 180) * Math.PI); // rotate -90 deg
-
-  //imd = ctx.getImageData(0, 0, 240, 240);
-  const radius = (options.size - options.lineWidth) / 2;
-
-  const drawCircle = function (
-    color: string,
-    lineWidth: number,
-    percent: number
-  ) {
-    percent = Math.min(Math.max(0, percent || 1), 1);
-    if (!ctx) {
+    if (!el || !this.pettyCashSummary) {
       return;
     }
 
-    ctx.beginPath();
-    ctx.arc(0, 0, radius, 0, Math.PI * 2 * percent, false);
-    ctx.strokeStyle = color;
-    ctx.lineCap = 'round'; // butt, round or square
-    ctx.lineWidth = lineWidth;
-    ctx.stroke();
-  };
+    const options = {
+      size: this.chartSize,
+      lineWidth: this.chartLine,
+      rotate: this.chartRotate || 145,
+    };
 
-  // Init
-  drawCircle('#E4E6EF', options.lineWidth, 100 / 100);
-  drawCircle(getCSSVariableValue('--bs-primary'), options.lineWidth, 100 / 150);
-  drawCircle(getCSSVariableValue('--bs-success'), options.lineWidth, 100 / 250);
-};
+    const canvas = document.createElement('canvas');
+    const span = document.createElement('span');
+
+    // @ts-ignore
+    if (typeof G_vmlCanvasManager !== 'undefined') {
+      // @ts-ignore
+      G_vmlCanvasManager.initElement(canvas);
+    }
+
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.height = options.size;
+
+    el.appendChild(span);
+    el.appendChild(canvas);
+
+    // @ts-ignore
+    ctx.translate(options.size / 2, options.size / 2); // change center
+    // @ts-ignore
+    ctx.rotate((-1 / 2 + options.rotate / 180) * Math.PI); // rotate -90 deg
+
+    const radius = (options.size - options.lineWidth) / 2;
+
+    const drawCircle = function (
+      color: string,
+      lineWidth: number,
+      percent: number
+    ) {
+      percent = Math.min(Math.max(0, percent || 1), 1);
+      if (!ctx) {
+        return;
+      }
+
+      ctx.beginPath();
+      ctx.arc(0, 0, radius, 0, Math.PI * 2 * percent, false);
+      ctx.strokeStyle = color;
+      ctx.lineCap = 'round'; // butt, round or square
+      ctx.lineWidth = lineWidth;
+      ctx.stroke();
+    };
+
+    // Calcular los porcentajes basados en los valores reales
+    const total = this.pettyCashSummary.totalIncome + this.pettyCashSummary.totalExpense;
+
+    // Siempre dibujamos el fondo gris completo
+    drawCircle('#E4E6EF', options.lineWidth, 1);
+
+    // Solo dibujamos el gasto si hay gastos
+    if (this.pettyCashSummary.totalExpense > 0 && total > 0) {
+      const expensePercentage = this.pettyCashSummary.totalExpense / total;
+      drawCircle(getCSSVariableValue('--bs-primary'), options.lineWidth, expensePercentage);
+    }
+
+    // Solo dibujamos los ingresos si hay ingresos
+    if (this.pettyCashSummary.totalIncome > 0 && total > 0) {
+      const incomePercentage = this.pettyCashSummary.totalIncome / total;
+      drawCircle(getCSSVariableValue('--bs-success'), options.lineWidth, incomePercentage);
+    }
+  }
+}

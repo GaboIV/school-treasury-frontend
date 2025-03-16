@@ -19,7 +19,7 @@
           <app-keenicon [name]="(pettyCashSummary && pettyCashSummary.percentageChange >= 0) ? 'arrow-up' : 'arrow-down'"
                       [ngClass]="(pettyCashSummary && pettyCashSummary.percentageChange >= 0) ? 'text-success' : 'text-danger'"
                       class="fs-5 ms-n1"></app-keenicon>
-          {{pettyCashSummary?.percentageChange || 0}}%
+          {{pettyCashSummary && pettyCashSummary.percentageChange || 0}}%
         </span>
         <!--end::Badge-->
       </div>
