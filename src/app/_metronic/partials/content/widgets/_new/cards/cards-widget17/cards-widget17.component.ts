@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { getCSSVariableValue } from '../../../../../../kt/_utils';
+import { PettyCashSummary } from '../../../../../../../services/dashboard.service';
 
 @Component({
   selector: 'app-cards-widget17',
@@ -13,6 +14,7 @@ export class CardsWidget17Component implements OnInit {
   @Input() chartSize: number = 70;
   @Input() chartLine: number = 11;
   @Input() chartRotate?: number = 145;
+  @Input() pettyCashSummary: PettyCashSummary | null = null;
 
   constructor() {}
 

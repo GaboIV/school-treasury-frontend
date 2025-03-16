@@ -11,13 +11,15 @@
         <!--end::Currency-->
 
         <!--begin::Amount-->
-        <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">1.900,00</span>
+        <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">{{pettyCashSummary?.currentBalance || 0}}</span>
         <!--end::Amount-->
 
         <!--begin::Badge-->
-        <span class="badge badge-light-success fs-base">
-          <app-keenicon name="arrow-up" class="fs-5 text-success ms-n1"></app-keenicon>
-          2.2%
+        <span class="badge" [ngClass]="(pettyCashSummary && pettyCashSummary.percentageChange >= 0) ? 'badge-light-success' : 'badge-light-danger'" *ngIf="pettyCashSummary && pettyCashSummary.percentageChange !== 0">
+          <app-keenicon [name]="(pettyCashSummary && pettyCashSummary.percentageChange >= 0) ? 'arrow-up' : 'arrow-down'"
+                      [ngClass]="(pettyCashSummary && pettyCashSummary.percentageChange >= 0) ? 'text-success' : 'text-danger'"
+                      class="fs-5 ms-n1"></app-keenicon>
+          {{pettyCashSummary?.percentageChange || 0}}%
         </span>
         <!--end::Badge-->
       </div>
@@ -52,11 +54,11 @@
         <!--end::Bullet-->
 
         <!--begin::Label-->
-        <div class="text-gray-500 flex-grow-1 me-4">Cobros</div>
+        <div class="text-gray-500 flex-grow-1 me-4">Ingresos</div>
         <!--end::Label-->
 
         <!--begin::Stats-->
-        <div class="fw-bolder text-gray-700 text-xxl-end">S/ 1.600,00</div>
+        <div class="fw-bolder text-gray-700 text-xxl-end">S/ {{pettyCashSummary?.totalIncome || 0}}</div>
         <!--end::Stats-->
       </div>
       <!--end::Label-->
@@ -68,11 +70,11 @@
         <!--end::Bullet-->
 
         <!--begin::Label-->
-        <div class="text-gray-500 flex-grow-1 me-4">Pagos</div>
+        <div class="text-gray-500 flex-grow-1 me-4">Gastos</div>
         <!--end::Label-->
 
         <!--begin::Stats-->
-        <div class="fw-bolder text-gray-700 text-xxl-end">S/ 677,90</div>
+        <div class="fw-bolder text-gray-700 text-xxl-end">S/ {{pettyCashSummary?.totalExpense || 0}}</div>
         <!--end::Stats-->
       </div>
       <!--end::Label-->
@@ -88,7 +90,7 @@
         <!--end::Label-->
 
         <!--begin::Stats-->
-        <div class=" fw-bolder text-gray-700 text-xxl-end">S/ 45,257</div>
+        <div class="fw-bolder text-gray-700 text-xxl-end">S/ {{pettyCashSummary?.available || 0}}</div>
         <!--end::Stats-->
       </div>
       <!--end::Label-->

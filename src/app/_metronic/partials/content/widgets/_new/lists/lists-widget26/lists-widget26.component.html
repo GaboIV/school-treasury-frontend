@@ -25,7 +25,7 @@
       <!--begin::Item-->
       <div class="d-flex flex-stack">
         <!--begin::Section-->
-        <a href="#" class="text-primary fw-semibold fs-6 me-2">{{row.description}}</a>
+        <a [href]="row.url || '#'" target="_blank" class="text-primary fw-semibold fs-6 me-2">{{row.description}}</a>
         <!--end::Section-->
         <!--begin::Action-->
         <button type="button" class="btn btn-icon btn-sm h-auto btn-color-gray-500 btn-active-color-primary justify-content-end">
