@@ -1,0 +1,25 @@
+<div class="modal-header">
+  <h4 class="modal-title" translate="ACCESS.DELETE_STUDENT"></h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="cancel()"></button>
+</div>
+<div class="modal-body">
+  <div class="text-center mb-5">
+    <img [src]="getAvatarPath(student.avatar)" class="w-25 rounded mb-3" alt="Avatar" />
+    <p class="fs-4 fw-bold">{{ student.name }}</p>
+  </div>
+
+  <div class="alert alert-warning">
+    <span translate="ACCESS.DELETE_STUDENT_CONFIRMATION"></span>
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="cancel()" translate="GENERAL.CANCEL"></button>
+  <button type="button" class="btn btn-danger" (click)="delete()" [disabled]="isLoading">
+    <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    <span translate="GENERAL.DELETE"></span>
+  </button>
+</div>

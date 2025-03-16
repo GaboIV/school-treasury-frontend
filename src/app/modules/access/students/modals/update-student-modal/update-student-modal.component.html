@@ -1,0 +1,56 @@
+<div class="modal-header">
+  <h4 class="modal-title" translate="ACCESS.UPDATE_STUDENT"></h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="cancel()"></button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="form">
+    <div class="mb-5">
+      <label class="form-label required" translate="ACCESS.STUDENT_NAME"></label>
+      <input type="text" class="form-control" formControlName="name" />
+      <div *ngIf="form.get('name')?.invalid && form.get('name')?.touched" class="text-danger">
+        <div *ngIf="form.get('name')?.errors?.['required']" translate="VALIDATION.REQUIRED"></div>
+        <div *ngIf="form.get('name')?.errors?.['minlength']" translate="VALIDATION.MIN_LENGTH" [translateParams]="{min: 3}"></div>
+      </div>
+    </div>
+
+    <div class="mb-5">
+      <label class="form-label required" translate="ACCESS.AVATAR"></label>
+      <div class="row g-3">
+        <div *ngFor="let avatar of avatars" class="col-4 col-sm-3 col-md-2">
+          <div class="avatar-item cursor-pointer"
+               [class.selected]="selectedAvatar === avatar"
+               (click)="selectAvatar(avatar)">
+            <img [src]="getAvatarPath(avatar)" class="img-fluid rounded" alt="Avatar" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="cancel()" translate="GENERAL.CANCEL"></button>
+  <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="form.invalid || isLoading">
+    <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    <span translate="GENERAL.SAVE"></span>
+  </button>
+</div>
+
+<style>
+  .avatar-item {
+    padding: 5px;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    transition: all 0.2s;
+  }
+  .avatar-item:hover {
+    border-color: #e4e6ef;
+  }
+  .avatar-item.selected {
+    border-color: #009ef7;
+    background-color: rgba(0, 158, 247, 0.1);
+  }
+</style>

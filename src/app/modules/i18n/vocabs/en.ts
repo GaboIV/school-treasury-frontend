@@ -112,15 +112,35 @@ export const locale = {
       PETTY_CASH_BALANCE: 'Balance',
       PETTY_CASH_TRANSACTIONS: 'Transactions',
       PETTY_CASH_INCOME: 'Income',
-      PETTY_CASH_COLLECTION: 'Collections'
+      PETTY_CASH_COLLECTION: 'Expenses'
     },
     COLLECTIONS: {
       COLLECTIONTYPES: 'Collection Types',
-      COLLECTIONS: 'Collections'
+      COLLECTIONS: 'Collections List'
     },
     ACCESS: {
       ROLES: 'Roles',
-      STUDENTS: 'Students'
+      STUDENTS: 'Students',
+      STUDENTS_DESCRIPTION: 'List of registered students',
+      STUDENT_NAME: 'Student name',
+      AVATAR: 'Avatar',
+      CREATE_STUDENT: 'Create student',
+      UPDATE_STUDENT: 'Update student',
+      DELETE_STUDENT: 'Delete student',
+      DELETE_STUDENT_CONFIRMATION: 'Are you sure you want to delete this student? This action cannot be undone.',
+      GENERATE_USER: 'Generate User',
+      GENERATE_USER_SUCCESS: 'User generated successfully',
+      GENERATE_USER_ERROR: 'Error generating user'
+    },
+    GENERAL: {
+      ADD: 'Add',
+      SAVE: 'Save',
+      CANCEL: 'Cancel',
+      DELETE: 'Delete'
+    },
+    VALIDATION: {
+      REQUIRED: 'This field is required',
+      MIN_LENGTH: 'Minimum length is {{min}} characters'
     }
   }
 };

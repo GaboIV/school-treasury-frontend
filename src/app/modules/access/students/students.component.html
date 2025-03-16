@@ -1,0 +1,70 @@
+<div class="card mb-5 mb-xl-8">
+  <div class="card-header border-0 pt-5">
+    <h3 class="card-title align-items-start flex-column">
+      <span class="card-label fw-bold fs-3 mb-1" translate="ACCESS.STUDENTS"></span>
+      <span class="text-muted mt-1 fw-semibold fs-7" translate="ACCESS.STUDENTS_DESCRIPTION"></span>
+    </h3>
+    <div class="card-toolbar">
+      <button type="button" class="btn btn-sm btn-primary" (click)="openCreateModal()">
+        <span class="svg-icon svg-icon-2">
+          <app-keenicon name="plus" class="fs-2"></app-keenicon>
+        </span>
+        <span translate="GENERAL.ADD"></span>
+      </button>
+    </div>
+  </div>
+  <div class="card-body py-3">
+    <div *ngIf="isLoading" class="d-flex justify-content-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading">
+      <!-- begin::Row -->
+      <div class="row g-5 g-xl-8">
+        <div *ngFor="let student of students" class="col-xl-4">
+          <div class="card card-xl-stretch mb-xl-8 shadow-sm">
+            <div class="card-body d-flex flex-column p-0">
+              <!-- Imagen y datos del estudiante -->
+              <div class="d-flex flex-column align-items-center p-5">
+                <div class="symbol symbol-100px mb-3">
+                  <img [src]="getAvatarPath(student.avatar)" alt="" />
+                </div>
+                <div class="text-center">
+                  <a href="javascript:;" class="text-dark fw-bold text-hover-primary fs-4">{{ student.name }}</a>
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="d-flex justify-content-center border-top p-4">
+                <button class="btn btn-icon btn-sm btn-color-gray-400 btn-active-icon-primary me-2"
+                        (click)="openUpdateModal(student)"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        [title]="'ACCESS.UPDATE_STUDENT' | translate">
+                  <app-keenicon name="pencil" class="fs-3"></app-keenicon>
+                </button>
+                <button class="btn btn-icon btn-sm btn-color-gray-400 btn-active-icon-danger me-2"
+                        (click)="openDeleteModal(student)"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        [title]="'ACCESS.DELETE_STUDENT' | translate">
+                  <app-keenicon name="trash" class="fs-3"></app-keenicon>
+                </button>
+                <!-- <button class="btn btn-icon btn-sm btn-color-gray-400 btn-active-icon-success"
+                        (click)="generateUser(student)"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        [title]="'ACCESS.GENERATE_USER' | translate">
+                  <app-keenicon name="user" class="fs-3"></app-keenicon>
+                </button> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end::Row -->
+    </div>
+  </div>
+</div>
