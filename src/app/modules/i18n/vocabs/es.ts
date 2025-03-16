@@ -33,7 +33,24 @@ export const locale = {
     },
     ACCESS: {
       ROLES: 'Roles',
-      STUDENTS: 'Estudiantes'
+      STUDENTS: 'Estudiantes',
+      STUDENTS_DESCRIPTION: 'Listado de estudiantes registrados',
+      STUDENT_NAME: 'Nombre del estudiante',
+      AVATAR: 'Avatar',
+      CREATE_STUDENT: 'Crear estudiante',
+      UPDATE_STUDENT: 'Actualizar estudiante',
+      DELETE_STUDENT: 'Eliminar estudiante',
+      DELETE_STUDENT_CONFIRMATION: '¿Está seguro que desea eliminar este estudiante? Esta acción no se puede deshacer.'
+    },
+    GENERAL: {
+      ADD: 'Agregar',
+      SAVE: 'Guardar',
+      CANCEL: 'Cancelar',
+      DELETE: 'Eliminar'
+    },
+    VALIDATION: {
+      REQUIRED: 'Este campo es requerido',
+      MIN_LENGTH: 'La longitud mínima es {{min}} caracteres'
     },
     AUTH: {
       GENERAL: {

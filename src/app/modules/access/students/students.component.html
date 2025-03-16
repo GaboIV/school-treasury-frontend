@@ -1,0 +1,55 @@
+<div class="card mb-5 mb-xl-8">
+  <div class="card-header border-0 pt-5">
+    <h3 class="card-title align-items-start flex-column">
+      <span class="card-label fw-bold fs-3 mb-1" translate="ACCESS.STUDENTS"></span>
+      <span class="text-muted mt-1 fw-semibold fs-7" translate="ACCESS.STUDENTS_DESCRIPTION"></span>
+    </h3>
+    <div class="card-toolbar">
+      <button type="button" class="btn btn-sm btn-primary" (click)="openCreateModal()">
+        <span class="svg-icon svg-icon-2">
+          <app-keenicon name="plus" class="fs-2"></app-keenicon>
+        </span>
+        <span translate="GENERAL.ADD"></span>
+      </button>
+    </div>
+  </div>
+  <div class="card-body py-3">
+    <div *ngIf="isLoading" class="d-flex justify-content-center">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading">
+      <!-- begin::Row -->
+      <div class="row g-5 g-xl-8">
+        <div *ngFor="let student of students" class="col-xl-4">
+          <app-stats-widget2
+            class="card card-xl-stretch mb-xl-8"
+            [avatar]="getAvatarPath(student.avatar)"
+            [title]="student.name"
+            description="Estudiante"
+          >
+            <div class="d-flex justify-content-end">
+              <button class="btn btn-icon btn-sm btn-color-gray-400 btn-active-icon-primary me-2"
+                      (click)="openUpdateModal(student)"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title="Editar">
+                <app-keenicon name="pencil" class="fs-3"></app-keenicon>
+              </button>
+              <button class="btn btn-icon btn-sm btn-color-gray-400 btn-active-icon-danger"
+                      (click)="openDeleteModal(student)"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title="Eliminar">
+                <app-keenicon name="trash" class="fs-3"></app-keenicon>
+              </button>
+            </div>
+          </app-stats-widget2>
+        </div>
+      </div>
+      <!-- end::Row -->
+    </div>
+  </div>
+</div>

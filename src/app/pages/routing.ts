@@ -20,6 +20,10 @@ const Routing: Routes = [
     // data: { layout: 'dark-header' },
   },
   {
+    path: 'accesos',
+    loadChildren: () => import('../modules/access/access.module').then((m) => m.AccessModule),
+  },
+  {
     path: 'settings',
     loadChildren: () => import('../modules/settings/settings.module').then((m) => m.SettingsModule),
   },
