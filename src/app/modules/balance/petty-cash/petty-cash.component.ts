@@ -7,6 +7,8 @@ import { PettyCashService } from '../services/petty-cash.service';
 import { ScreenSizeService } from '../services/screen-size.service';
 import { CurrencyFormatService } from '../services/currency-format.service';
 import { LocationStrategy } from '@angular/common';
+import { UserRole } from '../../auth/services/role.service';
+import { AuthService } from '../../auth';
 
 @Component({
   selector: 'app-petty-cash',
@@ -16,6 +18,9 @@ import { LocationStrategy } from '@angular/common';
 export class PettyCashComponent implements OnInit, OnDestroy {
   @ViewChild('transactionModal') transactionModal: any;
 
+  currentUser: any;
+  isAdmin: boolean = false;
+  isRepresentative: boolean = false;
   transactionSummary: TransactionSummary | null = null;
   transactions: Transaction[] = [];
   paginatedResult: PaginatedResult<Transaction> | null = null;
@@ -45,7 +50,8 @@ export class PettyCashComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private screenSizeService: ScreenSizeService,
     private currencyFormatService: CurrencyFormatService,
-    private locationStrategy: LocationStrategy
+    private locationStrategy: LocationStrategy,
+    private authService: AuthService
   ) {
     this.transactionForm = this.formBuilder.group({
       amount: [0, [Validators.required, Validators.min(0.01)]],
@@ -62,6 +68,13 @@ export class PettyCashComponent implements OnInit, OnDestroy {
         this.isSmallScreen = isMobile;
       })
     );
+
+    this.currentUser = this.authService.currentUserValue;
+
+    if (this.currentUser) {
+      this.isAdmin = this.currentUser.roles.includes(UserRole.Administrator);
+      this.isRepresentative = this.currentUser.roles.includes(UserRole.Representative);
+    }
   }
 
   // Manejar el evento de navegación hacia atrás

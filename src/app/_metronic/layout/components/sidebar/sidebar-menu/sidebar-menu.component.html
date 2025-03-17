@@ -54,13 +54,13 @@
     </div>
 
     <!-- Separator -->
-    <div class="menu-item">
+    <div class="menu-item" *ngIf="isAdmin">
       <div class="menu-content pt-8 pb-2">
         <span class="menu-section text-muted text-uppercase fs-8 ls-1" translate="MENU.ACCESS"></span>
       </div>
     </div>
 
-    <div class="menu-item">
+    <div class="menu-item" *ngIf="isAdmin">
       <a class="menu-link without-sub" routerLinkActive="active" routerLink="accesos/estudiantes">
         <span class="menu-icon">
           <app-keenicon name="profile-user" class="fs-2"></app-keenicon>

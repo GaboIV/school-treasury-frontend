@@ -77,7 +77,7 @@
     <div class="card-title">
       <h3 class="fw-bolder mb-0">{{ 'BALANCE.PETTY_CASH_TRANSACTIONS' | translate }}</h3>
     </div>
-    <div class="card-toolbar">
+    <div class="card-toolbar" *ngIf="isAdmin">
       <button class="btn btn-primary" (click)="openNewTransactionModal()">
         <i class="bi bi-plus-circle fs-4 me-2"></i>Nueva Transacción
       </button>

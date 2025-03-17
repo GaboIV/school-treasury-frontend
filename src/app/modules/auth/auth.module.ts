@@ -9,7 +9,6 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { LogoutComponent } from './components/logout/logout.component';
 import { AuthComponent } from './auth.component';
 import { TranslationModule } from '../i18n/translation.module';
-import { HasRoleDirective } from './directives/has-role.directive';
 
 @NgModule({
   declarations: [
@@ -18,7 +17,6 @@ import { HasRoleDirective } from './directives/has-role.directive';
     ForgotPasswordComponent,
     LogoutComponent,
     AuthComponent,
-    HasRoleDirective,
   ],
   imports: [
     CommonModule,
@@ -26,7 +24,6 @@ import { HasRoleDirective } from './directives/has-role.directive';
     AuthRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
   ],
 })
 export class AuthModule {}

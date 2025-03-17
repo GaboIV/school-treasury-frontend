@@ -9,6 +9,8 @@ import { PaymentListModalComponent } from './modals/payment-list-modal/payment-l
 import { AdjustAmountModalComponent } from './modals/adjust-amount-modal/adjust-amount-modal.component';
 import { ScreenSizeService } from '../services/screen-size.service';
 import { Subscription } from 'rxjs';
+import { UserRole } from '../../auth/services/role.service';
+import { AuthService } from '../../auth';
 
 @Component({
   selector: 'app-collections',
@@ -81,6 +83,9 @@ export class CollectionsComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   error: string = '';
   isMobile: boolean = false;
+  currentUser: any;
+  isAdmin: boolean = false;
+  isRepresentative: boolean = false;
   private subscription: Subscription = new Subscription();
 
   // Paginación
@@ -95,7 +100,8 @@ export class CollectionsComponent implements OnInit, OnDestroy {
   constructor(
     private collectionService: CollectionService,
     private modalService: NgbModal,
-    private screenSizeService: ScreenSizeService
+    private screenSizeService: ScreenSizeService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -105,6 +111,13 @@ export class CollectionsComponent implements OnInit, OnDestroy {
         this.isMobile = isMobile;
       })
     );
+
+    this.currentUser = this.authService.currentUserValue;
+
+    if (this.currentUser) {
+      this.isAdmin = this.currentUser.roles.includes(UserRole.Administrator);
+      this.isRepresentative = this.currentUser.roles.includes(UserRole.Representative);
+    }
   }
 
   ngOnDestroy(): void {

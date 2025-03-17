@@ -6,7 +6,7 @@
         {{ expenses.length }} gastos registrados
       </span>
     </h3>
-    <button class="btn btn-sm fw-bold btn-primary" (click)="openCreateModal()">Crear nuevo</button>
+    <button *appHasRole="['Admin']" class="btn btn-sm fw-bold btn-primary" (click)="openCreateModal()">Crear nuevo</button>
   </div>
 
   <div class="card-body py-3">
@@ -29,7 +29,7 @@
             <th class="min-w-120px">Descripción</th>
             <th class="min-w-100px">Estado</th>
             <th class="min-w-100px">Imágenes</th>
-            <th class="min-w-100px text-end">Acciones</th>
+            <th class="min-w-100px text-end" *appHasRole="['Admin']">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -75,7 +75,7 @@
                 Sin imágenes
               </span>
             </td>
-            <td class="text-end">
+            <td class="text-end" *appHasRole="['Admin']">
               <a href="javascript:;" class="btn btn-icon btn-bg-light btn-sm me-1" (click)="openUpdateModal(expense)">
                 <app-keenicon name="pencil" class="fs-3"></app-keenicon>
               </a>

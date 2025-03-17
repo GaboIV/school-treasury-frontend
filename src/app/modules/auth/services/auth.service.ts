@@ -80,6 +80,17 @@ export class AuthService implements OnDestroy {
     });
   }
 
+  getUserRoles(){
+    var currentUser = this.currentUserValue;
+
+    console.log("Muestro a usuario ", currentUser)
+
+    if (currentUser) {
+      console.log("Devuelvo roles de usuario ", currentUser.roles)
+      return currentUser.roles;
+    }
+  }
+
   getUserByToken(): Observable<UserType> {
     const auth = this.getAuthFromLocalStorage();
     if (!auth || !auth.authToken) {
