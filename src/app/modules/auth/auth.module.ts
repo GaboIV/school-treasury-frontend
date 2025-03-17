@@ -28,8 +28,5 @@ import { HasRoleDirective } from './directives/has-role.directive';
     ReactiveFormsModule,
     HttpClientModule,
   ],
-  exports: [
-    HasRoleDirective
-  ]
 })
 export class AuthModule {}

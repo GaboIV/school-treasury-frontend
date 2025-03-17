@@ -8,8 +8,8 @@ import { AuthModel } from '../../../models/auth.model';
 import { UsersTable } from '../../../../../_fake/users.table';
 import { environment } from '../../../../../../environments/environment';
 
-const API_LOGIN_URL = `${environment.apiUrl}/auth/login`;
-const API_ME_URL = `${environment.apiUrl}/auth/me`;
+const API_LOGIN_URL = `${environment.apiUrl}/api/v1/auth/login`;
+const API_ME_URL = `${environment.apiUrl}/api/v1/auth/me`;
 
 @Injectable({
   providedIn: 'root',

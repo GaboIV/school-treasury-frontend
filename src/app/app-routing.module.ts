@@ -17,16 +17,16 @@ export const routes: Routes = [
   },
   {
     path: '',
-    // canActivate: [
-    //   AuthGuard,
-    //   RoleGuard
-    // ],
-    // data: {
-    //   roles: [
-    //     UserRole.Administrator,
-    //     UserRole.Representative
-    //   ]
-    // },
+    canActivate: [
+      AuthGuard,
+      RoleGuard
+    ],
+    data: {
+      roles: [
+        UserRole.Administrator,
+        UserRole.Representative
+      ]
+    },
     loadChildren: () => {
       console.log("app-routing: Cargando módulo de layout");
       return import('./_metronic/layout/layout.module').then((m) => {
@@ -44,7 +44,6 @@ export const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-    enableTracing: true, // <-- Habilitar trazado de rutas para depuración
     useHash: false,
     paramsInheritanceStrategy: 'always'
   })],

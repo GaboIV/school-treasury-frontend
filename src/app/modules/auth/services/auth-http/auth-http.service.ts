@@ -6,8 +6,8 @@ import { environment } from '../../../../../environments/environment';
 import { AuthModel } from '../../models/auth.model';
 import { map, catchError, tap } from 'rxjs/operators';
 
-// const API_USERS_URL = `${environment.apiUrl}/auth`;
-const API_USERS_URL = `${environment.apiUrl}/auth`;
+// const API_AUTH_URL = `${environment.apiUrl}/auth`;
+const API_AUTH_URL = `${environment.apiUrl}/auth`;
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +17,8 @@ export class AuthHTTPService {
 
   // public methods
   login(username: string, password: string): Observable<AuthModel> {
-    console.log("AuthHTTPService: Consumiendo API real en", `${API_USERS_URL}/login`);
-    return this.http.post<any>(`${API_USERS_URL}/login`, {
+    console.log("AuthHTTPService: Consumiendo API real en", `${API_AUTH_URL}/login`);
+    return this.http.post<any>(`${API_AUTH_URL}/login`, {
       username,
       password,
     }).pipe(
@@ -50,12 +50,12 @@ export class AuthHTTPService {
 
   // CREATE =>  POST: add a new user to the server
   createUser(user: UserModel): Observable<UserModel> {
-    return this.http.post<UserModel>(`${API_USERS_URL}/register`, user);
+    return this.http.post<UserModel>(`${API_AUTH_URL}/register`, user);
   }
 
   // Your server should check email => If email exists send link to the user and return true | If email doesn't exist return false
   forgotPassword(email: string): Observable<boolean> {
-    return this.http.post<boolean>(`${API_USERS_URL}/forgot-password`, {
+    return this.http.post<boolean>(`${API_AUTH_URL}/forgot-password`, {
       email,
     });
   }
@@ -69,7 +69,7 @@ export class AuthHTTPService {
     });
 
     // Consumir el servicio /me para verificar el token
-    return this.http.get<any>(`${API_USERS_URL}/me`, { headers: httpHeaders }).pipe(
+    return this.http.get<any>(`${API_AUTH_URL}/me`, { headers: httpHeaders }).pipe(
       tap(response => {
         console.log("AuthHTTPService: Respuesta completa de /me", response);
       }),
