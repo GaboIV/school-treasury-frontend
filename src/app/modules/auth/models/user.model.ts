@@ -54,8 +54,20 @@ export class UserModel extends AuthModel {
     this.fullname = user.fullname || '';
     this.email = user.email || '';
     this.pic = user.pic || './assets/media/avatars/blank.png';
-    this.role = user.role || 0;
-    this.roles = user.roles || [];
+
+    // Asegurarse de que role tenga un valor válido
+    console.log("UserModel: Valor original de role:", user.role);
+    this.role = user.role !== undefined ? user.role : 0; // Valor por defecto: 0 (Administrador)
+
+    // Asegurarse de que roles sea un array
+    console.log("UserModel: Valor original de roles:", user.roles);
+    this.roles = Array.isArray(user.roles) ? user.roles : [this.role];
+
+    console.log("UserModel: Valores finales:", {
+      role: this.role,
+      roles: this.roles
+    });
+
     this.occupation = user.occupation || '';
     this.companyName = user.companyName || '';
     this.phone = user.phone || '';

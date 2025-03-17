@@ -14,7 +14,13 @@ export class AuthGuard {
     const currentUser = this.authService.currentUserValue;
 
     if (currentUser) {
-      console.log("AuthGuard: Usuario autenticado", currentUser);
+      console.log("AuthGuard: Usuario autenticado", JSON.stringify({
+        id: currentUser.id,
+        username: currentUser.username,
+        role: currentUser.role,
+        roles: currentUser.roles,
+        authToken: currentUser.authToken ? 'Presente' : 'No presente'
+      }));
       return true;
     }
 

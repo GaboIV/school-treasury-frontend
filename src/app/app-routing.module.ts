@@ -17,24 +17,41 @@ export const routes: Routes = [
   },
   {
     path: '',
-    canActivate: [
-      AuthGuard,
-      RoleGuard
-    ],
-    data: {
-      roles: [
-        UserRole.Administrator,
-        UserRole.Representative
-      ]
+    // canActivate: [
+    //   AuthGuard,
+    //   RoleGuard
+    // ],
+    // data: {
+    //   roles: [
+    //     UserRole.Administrator,
+    //     UserRole.Representative
+    //   ]
+    // },
+    loadChildren: () => {
+      console.log("app-routing: Cargando módulo de layout");
+      return import('./_metronic/layout/layout.module').then((m) => {
+        console.log("app-routing: Módulo de layout cargado correctamente");
+        return m.LayoutModule;
+      });
     },
-    loadChildren: () =>
-      import('./_metronic/layout/layout.module').then((m) => m.LayoutModule),
   },
-  { path: '**', redirectTo: 'error/404' },
+  {
+    path: '**',
+    redirectTo: 'error/404',
+    pathMatch: 'full'
+  },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {
+    enableTracing: true, // <-- Habilitar trazado de rutas para depuración
+    useHash: false,
+    paramsInheritanceStrategy: 'always'
+  })],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule {
+  constructor() {
+    console.log("AppRoutingModule: Inicializado con rutas:", routes);
+  }
+}

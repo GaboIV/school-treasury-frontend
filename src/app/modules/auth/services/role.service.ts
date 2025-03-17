@@ -23,8 +23,7 @@ export class RoleService {
       return false;
     }
 
-    console.log("RoleService: Usuario actual", currentUser);
-    console.log("RoleService: Propiedades del usuario:", {
+    console.log("RoleService: Usuario actual", JSON.stringify({
       id: currentUser.id,
       username: currentUser.username,
       role: currentUser.role,
@@ -33,7 +32,7 @@ export class RoleService {
       hasRolesProperty: currentUser.hasOwnProperty('roles'),
       roleType: typeof currentUser.role,
       rolesType: typeof currentUser.roles
-    });
+    }));
 
     // Verificar si el rol está en el array de roles
     if (Array.isArray(currentUser.roles) && currentUser.roles.includes(role)) {
@@ -44,10 +43,17 @@ export class RoleService {
     // O verificar si el rol coincide con la propiedad role
     const hasMatchingRole = currentUser.role === role;
     console.log(`RoleService: El rol ${role} coincide con la propiedad role: ${hasMatchingRole}`);
+    console.log(`RoleService: Comparación de roles: ${currentUser.role} === ${role}`);
 
     // Verificación adicional para el caso específico del rol 1 (Representante)
     if (role === UserRole.Representative && currentUser.role === 1) {
       console.log("RoleService: El usuario es un Representante (role=1)");
+      return true;
+    }
+
+    // Verificación adicional para el caso específico del rol 0 (Administrador)
+    if (role === UserRole.Administrator && currentUser.role === 0) {
+      console.log("RoleService: El usuario es un Administrador (role=0)");
       return true;
     }
 
@@ -82,9 +88,11 @@ export class RoleService {
 
     if (Array.isArray(currentUser.roles) && currentUser.roles.length > 0) {
       userRole = currentUser.roles[0];
-    } else if (currentUser.role) {
+    } else if (currentUser.role !== undefined) {
       userRole = currentUser.role;
     }
+
+    console.log("RoleService: Determinando nombre del rol para", userRole);
 
     switch (userRole) {
       case UserRole.Administrator:

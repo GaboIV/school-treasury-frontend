@@ -86,7 +86,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         (user: UserModel | undefined) => {
           if (user) {
             console.log("LoginComponent: Login exitoso, redirigiendo a", this.returnUrl);
-            this.router.navigate([this.returnUrl]);
+            // Forzar la redirección al dashboard directamente
+            if (this.returnUrl === '/') {
+              console.log("LoginComponent: Redirigiendo directamente al dashboard");
+              this.router.navigate(['/dashboard']);
+            } else {
+              this.router.navigate([this.returnUrl]);
+            }
           } else {
             console.log("LoginComponent: Login fallido, usuario indefinido");
             this.hasError = true;

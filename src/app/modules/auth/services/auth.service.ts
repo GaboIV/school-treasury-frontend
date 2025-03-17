@@ -66,12 +66,14 @@ export class AuthService implements OnDestroy {
       }),
       finalize(() => {
         console.log("AuthService: Finalizando proceso de login");
+        console.log("AuthService: Usuario después de login", this.currentUserValue);
         this.isLoadingSubject.next(false);
       })
     );
   }
 
   logout() {
+    console.log("AuthService: Cerrando sesión");
     localStorage.removeItem(this.authLocalStorageToken);
     this.router.navigate(['/auth/login'], {
       queryParams: {},
@@ -94,6 +96,34 @@ export class AuthService implements OnDestroy {
       map((user: UserType) => {
         if (user) {
           console.log("AuthService: se validó el usuario y se continuará");
+
+          // Convertir el rol de string a número si es necesario
+          if (typeof user.role === 'string') {
+            console.log("AuthService: El rol es un string:", user.role);
+            // Mapear el string del rol a su valor numérico correspondiente
+            if (user.role === 'Administrator') {
+              console.log("AuthService: Convirtiendo rol 'Administrator' a 0");
+              user.role = 0;
+            } else if (user.role === 'Representative') {
+              console.log("AuthService: Convirtiendo rol 'Representative' a 1");
+              user.role = 1;
+            } else {
+              console.log("AuthService: Rol desconocido, asignando rol por defecto (0)");
+              user.role = 0;
+            }
+          }
+          // Si el rol sigue siendo undefined, asignar un valor por defecto
+          else if (user.role === undefined) {
+            console.log("AuthService: El usuario no tiene un rol definido, asignando rol por defecto (0)");
+            user.role = 0; // Asignar rol de Administrador por defecto
+          }
+
+          // Asegurarse de que el usuario tenga un array de roles
+          if (!Array.isArray(user.roles)) {
+            console.log("AuthService: El usuario no tiene un array de roles, creando uno con el rol actual");
+            user.roles = [user.role];
+          }
+
           this.currentUserSubject.next(user);
         } else {
           console.log("AuthService: Usuario no encontrado, cerrando sesión");
