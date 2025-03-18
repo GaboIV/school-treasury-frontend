@@ -1,7 +1,7 @@
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { ClipboardModule } from 'ngx-clipboard';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,6 +13,7 @@ import { AuthService } from './modules/auth/services/auth.service';
 import { environment } from 'src/environments/environment';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { LoggerService } from './services/logger.service';
+import { HttpErrorInterceptor } from './modules/auth/services/http-error.interceptor';
 // #fake-start#
 import { FakeAPIService } from './_fake/fake-api.service';
 // #fake-end#
@@ -27,12 +28,11 @@ function appInitializer(authService: AuthService) {
 }
 
 // Inicializador para el servicio de logging
-function loggerInitializer(loggerService: LoggerService) {
-  return () => {
-    // El constructor del servicio ya se encarga de sobrescribir los métodos de console
-    return Promise.resolve();
-  };
-}
+// function loggerInitializer(loggerService: LoggerService) {
+//   return () => {
+//     return Promise.resolve();
+//   };
+// }
 
 @NgModule({
   declarations: [AppComponent],
@@ -43,12 +43,13 @@ function loggerInitializer(loggerService: LoggerService) {
     HttpClientModule,
     ClipboardModule,
     // #fake-start#
-    environment.isMockEnabled
-      ? HttpClientInMemoryWebApiModule.forRoot(FakeAPIService, {
-        passThruUnknownUrl: true,
-        dataEncapsulation: false,
-      })
-      : [],
+    // Deshabilitamos el API falso para usar el API real
+    // environment.isMockEnabled
+    //   ? HttpClientInMemoryWebApiModule.forRoot(FakeAPIService, {
+    //     passThruUnknownUrl: true,
+    //     dataEncapsulation: false,
+    //   })
+    //   : [],
     // #fake-end#
     AppRoutingModule,
     InlineSVGModule.forRoot(),
@@ -62,12 +63,17 @@ function loggerInitializer(loggerService: LoggerService) {
       multi: true,
       deps: [AuthService],
     },
+    // {
+    //   provide: APP_INITIALIZER,
+    //   useFactory: loggerInitializer,
+    //   multi: true,
+    //   deps: [LoggerService],
+    // },
     {
-      provide: APP_INITIALIZER,
-      useFactory: loggerInitializer,
-      multi: true,
-      deps: [LoggerService],
-    },
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent],
 })

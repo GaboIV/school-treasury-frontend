@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { LayoutType } from '../../../core/configs/config';
 import { LayoutInitService } from '../../../core/layout-init.service';
 import { LayoutService } from '../../../core/layout.service';
+import { AuthService } from 'src/app/modules/auth';
+import { UserRole } from 'src/app/modules/auth/services/role.service';
 
 @Component({
   selector: 'app-header-menu',
@@ -10,9 +12,20 @@ import { LayoutService } from '../../../core/layout.service';
   styleUrls: ['./header-menu.component.scss'],
 })
 export class HeaderMenuComponent implements OnInit {
-  constructor(private router: Router, private layout: LayoutService, private layoutInit: LayoutInitService) {}
+  currentUser: any;
+  isAdmin: boolean = false;
+  isRepresentative: boolean = false;
 
-  ngOnInit(): void {}
+  constructor(private router: Router, private layout: LayoutService, private layoutInit: LayoutInitService, private authService: AuthService) {}
+
+  ngOnInit(): void {
+    this.currentUser = this.authService.currentUserValue;
+
+    if (this.currentUser) {
+      this.isAdmin = this.currentUser.roles.includes(UserRole.Administrator);
+      this.isRepresentative = this.currentUser.roles.includes(UserRole.Representative);
+    }
+  }
 
   calculateMenuItemCssClass(url: string): string {
     return checkIsActive(this.router.url, url) ? 'active' : '';

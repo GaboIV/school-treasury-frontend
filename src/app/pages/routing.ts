@@ -3,7 +3,13 @@ import { Routes } from '@angular/router';
 const Routing: Routes = [
   {
     path: 'dashboard',
-    loadChildren: () => import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
+    loadChildren: () => {
+      console.log("routing.ts: Cargando módulo de dashboard");
+      return import('./dashboard/dashboard.module').then((m) => {
+        console.log("routing.ts: Módulo de dashboard cargado correctamente");
+        return m.DashboardModule;
+      });
+    },
   },
   {
     path: 'builder',

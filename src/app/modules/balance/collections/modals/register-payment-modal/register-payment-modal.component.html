@@ -24,15 +24,16 @@
           <span class="text-muted">Monto Individual:</span>
           <span class="fw-bold">{{ payment.amountCollection | currency: 'S/ ' }}</span>
         </div>
-        <div class="d-flex justify-content-between mb-2" *ngIf="payment.adjustedAmountCollection && payment.adjustedAmountCollection !== payment.amountCollection">
+        <div class="d-flex justify-content-between mb-2"
+          *ngIf="payment.adjustedAmountCollection && payment.adjustedAmountCollection !== payment.amountCollection">
           <span class="text-muted">Monto Ajustado:</span>
-          <span class="fw-bold" [ngClass]="payment.adjustedAmountCollection < payment.amountCollection ? 'text-success' : 'text-danger'">
+          <span class="fw-bold"
+            [ngClass]="payment.adjustedAmountCollection < payment.amountCollection ? 'text-success' : 'text-danger'">
             {{ payment.adjustedAmountCollection | currency: 'S/ ' }}
             <span class="small">
-              {{ payment.adjustedAmountCollection < payment.amountCollection ? '↓' : '↑' }}
-              {{ getPercentageDifference(payment.amountCollection, payment.adjustedAmountCollection) }}%
+              {{ payment.adjustedAmountCollection < payment.amountCollection ? '↓' : '↑' }} {{
+                getPercentageDifference(payment.amountCollection, payment.adjustedAmountCollection) }}% </span>
             </span>
-          </span>
         </div>
         <div class="d-flex justify-content-between mb-2" *ngIf="payment.surplus && payment.surplus > 0">
           <span class="text-muted">Excedente (caja chica):</span>
@@ -51,117 +52,96 @@
       </div>
     </div>
 
-    <div class="alert alert-info mb-3" *ngIf="payment.adjustedAmountCollection && payment.adjustedAmountCollection !== payment.amountCollection">
-      <div class="d-flex">
-        <i class="bi bi-info-circle-fill me-2 fs-5"></i>
-        <div>
-          <p class="mb-0">
-            <strong>Nota:</strong> Este pago tiene un monto ajustado. El estudiante debe pagar
-            {{ payment.adjustedAmountCollection | currency: 'S/ ' }} en lugar de
-            {{ payment.amountCollection | currency: 'S/ ' }}.
-            <span *ngIf="payment.surplus && payment.surplus > 0">
-              La diferencia de {{ payment.surplus | currency: 'S/ ' }} irá a caja chica.
-            </span>
-          </p>
+    <ng-container *appHasRole="['Admin']">
+      <div class="alert alert-info mb-3"
+        *ngIf="payment.adjustedAmountCollection && payment.adjustedAmountCollection !== payment.amountCollection">
+        <div class="d-flex">
+          <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+          <div>
+            <p class="mb-0">
+              <strong>Nota:</strong> Este pago tiene un monto ajustado. El estudiante debe pagar
+              {{ payment.adjustedAmountCollection | currency: 'S/ ' }} en lugar de
+              {{ payment.amountCollection | currency: 'S/ ' }}.
+              <span *ngIf="payment.surplus && payment.surplus > 0">
+                La diferencia de {{ payment.surplus | currency: 'S/ ' }} irá a caja chica.
+              </span>
+            </p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="mb-3">
-      <label class="form-label required">Monto a Pagar</label>
-      <input
-        type="number"
-        class="form-control"
-        formControlName="amountPaid"
-        [ngClass]="{
+
+      <div class="mb-3">
+        <label class="form-label required">Monto a Pagar</label>
+        <input type="number" class="form-control" formControlName="amountPaid" [ngClass]="{
           'is-invalid': isControlInvalid('amountPaid'),
           'is-valid': isControlValid('amountPaid')
-        }"
-      />
-      <div class="invalid-feedback" *ngIf="controlHasError('required', 'amountPaid')">
-        El monto es requerido
-      </div>
-      <div class="invalid-feedback" *ngIf="controlHasError('min', 'amountPaid')">
-        El monto debe ser mayor a 0
-      </div>
-      <div class="invalid-feedback" *ngIf="controlHasError('max', 'amountPaid')">
-        El monto no puede ser mayor al pendiente ({{ getPendingAmount() | currency: 'S/ ' }})
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Comentario (opcional)</label>
-      <textarea
-        class="form-control"
-        formControlName="comment"
-        rows="3"
-      ></textarea>
-    </div>
-
-    <!-- Sección de carga de imágenes -->
-    <div class="mb-3">
-      <label class="form-label">Imágenes de comprobante</label>
-      <div
-        class="dropzone border rounded p-4 text-center position-relative"
-        [ngClass]="{ 'bg-light-primary border-primary': isDragging }"
-        (dragover)="onDragOver($event)"
-        (dragleave)="onDragLeave($event)"
-        (drop)="onDrop($event)"
-        (click)="fileInput.click()"
-        style="cursor: pointer; transition: all 0.2s ease;"
-      >
-        <div *ngIf="uploadedImages.length === 0" class="py-4">
-          <div class="mb-3">
-            <i class="bi bi-cloud-upload fs-1 text-primary"></i>
-          </div>
-          <h6 class="mb-2">Arrastra y suelta imágenes aquí</h6>
-          <p class="text-muted mb-0">o haz clic en cualquier parte de esta área para seleccionar archivos</p>
+        }" />
+        <div class="invalid-feedback" *ngIf="controlHasError('required', 'amountPaid')">
+          El monto es requerido
         </div>
-        <div *ngIf="uploadedImages.length > 0" class="d-flex flex-wrap gap-3 justify-content-center py-3">
-          <div *ngFor="let url of imagePreviewUrls; let i = index" class="position-relative">
-            <div class="image-preview-container" style="width: 120px; height: 120px; overflow: hidden; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-              <img [src]="url" class="w-100 h-100" style="object-fit: cover;" />
-              <div class="position-absolute top-0 end-0 m-1">
-                <button
-                  type="button"
-                  class="btn btn-icon btn-sm btn-danger rounded-circle"
-                  style="width: 24px; height: 24px; padding: 0; line-height: 24px;"
-                  (click)="removeImage(i); $event.stopPropagation();"
-                >
-                  <i class="bi bi-x"></i>
-                </button>
+        <div class="invalid-feedback" *ngIf="controlHasError('min', 'amountPaid')">
+          El monto debe ser mayor a 0
+        </div>
+        <div class="invalid-feedback" *ngIf="controlHasError('max', 'amountPaid')">
+          El monto no puede ser mayor al pendiente ({{ getPendingAmount() | currency: 'S/ ' }})
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Comentario (opcional)</label>
+        <textarea class="form-control" formControlName="comment" rows="3"></textarea>
+      </div>
+
+
+      <!-- Sección de carga de imágenes -->
+      <div class="mb-3">
+        <label class="form-label">Imágenes de comprobante</label>
+        <div class="dropzone border rounded p-4 text-center position-relative"
+          [ngClass]="{ 'bg-light-primary border-primary': isDragging }" (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" (click)="fileInput.click()"
+          style="cursor: pointer; transition: all 0.2s ease;">
+          <div *ngIf="uploadedImages.length === 0" class="py-4">
+            <div class="mb-3">
+              <i class="bi bi-cloud-upload fs-1 text-primary"></i>
+            </div>
+            <h6 class="mb-2">Arrastra y suelta imágenes aquí</h6>
+            <p class="text-muted mb-0">o haz clic en cualquier parte de esta área para seleccionar archivos</p>
+          </div>
+          <div *ngIf="uploadedImages.length > 0" class="d-flex flex-wrap gap-3 justify-content-center py-3">
+            <div *ngFor="let url of imagePreviewUrls; let i = index" class="position-relative">
+              <div class="image-preview-container"
+                style="width: 120px; height: 120px; overflow: hidden; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <img [src]="url" class="w-100 h-100" style="object-fit: cover;" />
+                <div class="position-absolute top-0 end-0 m-1">
+                  <button type="button" class="btn btn-icon btn-sm btn-danger rounded-circle"
+                    style="width: 24px; height: 24px; padding: 0; line-height: 24px;"
+                    (click)="removeImage(i); $event.stopPropagation();">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center">
+              <div class="add-more-container"
+                style="width: 120px; height: 120px; border: 2px dashed var(--bs-primary); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <i class="bi bi-plus-circle fs-2 text-primary mb-2"></i>
+                <span class="text-primary small">Agregar más</span>
               </div>
             </div>
           </div>
-          <div class="d-flex align-items-center justify-content-center">
-            <div class="add-more-container" style="width: 120px; height: 120px; border: 2px dashed var(--bs-primary); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-              <i class="bi bi-plus-circle fs-2 text-primary mb-2"></i>
-              <span class="text-primary small">Agregar más</span>
-            </div>
-          </div>
+        </div>
+        <input #fileInput type="file" accept="image/*" multiple class="d-none" (change)="onFileSelected($event)" />
+        <div class="form-text text-muted mt-2">
+          <i class="bi bi-info-circle me-1"></i> Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB por imagen.
         </div>
       </div>
-      <input
-        #fileInput
-        type="file"
-        accept="image/*"
-        multiple
-        class="d-none"
-        (change)="onFileSelected($event)"
-      />
-      <div class="form-text text-muted mt-2">
-        <i class="bi bi-info-circle me-1"></i> Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB por imagen.
-      </div>
-    </div>
+    </ng-container>
   </div>
 
-  <div class="modal-footer">
+  <div class="modal-footer" *appHasRole="['Admin']">
     <button type="button" class="btn btn-light" (click)="activeModal.dismiss()">Cancelar</button>
-    <button
-      type="submit"
-      class="btn btn-primary"
-      [disabled]="paymentForm.invalid || isLoading"
-    >
+    <button type="submit" class="btn btn-primary" [disabled]="paymentForm.invalid || isLoading">
       <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
       Registrar Pago
     </button>

@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 
 import { UserModel } from '../../../models/user.model';
 import { AuthModel } from '../../../models/auth.model';
 import { UsersTable } from '../../../../../_fake/users.table';
 import { environment } from '../../../../../../environments/environment';
 
-const API_USERS_URL = `${environment.apiUrlFake}/users`;
+const API_LOGIN_URL = `${environment.apiUrl}/api/v1/auth/login`;
+const API_ME_URL = `${environment.apiUrl}/api/v1/auth/me`;
 
 @Injectable({
   providedIn: 'root',
@@ -17,71 +18,81 @@ export class AuthHTTPService {
   constructor(private http: HttpClient) {}
 
   // public methods
-  login(email: string, password: string): Observable<any> {
+  login(username: string, password: string): Observable<any> {
+    console.log("AuthHTTPService: se obtendrá el login");
+
     const notFoundError = new Error('Not Found');
-    if (!email || !password) {
+    if (!username || !password) {
       return of(notFoundError);
     }
 
-    return this.getAllUsers().pipe(
-      map((result: UserModel[]) => {
-        if (result.length <= 0) {
+    return this.postLogin(username, password).pipe(
+      map((result: any) => {
+        if (!result || (Array.isArray(result) && result.length <= 0)) {
           return notFoundError;
         }
 
-        const user = result.find((u) => {
-          return (
-            u.email.toLowerCase() === email.toLowerCase() &&
-            u.password === password
-          );
-        });
-        if (!user) {
-          return notFoundError;
-        }
-
+        // Si es un objeto directo (respuesta de API real)
         const auth = new AuthModel();
-        auth.authToken = user.authToken;
-        auth.refreshToken = user.refreshToken;
+        auth.authToken = result.token;
+        auth.id = result.id;
+        auth.username = result.username;
+        auth.email = result.email || '';
+        auth.fullName = result.fullName;
+        auth.role = result.role;
+        auth.studentId = result.studentId;
         auth.expiresIn = new Date(Date.now() + 100 * 24 * 60 * 60 * 1000);
+
+        console.log(auth);
+
         return auth;
       })
     );
   }
 
-  createUser(user: UserModel): Observable<any> {
-    user.roles = [2]; // Manager
-    user.authToken = 'auth-token-' + Math.random();
-    user.refreshToken = 'auth-token-' + Math.random();
-    user.expiresIn = new Date(Date.now() + 100 * 24 * 60 * 60 * 1000);
-    user.pic = './assets/media/avatars/300-1.jpg';
+  getUserByToken(token: string): Observable<UserModel | undefined> {
+    console.log("AuthHTTPService: Verificando token con /auth/me");
 
-    return this.http.post<UserModel>(API_USERS_URL, user);
-  }
+    // Configurar los headers con el token de autorización
+    const httpHeaders = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
 
-  forgotPassword(email: string): Observable<boolean> {
-    return this.getAllUsers().pipe(
-      map((result: UserModel[]) => {
-        const user = result.find(
-          (u) => u.email.toLowerCase() === email.toLowerCase()
-        );
-        return user !== undefined;
+    // Consumir el servicio /auth/me
+    return this.http.get<any>(API_ME_URL, { headers: httpHeaders }).pipe(
+      map(response => {
+        console.log("AuthHTTPService: Respuesta de /auth/me", response);
+
+        // Crear y configurar el modelo de usuario con la respuesta
+        const user = new UserModel();
+        user.id = response.id;
+        user.username = response.username || '';
+        user.email = response.email || '';
+        user.fullname = response.fullName || '';
+        user.authToken = token;
+
+        console.log()
+
+        // Configurar el rol según la respuesta
+        if (response.role == 'Administrator') {
+          user.roles = [0]; // Administrador
+        } else if (response.role == 'Representative') {
+          user.roles = [1]; // Representante
+        } else {
+          user.roles = [2]; // Otro rol
+        }
+
+        return user;
+      }),
+      catchError(error => {
+        console.error("AuthHTTPService: Error al verificar token", error);
+        return of(undefined);
       })
     );
   }
 
-  getUserByToken(token: string): Observable<UserModel | undefined> {
-    const user = UsersTable.users.find((u: UserModel) => {
-      return u.authToken === token;
-    });
-
-    if (!user) {
-      return of(undefined);
-    }
-
-    return of(user);
-  }
-
-  getAllUsers(): Observable<UserModel[]> {
-    return this.http.get<UserModel[]>(API_USERS_URL);
+  postLogin(username: string, password: string): Observable<any> {
+    return this.http.post<any>(API_LOGIN_URL, { username, password });
   }
 }

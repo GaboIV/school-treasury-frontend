@@ -6,7 +6,7 @@
         {{ collections.length }} cobros registrados
       </span>
     </h3>
-    <button class="btn btn-sm fw-bold btn-primary" (click)="openCreateModal()">Crear nuevo</button>
+    <button *ngIf="isAdmin" class="btn btn-sm fw-bold btn-primary" (click)="openCreateModal()">Crear nuevo</button>
   </div>
 
   <div class="card-body py-3">
@@ -31,7 +31,7 @@
             <th class="min-w-120px">Fecha</th>
             <th class="min-w-100px">Estado</th>
             <th class="min-w-150px">Avance de Pago</th>
-            <th class="min-w-100px text-end">Acciones</th>
+            <th class="min-w-100px text-end" *ngIf="isAdmin">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -97,17 +97,17 @@
                 {{ collection.advance.completed }}/{{ collection.advance.total }}
               </div>
             </td>
-            <td class="text-end">
-              <a href="javascript:;" class="btn btn-icon btn-bg-light btn-sm me-1" (click)="openAdjustAmountModal(collection)">
+            <td class="text-end" >
+              <a *ngIf="isAdmin" href="javascript:;" class="btn btn-icon btn-bg-light btn-sm me-1" (click)="openAdjustAmountModal(collection)">
                 <app-keenicon name="setting-2" class="fs-3"></app-keenicon>
               </a>
               <a href="javascript:;" class="btn btn-icon btn-bg-light btn-sm me-1" (click)="openPaymentListModal(collection)">
                 <app-keenicon name="dollar" class="fs-3"></app-keenicon>
               </a>
-              <a href="javascript:;" class="btn btn-icon btn-bg-light btn-sm me-1" (click)="openUpdateModal(collection)">
+              <a *ngIf="isAdmin" href="javascript:;" class="btn btn-icon btn-bg-light btn-sm me-1" (click)="openUpdateModal(collection)">
                 <app-keenicon name="pencil" class="fs-3"></app-keenicon>
               </a>
-              <a href="javascript:;" class="btn btn-icon btn-bg-light btn-sm" (click)="openDeleteModal(collection)">
+              <a *ngIf="isAdmin" href="javascript:;" class="btn btn-icon btn-bg-light btn-sm" (click)="openDeleteModal(collection)">
                 <app-keenicon name="trash" class="fs-3"></app-keenicon>
               </a>
             </td>
@@ -229,16 +229,16 @@
 
             <!-- Botones de acción -->
             <div class="d-flex justify-content-end gap-2">
-              <button class="btn btn-primary btn-sm" (click)="openAdjustAmountModal(collection)">
+              <button *appHasRole="['Admin']" class="btn btn-primary btn-sm" (click)="openAdjustAmountModal(collection)">
                 <i class="bi bi-gear me-1"></i> Ajustar
               </button>
               <button class="btn btn-primary btn-sm" (click)="openPaymentListModal(collection)">
                 <i class="bi bi-cash-coin me-1"></i> Pagos
               </button>
-              <button class="btn btn-light btn-sm" (click)="openUpdateModal(collection)">
+              <button *appHasRole="['Admin']" class="btn btn-light btn-sm" (click)="openUpdateModal(collection)">
                 <i class="bi bi-pencil me-1"></i> Editar
               </button>
-              <button class="btn btn-light btn-sm" (click)="openDeleteModal(collection)">
+              <button *appHasRole="['Admin']" class="btn btn-light btn-sm" (click)="openDeleteModal(collection)">
                 <i class="bi bi-trash me-1"></i> Eliminar
               </button>
             </div>

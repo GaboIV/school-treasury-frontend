@@ -24,7 +24,6 @@ import { TranslationModule } from '../i18n/translation.module';
     AuthRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
   ],
 })
 export class AuthModule {}
