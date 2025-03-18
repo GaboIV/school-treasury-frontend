@@ -3,14 +3,14 @@
   (ngSubmit)="submit()">
 
   <!-- begin::Alert info-->
-  <ng-container *ngIf="!hasError">
+  <!-- <ng-container *ngIf="!hasError">
     <div class="mb-10 bg-light-info p-8 rounded">
       <div class="text-info">
         Use account <strong>{{ defaultAuth.username }}</strong> and password
         <strong>{{ defaultAuth.password }}</strong> to continue.
       </div>
     </div>
-  </ng-container>
+  </ng-container> -->
   <!-- end::Alert info-->
 
 
@@ -84,9 +84,9 @@
     <div></div>
 
     <!--begin::Link-->
-    <a routerLink="/auth/forgot-password" class="link-primary">
+    <!-- <a routerLink="/auth/forgot-password" class="link-primary">
       ¿Olvidaste tu contraseña?
-    </a>
+    </a> -->
     <!--end::Link-->
   </div>
   <!--end::Wrapper-->
@@ -106,13 +106,13 @@
     </button>
   </div>
 
-  <div class="text-gray-500 text-center fw-semibold fs-6">
+  <!-- <div class="text-gray-500 text-center fw-semibold fs-6">
     ¿No eres miembro aún?
 
     <a routerLink="/auth/registration" class="link-primary">
       Regístrate
     </a>
-  </div>
+  </div> -->
 
   <!--end::Action-->
 </form>

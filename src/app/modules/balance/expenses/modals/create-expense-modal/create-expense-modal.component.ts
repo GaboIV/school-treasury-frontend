@@ -81,12 +81,14 @@ export class CreateExpenseModalComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     const formData = new FormData();
 
-    // Agregar los datos del formulario
-    Object.keys(this.expenseForm.value).forEach(key => {
-      formData.append(key, this.expenseForm.value[key]);
-    });
+    const formValues = this.expenseForm.value;
+    formData.append('name', formValues.name);
+    formData.append('amount', formValues.amount.toString()); // Convertir a string
+    formData.append('date', new Date(formValues.date).toISOString()); // Convertir fecha a ISO
+    formData.append('description', formValues.description ?? ''); // Evitar valores nulos
+    formData.append('status', formValues.status ? 'true' : 'false'); // Convertir booleano a string
 
-    // Agregar las imágenes
+    // Agregar imágenes
     this.uploadedImages.forEach((file) => {
       formData.append('images', file);
     });

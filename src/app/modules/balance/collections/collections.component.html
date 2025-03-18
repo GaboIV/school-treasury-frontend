@@ -229,16 +229,16 @@
 
             <!-- Botones de acción -->
             <div class="d-flex justify-content-end gap-2">
-              <button class="btn btn-primary btn-sm" (click)="openAdjustAmountModal(collection)">
+              <button *appHasRole="['Admin']" class="btn btn-primary btn-sm" (click)="openAdjustAmountModal(collection)">
                 <i class="bi bi-gear me-1"></i> Ajustar
               </button>
               <button class="btn btn-primary btn-sm" (click)="openPaymentListModal(collection)">
                 <i class="bi bi-cash-coin me-1"></i> Pagos
               </button>
-              <button class="btn btn-light btn-sm" (click)="openUpdateModal(collection)">
+              <button *appHasRole="['Admin']" class="btn btn-light btn-sm" (click)="openUpdateModal(collection)">
                 <i class="bi bi-pencil me-1"></i> Editar
               </button>
-              <button class="btn btn-light btn-sm" (click)="openDeleteModal(collection)">
+              <button *appHasRole="['Admin']" class="btn btn-light btn-sm" (click)="openDeleteModal(collection)">
                 <i class="bi bi-trash me-1"></i> Eliminar
               </button>
             </div>

@@ -141,6 +141,9 @@ export const locale = {
           ADD_MESSAGE: 'Customer has been created'
         }
       }
+    },
+    PROFILE: {
+      LANGUAGE: 'Idioma'
     }
   }
 };

@@ -141,6 +141,9 @@ export const locale = {
     VALIDATION: {
       REQUIRED: 'This field is required',
       MIN_LENGTH: 'Minimum length is {{min}} characters'
+    },
+    PROFILE: {
+      LANGUAGE: 'Language'
     }
   }
 };
