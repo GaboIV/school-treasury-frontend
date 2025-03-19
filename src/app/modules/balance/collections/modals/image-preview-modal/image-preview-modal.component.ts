@@ -31,8 +31,20 @@ import { LocationStrategy } from '@angular/common';
       animation: fadeIn 0.3s ease-in-out;
       transition: all 0.3s ease;
       max-width: 100%;
-      max-height: 100%;
+      max-height: calc(100vh - 150px);
       object-fit: contain;
+      margin: 0 auto;
+      display: block;
+      width: auto;
+      height: auto;
+    }
+
+    .image-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 150px);
+      overflow: hidden;
     }
 
     button {
@@ -97,6 +109,16 @@ import { LocationStrategy } from '@angular/common';
       height: 100vh;
       display: flex;
       flex-direction: column;
+    }
+
+    @media (max-width: 1366px) {
+      .main-image {
+        max-height: calc(100vh - 180px);
+      }
+
+      .image-container {
+        height: calc(100vh - 180px);
+      }
     }
   `]
 })

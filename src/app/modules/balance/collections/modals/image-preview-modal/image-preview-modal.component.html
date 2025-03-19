@@ -23,7 +23,7 @@
     <!-- Contenedor principal que ocupa todo el espacio disponible -->
     <div class="d-flex flex-column justify-content-center align-items-center" style="height: 100vh; padding-bottom: 100px; padding-top: 60px;">
       <!-- Contenedor de la imagen principal -->
-      <div class="d-flex justify-content-center align-items-center position-relative" style="width: 100%; height: 100%;">
+      <div class="image-container position-relative" style="width: 100%;">
         <!-- Botón anterior -->
         <button
           *ngIf="images.length > 1 && currentIndex > 0"
@@ -36,10 +36,10 @@
         </button>
 
         <!-- Imagen principal -->
-        <div class="text-center" style="max-height: 100%; max-width: 100%;">
+        <div class="text-center">
           <img
             [src]="images[currentIndex]"
-            class="img-fluid main-image"
+            class="main-image"
             style="border-radius: 8px; box-shadow: 0 0 30px rgba(0,0,0,0.5);"
             alt="Imagen de comprobante"
           >

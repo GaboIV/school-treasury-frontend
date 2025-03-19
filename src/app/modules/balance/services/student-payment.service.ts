@@ -31,4 +31,11 @@ export class StudentPaymentService {
       formData
     );
   }
+
+  updatePayment(formData: FormData, id: string): Observable<StudentPaymentResponse> {
+    return this.http.put<StudentPaymentResponse>(
+      `${this.apiUrl}/update-payment-with-images/${id}`,
+      formData
+    );
+  }
 }
