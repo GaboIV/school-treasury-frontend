@@ -70,8 +70,8 @@
         </div>
       </div>
 
-
-      <div class="mb-3">
+      <!-- Campo de monto a pagar solo se muestra si hay monto pendiente -->
+      <div class="mb-3" *ngIf="getPendingAmount() > 0">
         <label class="form-label required">Monto a Pagar</label>
         <input type="number" class="form-control" formControlName="amountPaid" [ngClass]="{
           'is-invalid': isControlInvalid('amountPaid'),
@@ -80,11 +80,28 @@
         <div class="invalid-feedback" *ngIf="controlHasError('required', 'amountPaid')">
           El monto es requerido
         </div>
-        <div class="invalid-feedback" *ngIf="controlHasError('min', 'amountPaid')">
-          El monto debe ser mayor a 0
-        </div>
         <div class="invalid-feedback" *ngIf="controlHasError('max', 'amountPaid')">
           El monto no puede ser mayor al pendiente ({{ getPendingAmount() | currency: 'S/ ' }})
+        </div>
+      </div>
+
+      <!-- Campo de fecha de pago - siempre visible -->
+      <div class="mb-3">
+        <label class="form-label required">Fecha de Pago</label>
+        <div class="input-group">
+          <input
+            type="date"
+            class="form-control"
+            formControlName="paymentDate"
+            [ngClass]="{
+              'is-invalid': isControlInvalid('paymentDate'),
+              'is-valid': isControlValid('paymentDate')
+            }"
+          />
+          <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+        </div>
+        <div class="invalid-feedback" *ngIf="controlHasError('required', 'paymentDate')">
+          La fecha de pago es requerida
         </div>
       </div>
 
@@ -93,7 +110,6 @@
         <textarea class="form-control" formControlName="comment" rows="3"></textarea>
       </div>
 
-
       <!-- Sección de carga de imágenes -->
       <div class="mb-3">
         <label class="form-label">Imágenes de comprobante</label>
@@ -101,14 +117,14 @@
           [ngClass]="{ 'bg-light-primary border-primary': isDragging }" (dragover)="onDragOver($event)"
           (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" (click)="fileInput.click()"
           style="cursor: pointer; transition: all 0.2s ease;">
-          <div *ngIf="uploadedImages.length === 0" class="py-4">
+          <div *ngIf="uploadedImages.length === 0 && imagePreviewUrls.length === 0" class="py-4">
             <div class="mb-3">
               <i class="bi bi-cloud-upload fs-1 text-primary"></i>
             </div>
             <h6 class="mb-2">Arrastra y suelta imágenes aquí</h6>
             <p class="text-muted mb-0">o haz clic en cualquier parte de esta área para seleccionar archivos</p>
           </div>
-          <div *ngIf="uploadedImages.length > 0" class="d-flex flex-wrap gap-3 justify-content-center py-3">
+          <div *ngIf="imagePreviewUrls.length > 0" class="d-flex flex-wrap gap-3 justify-content-center py-3">
             <div *ngFor="let url of imagePreviewUrls; let i = index" class="position-relative">
               <div class="image-preview-container"
                 style="width: 120px; height: 120px; overflow: hidden; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
@@ -141,9 +157,11 @@
 
   <div class="modal-footer" *appHasRole="['Admin']">
     <button type="button" class="btn btn-light" (click)="activeModal.dismiss()">Cancelar</button>
-    <button type="submit" class="btn btn-primary" [disabled]="paymentForm.invalid || isLoading">
+    <button type="submit" class="btn btn-primary"
+      [disabled]="(!formChanged && getPendingAmount() <= 0)">
       <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-      Registrar Pago
+      {{ getPendingAmount() > 0 ? 'Registrar Pago' : 'Actualizar Datos' }}
     </button>
+    <!-- <span class="ms-2 small text-muted">{{ formChanged ? 'Cambios detectados' : 'Sin cambios' }}</span> -->
   </div>
 </form>
