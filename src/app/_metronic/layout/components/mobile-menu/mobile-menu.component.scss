@@ -1,0 +1,55 @@
+.mobile-menu-container {
+  background-color: #ffffff;
+  border-top: 1px solid #e4e6ef;
+  box-shadow: 0px -1px 10px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+
+.mobile-menu {
+  .menu-item {
+    color: #a1a5b7;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    &.active {
+      color: #009ef7;
+
+      .menu-icon {
+        i, span, app-keenicon {
+          color: #009ef7;
+        }
+      }
+    }
+
+    .menu-icon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0.3rem;
+
+      i, span, app-keenicon {
+        color: #a1a5b7;
+      }
+    }
+
+    .menu-title {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+// Modificación para crear la barra inferior indicadora de menú activo
+.menu-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 4px;
+  background-color: #009ef7;
+  border-radius: 4px 4px 0 0;
+}

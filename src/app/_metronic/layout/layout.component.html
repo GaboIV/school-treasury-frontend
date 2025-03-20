@@ -14,7 +14,7 @@
 
       <ng-container *ngIf="appSidebarDisplay">
         <!--begin::sidebar-->
-        <app-sidebar #ktSidebar id="kt_app_sidebar" class="app-sidebar flex-column" [ngClass]="appSidebarDefaultClass">
+        <app-sidebar #ktSidebar id="kt_app_sidebar" class="app-sidebar flex-column d-none d-lg-flex" [ngClass]="appSidebarDefaultClass">
         </app-sidebar>
         <!--end::sidebar-->
       </ng-container>
@@ -49,6 +49,9 @@
   <!--end::Page-->
 </div>
 <!--end::App-->
+
+<!-- Menú móvil -->
+<app-mobile-menu></app-mobile-menu>
 
 <app-scripts-init></app-scripts-init>
 <ng-container>

@@ -1,0 +1,46 @@
+<!-- Menú móvil inferior para dispositivos móviles -->
+<div class="mobile-menu-container fixed-bottom d-lg-none">
+  <div class="mobile-menu">
+    <div class="row g-0">
+      <!-- Elemento de menú: Inicio -->
+      <div class="col text-center position-relative">
+        <a class="menu-item py-3 px-1" routerLink="/dashboard" routerLinkActive="active">
+          <div class="menu-icon">
+            <i class="bi bi-house fs-2"></i>
+          </div>
+          <div class="menu-title small" translate="MENU.DASHBOARD"></div>
+        </a>
+      </div>
+
+      <!-- Elemento de menú: Cobros -->
+      <div class="col text-center position-relative">
+        <a class="menu-item py-3 px-1" routerLink="balance/caja-chica" routerLinkActive="active">
+          <div class="menu-icon">
+            <i class="bi bi-graph-up-arrow fs-2"></i>
+          </div>
+          <div class="menu-title small" translate="BALANCE.PETTY_CASH"></div>
+        </a>
+      </div>
+
+       <!-- Elemento de menú: Caja Chica -->
+       <div class="col text-center position-relative">
+        <a class="menu-item py-3 px-1" routerLink="balance/cobros" routerLinkActive="active">
+          <div class="menu-icon">
+            <i class="bi bi-graph-up-arrow fs-2"></i>
+          </div>
+          <div class="menu-title small" translate="BALANCE."></div>
+        </a>
+      </div>
+
+      <!-- Elemento de menú: Gastos -->
+      <div class="col text-center position-relative">
+        <a class="menu-item py-3 px-1" routerLink="balance/gastos" routerLinkActive="active">
+          <div class="menu-icon">
+            <i class="bi bi-cash-coin fs-2"></i>
+          </div>
+          <div class="menu-title small" translate="BALANCE.EXPENSES"></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
