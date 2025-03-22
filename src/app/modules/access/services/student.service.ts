@@ -8,7 +8,7 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root'
 })
 export class StudentService {
-  private apiUrl = 'http://192.168.18.137:5200/api/v1/Students';
+  private apiUrl = `${environment.apiUrl}/api/v1/Students`
 
   constructor(private http: HttpClient) { }
 

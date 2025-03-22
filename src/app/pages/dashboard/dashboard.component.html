@@ -2,26 +2,29 @@
 <div class="row g-5 g-xl-10 mb-5" *ngIf="!isLoading && !error && dashboardData">
   <!--begin::Col-->
   <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-3">
-    <app-cards-widget20 cssClass="mb-5 mb-xl-10" color="#F1416C"
+    <app-cards-widget20 cssClass="mb-5 mb-xl-10 hover-elevate-up cursor-pointer" color="#F1416C"
       img="./assets/media/patterns/vector-1.png"
       [description]="'Pagos pendientes'"
       [pendingPayments]="dashboardData.pendingPayments.totalPendingPayments"
       [totalPayments]="dashboardData.pendingPayments.totalPayments"
-      [completionPercentage]="dashboardData.pendingPayments.completionPercentage"></app-cards-widget20>
+      [completionPercentage]="dashboardData.pendingPayments.completionPercentage"
+      (click)="navigateToCollections()"></app-cards-widget20>
   </div>
   <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-md-5">
-    <app-cards-widget7 cssClass="mb-5 mb-xl-10" [icon]="false"
+    <app-cards-widget7 cssClass="mb-5 mb-xl-10 hover-elevate-up cursor-pointer" [icon]="false"
       description="Estudiantes"
       [stats]="dashboardData.studentsInfo.totalStudents"
       [studentInitials]="dashboardData.studentsInfo.studentInitials"
-      labelColor="dark" textColor="gray-300"></app-cards-widget7>
+      labelColor="dark" textColor="gray-300"
+      (click)="navigateToStudents()"></app-cards-widget7>
   </div>
   <!--end::Col-->
 
   <!--begin::Col-->
   <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-md-5">
-    <app-cards-widget17 cssClass="mb-5 mb-xl-10"
-      [pettyCashSummary]="dashboardData.pettyCashSummary"></app-cards-widget17>
+    <app-cards-widget17 cssClass="mb-5 mb-xl-10 hover-elevate-up cursor-pointer"
+      [pettyCashSummary]="dashboardData.pettyCashSummary"
+      (click)="navigateToPettyCash()"></app-cards-widget17>
   </div>
   <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-md-5">
     <app-lists-widget26 class="b-5 mb-xl-10"
