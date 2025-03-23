@@ -11,6 +11,9 @@
 @import "./assets/plugins/keenicons/outline/style.css";
 @import "./assets/plugins/keenicons/solid/style.css";
 
+// Importar estilos personalizados para componentes
+@import "./app/styles/custom-components.scss";
+
 // Estilos globales para el modal de vista previa de imágenes
 .image-preview-modal-container .modal-dialog {
   margin: 0;
