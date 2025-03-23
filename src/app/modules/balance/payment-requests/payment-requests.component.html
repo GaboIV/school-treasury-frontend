@@ -3,45 +3,40 @@
     <h3 class="card-title align-items-start flex-column">
       <span class="card-label fw-bold fs-3 mb-1" translate="BALANCE.PAYMENT_REQUESTS.TITLE"></span>
     </h3>
-    <div class="card-toolbar">
-      <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_create_payment_request">
-        <i class="fa-solid fa-plus"></i> {{ 'BALANCE.PAYMENT_REQUESTS.CREATE' | translate }}
-      </button>
-    </div>
   </div>
   <div class="card-body py-3">
-    <!-- Estado y filtros -->
+    <!-- Estado y filtros mejorados visualmente -->
     <div class="mb-5">
       <div class="row mb-6">
-        <div class="col-lg-3">
-          <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x mb-5 fs-6">
-            <li class="nav-item">
-              <a class="nav-link active" data-bs-toggle="tab" href="#kt_tab_pane_all">
+        <div class="col-lg-12">
+          <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x fs-6 fw-bold border-0">
+            <li class="nav-item me-2">
+              <a class="nav-link text-active-primary pb-4 cursor-pointer" [class.active]="activeTab === 'all'" (click)="$event.preventDefault(); activeTab = 'all'; refreshData()">
                 {{ 'GENERAL.ALL' | translate }}
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_pending">
+            <li class="nav-item me-2">
+              <a class="nav-link text-active-primary pb-4 cursor-pointer" [class.active]="activeTab === 'pending'" (click)="$event.preventDefault(); activeTab = 'pending'; refreshData()">
                 {{ 'BALANCE.PAYMENT_REQUESTS.PENDING' | translate }}
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_under_review">
+            <li class="nav-item me-2">
+              <a class="nav-link text-active-primary pb-4 cursor-pointer" [class.active]="activeTab === 'underReview'" (click)="$event.preventDefault(); activeTab = 'underReview'; refreshData()">
                 {{ 'BALANCE.PAYMENT_REQUESTS.UNDER_REVIEW' | translate }}
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_approved">
+            <li class="nav-item me-2">
+              <a class="nav-link text-active-primary pb-4 cursor-pointer" [class.active]="activeTab === 'approved'" (click)="$event.preventDefault(); activeTab = 'approved'; refreshData()">
                 {{ 'BALANCE.PAYMENT_REQUESTS.APPROVED' | translate }}
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_rejected">
+            <li class="nav-item me-2">
+              <a class="nav-link text-active-primary pb-4 cursor-pointer" [class.active]="activeTab === 'rejected'" (click)="$event.preventDefault(); activeTab = 'rejected'; refreshData()">
                 {{ 'BALANCE.PAYMENT_REQUESTS.REJECTED' | translate }}
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_needs_changes">
+              <a class="nav-link text-active-primary pb-4 cursor-pointer" [class.active]="activeTab === 'needsChanges'" (click)="$event.preventDefault(); activeTab = 'needsChanges'; refreshData()">
                 {{ 'BALANCE.PAYMENT_REQUESTS.NEEDS_CHANGES' | translate }}
               </a>
             </li>
@@ -50,96 +45,208 @@
       </div>
     </div>
 
-    <!-- Tabla de solicitudes -->
+    <!-- Tabla de solicitudes - tabla mejorada con más información -->
     <div class="tab-content">
-      <div class="tab-pane fade show active" id="kt_tab_pane_all">
+      <div class="tab-pane fade" [ngClass]="{'show active': activeTab === 'all'}" id="kt_tab_pane_all">
         <div class="table-responsive">
           <table class="table align-middle gs-0 gy-4">
             <thead>
               <tr class="fw-bold text-muted bg-light">
-                <th class="ps-4 min-w-200px rounded-start">{{ 'BALANCE.PAYMENT_REQUESTS.STUDENT' | translate }}</th>
-                <th class="min-w-125px">{{ 'BALANCE.PAYMENT_REQUESTS.AMOUNT' | translate }}</th>
-                <th class="min-w-125px">{{ 'BALANCE.PAYMENT_REQUESTS.DATE' | translate }}</th>
-                <th class="min-w-125px">{{ 'BALANCE.PAYMENT_REQUESTS.STATUS' | translate }}</th>
-                <th class="min-w-200px text-end rounded-end pe-4">{{ 'BALANCE.PAYMENT_REQUESTS.ACTIONS' | translate }}</th>
+                <th class="ps-4 min-w-150px rounded-start">{{ 'BALANCE.PAYMENT_REQUESTS.STUDENT' | translate }}</th>
+                <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.AMOUNT' | translate }}</th>
+                <!-- <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.PERCENTAGE' | translate }}</th> -->
+                <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.CONCEPT' | translate }}</th>
+                <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.DATE' | translate }}</th>
+                <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.STATUS' | translate }}</th>
+                <th class="min-w-120px">{{ 'BALANCE.PAYMENT_REQUESTS.IMAGES' | translate }}</th>
+                <th class="min-w-100px text-end rounded-end pe-4">{{ 'BALANCE.PAYMENT_REQUESTS.ACTIONS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
               <!-- Mensaje cuando no hay datos -->
-              <tr *ngIf="true">
-                <td colspan="5" class="text-center py-5">
+              <tr *ngIf="paymentRequests.length === 0">
+                <td colspan="8" class="text-center py-5">
                   <span class="text-muted">No hay solicitudes disponibles</span>
                 </td>
               </tr>
 
               <!-- Aquí se renderizarán las solicitudes de pago cuando haya datos -->
-              <!-- <tr *ngFor="let request of paymentRequests">
-                <td>
+              <tr *ngFor="let request of paymentRequests">
+                <td style="padding-left: 1rem;">
                   <div class="d-flex align-items-center">
-                    <div class="symbol symbol-50px me-5">
-                      <img src="assets/media/avatars/300-1.jpg" alt="" />
-                    </div>
                     <div class="d-flex justify-content-start flex-column">
-                      <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">{{ request.studentName }}</a>
+                      <span class="text-dark fw-bold text-hover-primary mb-1 fs-6">{{ request.studentName }}</span>
                     </div>
                   </div>
                 </td>
                 <td>
-                  <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.amountPaid | currency }}</span>
+                  <span class="text-dark fw-bold d-block mb-1 fs-6">S/ {{ request.amountPaid | number:'1.2-2' }}</span>
+                  <span class="text-muted fw-bold text-muted d-block fs-7">de S/ {{ request.pendingAmount | number:'1.2-2' }} pendiente</span>
+                </td>
+                <!-- <td>
+                  <div class="d-flex align-items-center">
+                    <div class="progress h-6px w-100 bg-light-primary">
+                      <div class="progress-bar bg-primary" role="progressbar" [style.width]="(request.coveragePercentage || 0) + '%'" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <span class="text-muted fs-7 fw-bold ps-3">{{ request.coveragePercentage || 0 }}%</span>
+                  </div>
+                </td> -->
+                <td>
+                  <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.collection.name || 'Pago regular' }}</span>
+                  <span class="text-muted fw-semibold d-block fs-7" *ngIf="request.periodDescription">{{ request.periodDescription }}</span>
                 </td>
                 <td>
                   <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.paymentDate | date:'shortDate' }}</span>
                 </td>
                 <td>
-                  <span class="badge"
-                        [ngClass]="{
-                          'badge-light-warning': request.status === 'Pending',
-                          'badge-light-primary': request.status === 'UnderReview',
-                          'badge-light-success': request.status === 'Approved',
-                          'badge-light-danger': request.status === 'Rejected',
-                          'badge-light-info': request.status === 'NeedsChanges'
-                        }">
-                    {{ 'BALANCE.PAYMENT_REQUESTS.' + request.status.toUpperCase() | translate }}
+                  <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+                    {{ getStatusText(request.status) }}
                   </span>
                 </td>
+                <td>
+                  <div *ngIf="request.images && request.images.length > 0" class="card-images">
+                    <div
+                      *ngFor="let image of request.images.slice(0, 3); let i = index"
+                      class="card-image-container cursor-pointer"
+                      (click)="openImageViewer(request.images, i)"
+                    >
+                      <img [src]="image" class="card-image" [alt]="'Imagen ' + (i + 1)">
+                    </div>
+                    <div
+                      *ngIf="request.images.length > 3"
+                      class="more-images cursor-pointer"
+                      (click)="openImageViewer(request.images, 3)"
+                    >
+                      +{{ request.images.length - 3 }}
+                    </div>
+                  </div>
+                  <span class="text-muted fs-7" *ngIf="!request.images || request.images.length === 0">Sin imágenes</span>
+                </td>
                 <td class="text-end">
-                  <button type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" (click)="onView(request)">
+                  <button type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" (click)="onView(request)" title="Ver detalles">
                     <i class="fa-solid fa-eye"></i>
                   </button>
-                  <button *ngIf="request.status === 'Pending' || request.status === 'NeedsChanges'" type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" (click)="onEdit(request)">
+                  <button *ngIf="request.status === 0 || request.status === 1" type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" (click)="onEdit(request)" title="Editar solicitud">
                     <i class="fa-solid fa-pen"></i>
                   </button>
-                  <button *ngIf="request.status === 'Pending'" type="button" class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm" (click)="onDelete(request)">
+                  <button *ngIf="request.status === 0" type="button" class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm" (click)="onDelete(request)" title="Eliminar solicitud">
                     <i class="fa-solid fa-trash"></i>
                   </button>
                 </td>
-              </tr> -->
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Las pestañas restantes replicarán la estructura de la tabla con sus respectivos filtros -->
-      <div class="tab-pane fade" id="kt_tab_pane_pending">
-        <!-- Contenido similar filtrado por pendientes -->
+      <!-- Las pestañas restantes con estructura idéntica pero datos filtrados -->
+      <div class="tab-pane fade" [ngClass]="{'show active': activeTab === 'pending'}" id="kt_tab_pane_pending">
+        <div class="table-responsive">
+          <table class="table align-middle gs-0 gy-4">
+            <thead>
+              <tr class="fw-bold text-muted bg-light">
+                <th class="ps-4 min-w-150px rounded-start">{{ 'BALANCE.PAYMENT_REQUESTS.STUDENT' | translate }}</th>
+                <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.AMOUNT' | translate }}</th>
+                <!-- <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.PERCENTAGE' | translate }}</th> -->
+                <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.CONCEPT' | translate }}</th>
+                <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.DATE' | translate }}</th>
+                <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.STATUS' | translate }}</th>
+                <th class="min-w-120px">{{ 'BALANCE.PAYMENT_REQUESTS.IMAGES' | translate }}</th>
+                <th class="min-w-100px text-end rounded-end pe-4">{{ 'BALANCE.PAYMENT_REQUESTS.ACTIONS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="pendingRequests.length === 0">
+                <td colspan="8" class="text-center py-5">
+                  <span class="text-muted">No hay solicitudes pendientes</span>
+                </td>
+              </tr>
+              <tr *ngFor="let request of pendingRequests">
+                <!-- Misma estructura que en la pestaña "Todos" -->
+                <td style="padding-left: 1rem;">
+                  <div class="d-flex align-items-center">
+                    <div class="d-flex justify-content-start flex-column">
+                      <span class="text-dark fw-bold text-hover-primary mb-1 fs-6">{{ request.studentName }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="text-dark fw-bold d-block mb-1 fs-6">S/ {{ request.amountPaid | number:'1.2-2' }}</span>
+                </td>
+                <!-- <td>
+                  <div class="d-flex align-items-center">
+                    <div class="progress h-6px w-100 bg-light-primary">
+                      <div class="progress-bar bg-primary" role="progressbar" [style.width]="(request.coveragePercentage || 0) + '%'" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <span class="text-muted fs-7 fw-bold ps-3">{{ request.coveragePercentage || 0 }}%</span>
+                  </div>
+                </td> -->
+                <td>
+                  <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.collection.name || 'Pago regular' }}</span>
+                  <span class="text-muted fw-semibold d-block fs-7" *ngIf="request.periodDescription">{{ request.periodDescription }}</span>
+                </td>
+                <td>
+                  <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.paymentDate | date:'shortDate' }}</span>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+                    {{ getStatusText(request.status) }}
+                  </span>
+                </td>
+                <td>
+                  <div *ngIf="request.images && request.images.length > 0" class="card-images">
+                    <div
+                      *ngFor="let image of request.images.slice(0, 3); let i = index"
+                      class="card-image-container cursor-pointer"
+                      (click)="openImageViewer(request.images, i)"
+                    >
+                      <img [src]="image" class="card-image" [alt]="'Imagen ' + (i + 1)">
+                    </div>
+                    <div
+                      *ngIf="request.images.length > 3"
+                      class="more-images cursor-pointer"
+                      (click)="openImageViewer(request.images, 3)"
+                    >
+                      +{{ request.images.length - 3 }}
+                    </div>
+                  </div>
+                  <span class="text-muted fs-7" *ngIf="!request.images || request.images.length === 0">Sin imágenes</span>
+                </td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" (click)="onView(request)" title="Ver detalles">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                  <button type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" (click)="onEdit(request)" title="Editar solicitud">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                  <button type="button" class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm" (click)="onDelete(request)" title="Eliminar solicitud">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="tab-pane fade" id="kt_tab_pane_under_review">
+
+      <!-- Se repite la misma estructura para las demás pestañas -->
+      <div class="tab-pane fade" [ngClass]="{'show active': activeTab === 'underReview'}" id="kt_tab_pane_under_review">
         <!-- Contenido similar filtrado por en revisión -->
       </div>
-      <div class="tab-pane fade" id="kt_tab_pane_approved">
+      <div class="tab-pane fade" [ngClass]="{'show active': activeTab === 'approved'}" id="kt_tab_pane_approved">
         <!-- Contenido similar filtrado por aprobados -->
       </div>
-      <div class="tab-pane fade" id="kt_tab_pane_rejected">
+      <div class="tab-pane fade" [ngClass]="{'show active': activeTab === 'rejected'}" id="kt_tab_pane_rejected">
         <!-- Contenido similar filtrado por rechazados -->
       </div>
-      <div class="tab-pane fade" id="kt_tab_pane_needs_changes">
+      <div class="tab-pane fade" [ngClass]="{'show active': activeTab === 'needsChanges'}" id="kt_tab_pane_needs_changes">
         <!-- Contenido similar filtrado por necesita cambios -->
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal para crear solicitud de pago -->
+<!-- Se mantiene el modal pero ya no es accesible a través del botón -->
 <div class="modal fade" id="kt_modal_create_payment_request" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered mw-650px">
     <div class="modal-content">
@@ -210,5 +317,3 @@
     </div>
   </div>
 </div>
-
-<!-- Modales adicionales para editar, ver detalles y confirmar eliminación -->

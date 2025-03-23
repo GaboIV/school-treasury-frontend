@@ -65,7 +65,22 @@ export const locale = {
         ADD_COMMENT: 'Agregar Comentario',
         ADMIN_COMMENTS: 'Comentarios del Administrador',
         UPLOAD_IMAGES: 'Subir Imágenes',
-        DELETE_CONFIRMATION: '¿Está seguro que desea eliminar esta solicitud?'
+        DELETE_CONFIRMATION: '¿Está seguro que desea eliminar esta solicitud?',
+        PERCENTAGE: 'Porcentaje',
+        COVERAGE: 'Cobertura',
+        PAYMENT_DATE: 'Fecha de Pago',
+        CONCEPT: 'Concepto',
+        ORIGINAL_AMOUNT: 'Monto Original',
+        ADJUSTED_AMOUNT: 'Monto Ajustado',
+        SURPLUS: 'Excedente (caja chica)',
+        AMOUNT_PAID: 'Monto Pagado',
+        PARTIAL: 'Parcial',
+        PAID: 'Pagado',
+        SURPLUS_STATUS: 'Excedente',
+        UNKNOWN: 'Desconocido',
+        NOTE: 'Nota',
+        INSTEAD_OF: 'en lugar de',
+
       }
     },
     COLLECTIONS: {
@@ -121,7 +136,13 @@ export const locale = {
       ALLOWED_FORMATS: 'Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB por imagen',
       ERROR_OCCURRED: 'Ha ocurrido un error. Por favor, inténtalo de nuevo.',
       SUCCESS: 'Éxito',
-      ERROR: 'Error'
+      ERROR: 'Error',
+      ALL: 'Todos',
+      SEARCH: 'Buscar',
+      EDIT: 'Editar',
+      VIEW: 'Ver',
+      CREATE: 'Crear',
+      UPDATE: 'Actualizar',
     },
     VALIDATION: {
       REQUIRED: 'Este campo es requerido',

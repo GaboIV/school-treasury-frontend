@@ -68,7 +68,7 @@
               </tr>
 
               <!-- Aquí se renderizarán las solicitudes de pago cuando haya datos -->
-              <!-- <tr *ngFor="let request of paymentRequests">
+              <tr *ngFor="let request of paymentRequests">
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="symbol symbol-50px me-5">
@@ -88,20 +88,20 @@
                 <td>
                   <span class="badge"
                         [ngClass]="{
-                          'badge-light-warning': request.status === 'Pending',
-                          'badge-light-primary': request.status === 'UnderReview',
-                          'badge-light-success': request.status === 'Approved',
-                          'badge-light-danger': request.status === 'Rejected',
-                          'badge-light-info': request.status === 'NeedsChanges'
+                          'badge-light-warning': request.status === 0,
+                          'badge-light-primary': request.status === 1,
+                          'badge-light-success': request.status === 2,
+                          'badge-light-danger': request.status === 3,
+                          'badge-light-info': request.status === 4
                         }">
-                    {{ 'BALANCE.PAYMENT_REQUESTS.' + request.status.toUpperCase() | translate }}
+                    {{ 'BALANCE.PAYMENT_REQUESTS.' + request.status | translate }}
                   </span>
                 </td>
                 <td class="text-end">
                   <button type="button" class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary me-1" (click)="onView(request)">
                     <i class="fa-solid fa-eye"></i>
                   </button>
-                  <div class="d-inline-block" *ngIf="request.status === 'Pending' || request.status === 'UnderReview'">
+                  <div class="d-inline-block" *ngIf="request.status === 0 || request.status === 1">
                     <button type="button" class="btn btn-sm btn-light-success me-1" (click)="onApprove(request)">
                       {{ 'BALANCE.PAYMENT_REQUESTS.APPROVE' | translate }}
                     </button>
@@ -116,7 +116,7 @@
                     </button>
                   </div>
                 </td>
-              </tr> -->
+              </tr>
             </tbody>
           </table>
         </div>

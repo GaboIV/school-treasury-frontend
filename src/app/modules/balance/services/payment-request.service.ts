@@ -4,11 +4,11 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 
 export enum PaymentRequestStatus {
-  Pending = 'Pending',
-  UnderReview = 'UnderReview',
-  Approved = 'Approved',
-  Rejected = 'Rejected',
-  NeedsChanges = 'NeedsChanges'
+  Pending = 0,
+  UnderReview = 1,
+  Approved = 2,
+  Rejected = 3,
+  NeedsChanges = 4
 }
 
 export interface PaymentRequestDto {
@@ -16,11 +16,16 @@ export interface PaymentRequestDto {
   studentId: string;
   studentName: string;
   amountPaid: number;
+  pendingAmount: number;
   paymentDate: Date;
   comment: string;
   status: PaymentRequestStatus;
   images: Array<{ id: string, url: string }>;
   adminComments: Array<{ id: string, adminId: string, adminName: string, text: string, date: Date }>;
+  coveragePercentage?: number;
+  concept?: string;
+  periodDescription?: string;
+  collection?: any;
 }
 
 export interface CreatePaymentRequestDto {
