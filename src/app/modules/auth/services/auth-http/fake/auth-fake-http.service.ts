@@ -70,9 +70,10 @@ export class AuthHTTPService {
         user.username = response.username || '';
         user.email = response.email || '';
         user.fullname = response.fullName || '';
+        user.studentId = response.studentId || '';
         user.authToken = token;
 
-        console.log()
+        console.log(user)
 
         // Configurar el rol según la respuesta
         if (response.role == 'Administrator') {
