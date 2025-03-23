@@ -8,55 +8,69 @@
   </div>
 </div> -->
 
-<div class="d-flex flex-column flex-lg-row flex-column-fluid">
-
-  <!--begin::Body-->
-  <div class="d-flex flex-column flex-lg-row-fluid w-lg-50 p-10 order-2 order-lg-1">
-    <!--begin::Form-->
-    <div class="d-flex flex-center flex-column flex-lg-row-fluid">
-      <!--begin::Wrapper-->
-      <div class="<?php echo $params['wrapperClass']?> p-10">
-        <router-outlet></router-outlet>
-      </div>
-      <!--end::Wrapper-->
-    </div>
-    <!--end::Form-->
-
-    <!--begin::Footer-->
-    <div class="d-flex flex-center flex-wrap px-5">
-      <!--begin::Links-->
-      <div class="d-flex fw-semibold text-primary fs-base">
-        <!-- <a href="#" class="px-5" target="_blank">Terms</a>
-
-        <a href="#" class="px-5" target="_blank">Plans</a>
-
-        <a href="#" class="px-5" target="_blank">Contact Us</a> -->
-      </div>
-      <!--end::Links-->
-    </div>
-    <!--end::Footer-->
+<div class="auth-wrapper">
+  <!-- Burbujas de fondo animadas -->
+  <div class="bubbles">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
   </div>
-  <!--end::Body-->
 
-  <!--begin::Aside-->
-  <div class="d-flex flex-lg-row-fluid w-lg-50 bgi-size-cover bgi-position-center order-1 order-lg-2"
-    [ngStyle]="{'background-image': 'url(./assets/media/misc/auth-bg.png)'}">
-    <!--begin::Content-->
-    <div class="d-flex flex-column flex-center py-15 px-5 px-md-15 w-100">
-      <!--begin::Logo-->
-      <a routerLink="/" class="">
-        <img alt="Logo" src="./assets/media/logos/letras-small.png" class="h-75px" />
-      </a>
+  <div class="d-flex flex-column flex-lg-row flex-column-fluid align-items-center justify-content-center h-100">
+    <!--begin::Body-->
+    <div class="d-flex flex-column flex-lg-row-fluid w-lg-50 p-10 order-2 order-lg-1">
+      <!--begin::Form-->
+      <div class="d-flex flex-center flex-column flex-lg-row-fluid">
+        <!--begin::Wrapper-->
+        <div class="auth-form-wrapper p-10">
+          <router-outlet></router-outlet>
+        </div>
+        <!--end::Wrapper-->
+      </div>
+      <!--end::Form-->
 
-      CREATIVOS A
-      <!--end::Logo-->
+      <!--begin::Footer-->
+      <div class="d-flex flex-center flex-wrap px-5">
+        <!--begin::Links-->
+        <div class="d-flex fw-semibold text-primary fs-base">
+          <!-- <a href="#" class="px-5" target="_blank">Terms</a>
 
-      <!--begin::Image-->
-      <img class="mx-auto w-275px w-md-50 w-xl-400px mb-10 mb-lg-20 d-none d-lg-block" src="./assets/media/misc/study.webp"
-        alt="" />
-      <!--end::Image-->
+          <a href="#" class="px-5" target="_blank">Plans</a>
+
+          <a href="#" class="px-5" target="_blank">Contact Us</a> -->
+        </div>
+        <!--end::Links-->
+      </div>
+      <!--end::Footer-->
     </div>
-    <!--end::Content-->
+    <!--end::Body-->
+
+    <!--begin::Aside-->
+    <div class="d-flex flex-lg-row-fluid w-lg-50 auth-image-container order-1 order-lg-2 d-none d-lg-flex">
+      <!--begin::Content-->
+      <div class="d-flex flex-column flex-center py-15 px-5 px-md-15 w-100">
+        <!--begin::Logo-->
+        <a routerLink="/" class="logo-link">
+          <img alt="Logo" src="./assets/media/logos/letras-small.png" class="h-75px" />
+        </a>
+
+        <h1 class="school-title">CREATIVOS A</h1>
+        <!--end::Logo-->
+
+        <!--begin::Image-->
+        <img class="auth-image mx-auto w-275px w-md-50 w-xl-400px mb-10 mb-lg-20" src="./assets/media/misc/study.webp"
+          alt="" />
+        <!--end::Image-->
+      </div>
+      <!--end::Content-->
+    </div>
+    <!--end::Aside-->
   </div>
-  <!--end::Aside-->
 </div>
