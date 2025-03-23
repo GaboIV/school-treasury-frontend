@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">Registrar Pago</h4>
+  <h4 class="modal-title">{{ 'MYBALANCE.REGISTER_PAYMENT' | translate }}</h4>
   <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
 </div>
 
@@ -10,23 +10,23 @@
     </div>
 
     <div class="mb-4">
-      <h5>Información del Pago</h5>
+      <h5>{{ 'GENERAL.PAYMENT_INFORMATION' | translate }}</h5>
       <div class="d-flex flex-column">
         <div class="d-flex justify-content-between mb-2">
-          <span class="text-muted">Estudiante:</span>
+          <span class="text-muted">{{ 'GENERAL.STUDENT' | translate }}:</span>
           <span class="fw-bold">{{ payment.studentName }}</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
-          <span class="text-muted">Cobro:</span>
+          <span class="text-muted">{{ 'GENERAL.COLLECTION' | translate }}:</span>
           <span class="fw-bold">{{ payment.collectionName }}</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
-          <span class="text-muted">Monto Individual:</span>
+          <span class="text-muted">{{ 'GENERAL.INDIVIDUAL_AMOUNT' | translate }}:</span>
           <span class="fw-bold">{{ payment.amountCollection | currency: 'S/ ' }}</span>
         </div>
         <div class="d-flex justify-content-between mb-2"
           *ngIf="payment.adjustedAmountCollection && payment.adjustedAmountCollection !== payment.amountCollection">
-          <span class="text-muted">Monto Ajustado:</span>
+          <span class="text-muted">{{ 'GENERAL.ADJUSTED_AMOUNT' | translate }}:</span>
           <span class="fw-bold"
             [ngClass]="payment.adjustedAmountCollection < payment.amountCollection ? 'text-success' : 'text-danger'">
             {{ payment.adjustedAmountCollection | currency: 'S/ ' }}
@@ -36,15 +36,15 @@
             </span>
         </div>
         <div class="d-flex justify-content-between mb-2" *ngIf="payment.surplus && payment.surplus > 0">
-          <span class="text-muted">Excedente (caja chica):</span>
+          <span class="text-muted">{{ 'GENERAL.SURPLUS' | translate }}:</span>
           <span class="fw-bold text-success">{{ payment.surplus | currency: 'S/ ' }}</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
-          <span class="text-muted">Monto Pagado:</span>
+          <span class="text-muted">{{ 'GENERAL.AMOUNT_PAID' | translate }}:</span>
           <span class="fw-bold">{{ payment.amountPaid | currency: 'S/ ' }}</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
-          <span class="text-muted">Pendiente:</span>
+          <span class="text-muted">{{ 'GENERAL.PENDING' | translate }}:</span>
           <span class="fw-bold text-danger">
             {{ getPendingAmount() | currency: 'S/ ' }}
           </span>
@@ -59,11 +59,11 @@
           <i class="bi bi-info-circle-fill me-2 fs-5"></i>
           <div>
             <p class="mb-0">
-              <strong>Nota:</strong> Este pago tiene un monto ajustado. El estudiante debe pagar
-              {{ payment.adjustedAmountCollection | currency: 'S/ ' }} en lugar de
+              <strong>{{ 'GENERAL.NOTE' | translate }}:</strong> {{ 'MYBALANCE.ADJUSTED_AMOUNT_NOTE' | translate }}
+              {{ payment.adjustedAmountCollection | currency: 'S/ ' }} {{ 'GENERAL.INSTEAD_OF' | translate }}
               {{ payment.amountCollection | currency: 'S/ ' }}.
               <span *ngIf="payment.surplus && payment.surplus > 0">
-                La diferencia de {{ payment.surplus | currency: 'S/ ' }} irá a caja chica.
+                {{ 'MYBALANCE.SURPLUS_NOTE' | translate }} {{ payment.surplus | currency: 'S/ ' }}.
               </span>
             </p>
           </div>
@@ -72,22 +72,22 @@
 
       <!-- Campo de monto a pagar solo se muestra si hay monto pendiente -->
       <div class="mb-3" *ngIf="getPendingAmount() > 0">
-        <label class="form-label required">Monto a Pagar</label>
+        <label class="form-label required">{{ 'MYBALANCE.AMOUNT_TO_PAY' | translate }}</label>
         <input type="number" class="form-control" formControlName="amountPaid" [ngClass]="{
           'is-invalid': isControlInvalid('amountPaid'),
           'is-valid': isControlValid('amountPaid')
         }" />
         <div class="invalid-feedback" *ngIf="controlHasError('required', 'amountPaid')">
-          El monto es requerido
+          {{ 'VALIDATION.AMOUNT_REQUIRED' | translate }}
         </div>
         <div class="invalid-feedback" *ngIf="controlHasError('max', 'amountPaid')">
-          El monto no puede ser mayor al pendiente ({{ getPendingAmount() | currency: 'S/ ' }})
+          {{ 'VALIDATION.AMOUNT_MAX' | translate }} ({{ getPendingAmount() | currency: 'S/ ' }})
         </div>
       </div>
 
       <!-- Campo de fecha de pago - siempre visible -->
       <div class="mb-3">
-        <label class="form-label required">Fecha de Pago</label>
+        <label class="form-label required">{{ 'GENERAL.PAYMENT_DATE' | translate }}</label>
         <div class="input-group">
           <input
             type="date"
@@ -101,18 +101,18 @@
           <span class="input-group-text"><i class="bi bi-calendar"></i></span>
         </div>
         <div class="invalid-feedback" *ngIf="controlHasError('required', 'paymentDate')">
-          La fecha de pago es requerida
+          {{ 'VALIDATION.PAYMENT_DATE_REQUIRED' | translate }}
         </div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Comentario (opcional)</label>
+        <label class="form-label">{{ 'GENERAL.COMMENT_OPTIONAL' | translate }}</label>
         <textarea class="form-control" formControlName="comment" rows="3"></textarea>
       </div>
 
       <!-- Sección de carga de imágenes -->
       <div class="mb-3">
-        <label class="form-label">Imágenes de comprobante</label>
+        <label class="form-label">{{ 'MYBALANCE.RECEIPT_IMAGES' | translate }}</label>
         <div class="dropzone border rounded p-4 text-center position-relative"
           [ngClass]="{ 'bg-light-primary border-primary': isDragging }" (dragover)="onDragOver($event)"
           (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" (click)="fileInput.click()"
@@ -121,8 +121,8 @@
             <div class="mb-3">
               <i class="bi bi-cloud-upload fs-1 text-primary"></i>
             </div>
-            <h6 class="mb-2">Arrastra y suelta imágenes aquí</h6>
-            <p class="text-muted mb-0">o haz clic en cualquier parte de esta área para seleccionar archivos</p>
+            <h6 class="mb-2">{{ 'GENERAL.DRAG_DROP_HERE' | translate }}</h6>
+            <p class="text-muted mb-0">{{ 'GENERAL.OR_CLICK_TO_SELECT' | translate }}</p>
           </div>
           <div *ngIf="imagePreviewUrls.length > 0" class="d-flex flex-wrap gap-3 justify-content-center py-3">
             <div *ngFor="let url of imagePreviewUrls; let i = index" class="position-relative">
@@ -142,25 +142,25 @@
               <div class="add-more-container"
                 style="width: 120px; height: 120px; border: 2px dashed var(--bs-primary); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                 <i class="bi bi-plus-circle fs-2 text-primary mb-2"></i>
-                <span class="text-primary small">Agregar más</span>
+                <span class="text-primary small">{{ 'GENERAL.ADD_MORE' | translate }}</span>
               </div>
             </div>
           </div>
         </div>
         <input #fileInput type="file" accept="image/*" multiple class="d-none" (change)="onFileSelected($event)" />
         <div class="form-text text-muted mt-2">
-          <i class="bi bi-info-circle me-1"></i> Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB por imagen.
+          <i class="bi bi-info-circle me-1"></i> {{ 'GENERAL.ALLOWED_FORMATS' | translate }}
         </div>
       </div>
     </ng-container>
   </div>
 
   <div class="modal-footer" *appHasRole="['Admin']">
-    <button type="button" class="btn btn-light" (click)="activeModal.dismiss()">Cancelar</button>
+    <button type="button" class="btn btn-light" (click)="activeModal.dismiss()">{{ 'GENERAL.CANCEL' | translate }}</button>
     <button type="submit" class="btn btn-primary"
       [disabled]="(!formChanged && getPendingAmount() <= 0)">
       <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-      {{ getPendingAmount() > 0 ? 'Registrar Pago' : 'Actualizar Datos' }}
+      {{ getPendingAmount() > 0 ? ('MYBALANCE.REGISTER_PAYMENT' | translate) : ('GENERAL.UPDATE_DATA' | translate) }}
     </button>
     <!-- <span class="ms-2 small text-muted">{{ formChanged ? 'Cambios detectados' : 'Sin cambios' }}</span> -->
   </div>

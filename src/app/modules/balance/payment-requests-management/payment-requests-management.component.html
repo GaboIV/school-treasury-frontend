@@ -1,0 +1,237 @@
+<div class="card mb-5 mb-xl-10">
+  <div class="card-header border-0 pt-5">
+    <h3 class="card-title align-items-start flex-column">
+      <span class="card-label fw-bold fs-3 mb-1" translate="BALANCE.PAYMENT_REQUESTS_MANAGEMENT"></span>
+    </h3>
+  </div>
+  <div class="card-body py-3">
+    <!-- Estado y filtros -->
+    <div class="mb-5">
+      <div class="row mb-6">
+        <div class="col-lg-8">
+          <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x mb-5 fs-6">
+            <li class="nav-item">
+              <a class="nav-link active" data-bs-toggle="tab" href="#kt_tab_admin_all">
+                {{ 'GENERAL.ALL' | translate }}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_admin_pending">
+                {{ 'BALANCE.PAYMENT_REQUESTS.PENDING' | translate }}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_admin_under_review">
+                {{ 'BALANCE.PAYMENT_REQUESTS.UNDER_REVIEW' | translate }}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_admin_approved">
+                {{ 'BALANCE.PAYMENT_REQUESTS.APPROVED' | translate }}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_admin_rejected">
+                {{ 'BALANCE.PAYMENT_REQUESTS.REJECTED' | translate }}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_admin_needs_changes">
+                {{ 'BALANCE.PAYMENT_REQUESTS.NEEDS_CHANGES' | translate }}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de solicitudes -->
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="kt_tab_admin_all">
+        <div class="table-responsive">
+          <table class="table align-middle gs-0 gy-4">
+            <thead>
+              <tr class="fw-bold text-muted bg-light">
+                <th class="ps-4 min-w-150px rounded-start">{{ 'BALANCE.PAYMENT_REQUESTS.STUDENT' | translate }}</th>
+                <th class="min-w-125px">{{ 'BALANCE.PAYMENT_REQUESTS.AMOUNT' | translate }}</th>
+                <th class="min-w-125px">{{ 'BALANCE.PAYMENT_REQUESTS.DATE' | translate }}</th>
+                <th class="min-w-125px">{{ 'BALANCE.PAYMENT_REQUESTS.STATUS' | translate }}</th>
+                <th class="min-w-300px text-end rounded-end pe-4">{{ 'BALANCE.PAYMENT_REQUESTS.ACTIONS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Mensaje cuando no hay datos -->
+              <tr *ngIf="true">
+                <td colspan="5" class="text-center py-5">
+                  <span class="text-muted">No hay solicitudes disponibles</span>
+                </td>
+              </tr>
+
+              <!-- Aquí se renderizarán las solicitudes de pago cuando haya datos -->
+              <!-- <tr *ngFor="let request of paymentRequests">
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="symbol symbol-50px me-5">
+                      <img src="assets/media/avatars/300-1.jpg" alt="" />
+                    </div>
+                    <div class="d-flex justify-content-start flex-column">
+                      <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">{{ request.studentName }}</a>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.amountPaid | currency }}</span>
+                </td>
+                <td>
+                  <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.paymentDate | date:'shortDate' }}</span>
+                </td>
+                <td>
+                  <span class="badge"
+                        [ngClass]="{
+                          'badge-light-warning': request.status === 'Pending',
+                          'badge-light-primary': request.status === 'UnderReview',
+                          'badge-light-success': request.status === 'Approved',
+                          'badge-light-danger': request.status === 'Rejected',
+                          'badge-light-info': request.status === 'NeedsChanges'
+                        }">
+                    {{ 'BALANCE.PAYMENT_REQUESTS.' + request.status.toUpperCase() | translate }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary me-1" (click)="onView(request)">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                  <div class="d-inline-block" *ngIf="request.status === 'Pending' || request.status === 'UnderReview'">
+                    <button type="button" class="btn btn-sm btn-light-success me-1" (click)="onApprove(request)">
+                      {{ 'BALANCE.PAYMENT_REQUESTS.APPROVE' | translate }}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-light-danger me-1" (click)="onReject(request)">
+                      {{ 'BALANCE.PAYMENT_REQUESTS.REJECT' | translate }}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-light-warning me-1" (click)="onRequestChanges(request)">
+                      {{ 'BALANCE.PAYMENT_REQUESTS.REQUEST_CHANGES' | translate }}
+                    </button>
+                    <button type="button" class="btn btn-sm btn-light-info" (click)="onAddComment(request)">
+                      {{ 'BALANCE.PAYMENT_REQUESTS.ADD_COMMENT' | translate }}
+                    </button>
+                  </div>
+                </td>
+              </tr> -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Las pestañas restantes replicarán la estructura de la tabla con sus respectivos filtros -->
+      <div class="tab-pane fade" id="kt_tab_admin_pending">
+        <!-- Contenido similar filtrado por pendientes -->
+      </div>
+      <div class="tab-pane fade" id="kt_tab_admin_under_review">
+        <!-- Contenido similar filtrado por en revisión -->
+      </div>
+      <div class="tab-pane fade" id="kt_tab_admin_approved">
+        <!-- Contenido similar filtrado por aprobados -->
+      </div>
+      <div class="tab-pane fade" id="kt_tab_admin_rejected">
+        <!-- Contenido similar filtrado por rechazados -->
+      </div>
+      <div class="tab-pane fade" id="kt_tab_admin_needs_changes">
+        <!-- Contenido similar filtrado por necesita cambios -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para ver detalles -->
+<div class="modal fade" id="kt_modal_view_payment_request" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered mw-650px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{ 'BALANCE.PAYMENT_REQUESTS.VIEW' | translate }}</h2>
+        <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+          <i class="fa-solid fa-xmark fs-1"></i>
+        </div>
+      </div>
+      <div class="modal-body py-10 px-lg-17">
+        <!-- Contenido de la solicitud -->
+        <div class="d-flex flex-column mb-8">
+          <div class="row mb-4">
+            <div class="col-6">
+              <div class="fw-bold text-muted">{{ 'BALANCE.PAYMENT_REQUESTS.STUDENT' | translate }}</div>
+              <div class="fw-bolder fs-5"><!-- {{ request.studentName }} --></div>
+            </div>
+            <div class="col-6">
+              <div class="fw-bold text-muted">{{ 'BALANCE.PAYMENT_REQUESTS.AMOUNT' | translate }}</div>
+              <div class="fw-bolder fs-5"><!-- {{ request.amountPaid | currency }} --></div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-6">
+              <div class="fw-bold text-muted">{{ 'BALANCE.PAYMENT_REQUESTS.DATE' | translate }}</div>
+              <div class="fw-bolder fs-5"><!-- {{ request.paymentDate | date:'mediumDate' }} --></div>
+            </div>
+            <div class="col-6">
+              <div class="fw-bold text-muted">{{ 'BALANCE.PAYMENT_REQUESTS.STATUS' | translate }}</div>
+              <div class="fw-bolder fs-5">
+                <span class="badge"
+                      style="font-size: 0.95em;"
+
+
+
+                      >
+                  <!-- {{ 'BALANCE.PAYMENT_REQUESTS.' + request.status.toUpperCase() | translate }} -->
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="fw-bold text-muted">{{ 'BALANCE.PAYMENT_REQUESTS.COMMENT' | translate }}</div>
+              <div class="fw-bolder fs-5"><!-- {{ request.comment }} --></div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="fw-bold text-muted mb-2">{{ 'BALANCE.PAYMENT_REQUESTS.IMAGES' | translate }}</div>
+              <div class="d-flex flex-wrap">
+                <!-- <div *ngFor="let image of request.images" class="symbol symbol-100px symbol-lg-150px m-2">
+                  <img [src]="image.url" alt="Imagen de pago" class="cursor-pointer" (click)="onImageClick(image)" />
+                </div> -->
+              </div>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="fw-bold text-muted mb-2">{{ 'BALANCE.PAYMENT_REQUESTS.ADMIN_COMMENTS' | translate }}</div>
+              <div class="rounded border p-4 mb-4" *ngIf="true">
+                <!-- <div *ngFor="let comment of request.adminComments" class="d-flex mb-3">
+                  <div class="symbol symbol-40px me-3">
+                    <div class="symbol-label bg-light-primary">
+                      <i class="fa-solid fa-user-tie text-primary fs-4"></i>
+                    </div>
+                  </div>
+                  <div class="d-flex flex-column flex-grow-1">
+                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">{{ comment.adminName }}</a>
+                    <span class="text-muted fw-semibold d-block fs-7">{{ comment.date | date:'medium' }}</span>
+                    <span class="text-gray-800 fs-6 mt-2">{{ comment.text }}</span>
+                  </div>
+                </div> -->
+                <div class="text-muted text-center py-3">No hay comentarios administrativos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer flex-center">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ 'GENERAL.CANCEL' | translate }}</button>
+        <div *ngIf="true">
+          <button type="button" class="btn btn-success me-1">{{ 'BALANCE.PAYMENT_REQUESTS.APPROVE' | translate }}</button>
+          <button type="button" class="btn btn-danger me-1">{{ 'BALANCE.PAYMENT_REQUESTS.REJECT' | translate }}</button>
+          <button type="button" class="btn btn-warning">{{ 'BALANCE.PAYMENT_REQUESTS.REQUEST_CHANGES' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modales adicionales para aprobar, rechazar, solicitar cambios y añadir comentarios -->

@@ -8,6 +8,8 @@ import { ExpensesComponent } from './expenses/expenses.component';
 import { RoleGuard } from '../auth/services/role.guard';
 import { MyPaysComponent } from './my-pays/my-pays.component';
 import { UserRole } from '../auth/services/role.service';
+import { PaymentRequestsComponent } from './payment-requests/payment-requests.component';
+import { PaymentRequestsManagementComponent } from './payment-requests-management/payment-requests-management.component';
 
 const routes: Routes = [
   {
@@ -35,6 +37,18 @@ const routes: Routes = [
         component: MyPaysComponent,
         canActivate: [RoleGuard],
         data: { roles: [UserRole.Representative] }
+      },
+      {
+        path: 'solicitudes-pago',
+        component: PaymentRequestsComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [UserRole.Representative] }
+      },
+      {
+        path: 'gestion-solicitudes',
+        component: PaymentRequestsManagementComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [UserRole.Administrator] }
       },
       { path: '', redirectTo: 'caja-chica', pathMatch: 'full' },
       { path: '**', redirectTo: 'caja-chica', pathMatch: 'full' },

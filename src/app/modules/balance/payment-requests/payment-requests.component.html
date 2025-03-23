@@ -1,0 +1,214 @@
+<div class="card mb-5 mb-xl-10">
+  <div class="card-header border-0 pt-5">
+    <h3 class="card-title align-items-start flex-column">
+      <span class="card-label fw-bold fs-3 mb-1" translate="BALANCE.PAYMENT_REQUESTS.TITLE"></span>
+    </h3>
+    <div class="card-toolbar">
+      <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#kt_modal_create_payment_request">
+        <i class="fa-solid fa-plus"></i> {{ 'BALANCE.PAYMENT_REQUESTS.CREATE' | translate }}
+      </button>
+    </div>
+  </div>
+  <div class="card-body py-3">
+    <!-- Estado y filtros -->
+    <div class="mb-5">
+      <div class="row mb-6">
+        <div class="col-lg-3">
+          <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x mb-5 fs-6">
+            <li class="nav-item">
+              <a class="nav-link active" data-bs-toggle="tab" href="#kt_tab_pane_all">
+                {{ 'GENERAL.ALL' | translate }}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_pending">
+                {{ 'BALANCE.PAYMENT_REQUESTS.PENDING' | translate }}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_under_review">
+                {{ 'BALANCE.PAYMENT_REQUESTS.UNDER_REVIEW' | translate }}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_approved">
+                {{ 'BALANCE.PAYMENT_REQUESTS.APPROVED' | translate }}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_rejected">
+                {{ 'BALANCE.PAYMENT_REQUESTS.REJECTED' | translate }}
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_needs_changes">
+                {{ 'BALANCE.PAYMENT_REQUESTS.NEEDS_CHANGES' | translate }}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de solicitudes -->
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="kt_tab_pane_all">
+        <div class="table-responsive">
+          <table class="table align-middle gs-0 gy-4">
+            <thead>
+              <tr class="fw-bold text-muted bg-light">
+                <th class="ps-4 min-w-200px rounded-start">{{ 'BALANCE.PAYMENT_REQUESTS.STUDENT' | translate }}</th>
+                <th class="min-w-125px">{{ 'BALANCE.PAYMENT_REQUESTS.AMOUNT' | translate }}</th>
+                <th class="min-w-125px">{{ 'BALANCE.PAYMENT_REQUESTS.DATE' | translate }}</th>
+                <th class="min-w-125px">{{ 'BALANCE.PAYMENT_REQUESTS.STATUS' | translate }}</th>
+                <th class="min-w-200px text-end rounded-end pe-4">{{ 'BALANCE.PAYMENT_REQUESTS.ACTIONS' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Mensaje cuando no hay datos -->
+              <tr *ngIf="true">
+                <td colspan="5" class="text-center py-5">
+                  <span class="text-muted">No hay solicitudes disponibles</span>
+                </td>
+              </tr>
+
+              <!-- Aquí se renderizarán las solicitudes de pago cuando haya datos -->
+              <!-- <tr *ngFor="let request of paymentRequests">
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="symbol symbol-50px me-5">
+                      <img src="assets/media/avatars/300-1.jpg" alt="" />
+                    </div>
+                    <div class="d-flex justify-content-start flex-column">
+                      <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">{{ request.studentName }}</a>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.amountPaid | currency }}</span>
+                </td>
+                <td>
+                  <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.paymentDate | date:'shortDate' }}</span>
+                </td>
+                <td>
+                  <span class="badge"
+                        [ngClass]="{
+                          'badge-light-warning': request.status === 'Pending',
+                          'badge-light-primary': request.status === 'UnderReview',
+                          'badge-light-success': request.status === 'Approved',
+                          'badge-light-danger': request.status === 'Rejected',
+                          'badge-light-info': request.status === 'NeedsChanges'
+                        }">
+                    {{ 'BALANCE.PAYMENT_REQUESTS.' + request.status.toUpperCase() | translate }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" (click)="onView(request)">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                  <button *ngIf="request.status === 'Pending' || request.status === 'NeedsChanges'" type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" (click)="onEdit(request)">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                  <button *ngIf="request.status === 'Pending'" type="button" class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm" (click)="onDelete(request)">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </td>
+              </tr> -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Las pestañas restantes replicarán la estructura de la tabla con sus respectivos filtros -->
+      <div class="tab-pane fade" id="kt_tab_pane_pending">
+        <!-- Contenido similar filtrado por pendientes -->
+      </div>
+      <div class="tab-pane fade" id="kt_tab_pane_under_review">
+        <!-- Contenido similar filtrado por en revisión -->
+      </div>
+      <div class="tab-pane fade" id="kt_tab_pane_approved">
+        <!-- Contenido similar filtrado por aprobados -->
+      </div>
+      <div class="tab-pane fade" id="kt_tab_pane_rejected">
+        <!-- Contenido similar filtrado por rechazados -->
+      </div>
+      <div class="tab-pane fade" id="kt_tab_pane_needs_changes">
+        <!-- Contenido similar filtrado por necesita cambios -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para crear solicitud de pago -->
+<div class="modal fade" id="kt_modal_create_payment_request" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered mw-650px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{ 'BALANCE.PAYMENT_REQUESTS.CREATE' | translate }}</h2>
+        <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+          <i class="fa-solid fa-xmark fs-1"></i>
+        </div>
+      </div>
+      <div class="modal-body py-10 px-lg-17">
+        <!-- Formulario de solicitud de pago -->
+        <form class="form mb-15" method="post">
+          <div class="row mb-6">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+              <div class="fv-row mb-0">
+                <label class="form-label fs-6 fw-bolder text-dark">{{ 'BALANCE.PAYMENT_REQUESTS.STUDENT' | translate }}</label>
+                <select class="form-select form-select-solid" name="studentId">
+                  <option value="">Seleccione un estudiante</option>
+                  <!-- Opciones de estudiantes -->
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="fv-row mb-0">
+                <label class="form-label fs-6 fw-bolder text-dark">{{ 'BALANCE.PAYMENT_REQUESTS.AMOUNT' | translate }}</label>
+                <input type="number" class="form-control form-control-lg form-control-solid" name="amountPaid" step="0.01" min="0.01" />
+              </div>
+            </div>
+          </div>
+          <div class="row mb-6">
+            <div class="col-lg-12">
+              <div class="fv-row mb-0">
+                <label class="form-label fs-6 fw-bolder text-dark">{{ 'BALANCE.PAYMENT_REQUESTS.DATE' | translate }}</label>
+                <input type="date" class="form-control form-control-lg form-control-solid" name="paymentDate" />
+              </div>
+            </div>
+          </div>
+          <div class="row mb-6">
+            <div class="col-lg-12">
+              <div class="fv-row mb-0">
+                <label class="form-label fs-6 fw-bolder text-dark">{{ 'BALANCE.PAYMENT_REQUESTS.COMMENT' | translate }}</label>
+                <textarea class="form-control form-control-lg form-control-solid" name="comment" rows="4"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-6">
+            <div class="col-lg-12">
+              <div class="fv-row mb-0">
+                <label class="form-label fs-6 fw-bolder text-dark">{{ 'BALANCE.PAYMENT_REQUESTS.IMAGES' | translate }}</label>
+                <div class="dropzone" id="kt_dropzone_payment_request">
+                  <div class="dz-message needsclick">
+                    <i class="bi bi-file-earmark-arrow-up text-primary fs-3x"></i>
+                    <div class="ms-4">
+                      <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ 'BALANCE.PAYMENT_REQUESTS.UPLOAD_IMAGES' | translate }}</h3>
+                      <span class="fs-7 fw-semibold text-gray-400">Arrastre los archivos o haga clic para cargar</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer flex-center">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ 'GENERAL.CANCEL' | translate }}</button>
+        <button type="button" class="btn btn-primary">{{ 'GENERAL.SAVE' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modales adicionales para editar, ver detalles y confirmar eliminación -->

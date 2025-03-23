@@ -35,6 +35,9 @@ import { CreateExpenseModalComponent } from './expenses/modals/create-expense-mo
 import { UpdateExpenseModalComponent } from './expenses/modals/update-expense-modal/update-expense-modal.component';
 import { MyPaysComponent } from './my-pays/my-pays.component';
 import { PaymentDetailsModalComponent } from './my-pays/modals/payment-details-modal/payment-details-modal.component';
+import { PaymentRequestsComponent } from './payment-requests/payment-requests.component';
+import { PaymentRequestsManagementComponent } from './payment-requests-management/payment-requests-management.component';
+import { RequestPaymentModalComponent } from './payment-requests/modals/request-payment-modal/request-payment-modal.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +67,9 @@ import { PaymentDetailsModalComponent } from './my-pays/modals/payment-details-m
     UpdateExpenseModalComponent,
     MyPaysComponent,
     PaymentDetailsModalComponent,
+    PaymentRequestsComponent,
+    PaymentRequestsManagementComponent,
+    RequestPaymentModalComponent,
   ],
   imports: [
     CommonModule,
