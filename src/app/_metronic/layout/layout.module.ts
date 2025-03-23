@@ -39,6 +39,7 @@ import { ExtendedComponent } from './components/toolbar/extended/extended.compon
 import { ReportsComponent } from './components/toolbar/reports/reports.component';
 import { SaasComponent } from './components/toolbar/saas/saas.component';
 import { SharedModule } from "../shared/shared.module";
+import { MobileMenuComponent } from './components/mobile-menu/mobile-menu.component';
 
 const routes: Routes = [
   {
@@ -70,6 +71,7 @@ const routes: Routes = [
     ExtendedComponent,
     ReportsComponent,
     SaasComponent,
+    MobileMenuComponent,
   ],
   imports: [
     CommonModule,

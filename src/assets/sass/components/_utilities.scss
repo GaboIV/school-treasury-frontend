@@ -1,12 +1,6 @@
-:host {
-  width: 100%;
-}
+// Utilidades para animaciones y cursor
 
-.h-100 {
-  height: 100%;
-}
-
-/* Estilos para las animaciones de las tarjetas */
+// Animación de elevación al pasar el cursor
 .hover-elevate-up {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
@@ -21,6 +15,7 @@
   }
 }
 
+// Cursor tipo puntero para elementos clickeables
 .cursor-pointer {
   cursor: pointer;
 }

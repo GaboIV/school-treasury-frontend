@@ -1,0 +1,281 @@
+/*
+* Estilos personalizados para mejorar los íconos y animaciones
+* Este archivo debe importarse en styles.scss
+*/
+
+// Mejoras para los íconos y animaciones en el sidebar
+.app-sidebar-menu {
+  .menu {
+    .menu-item {
+      .menu-link {
+        position: relative;
+        overflow: hidden;
+
+        // Estilo mejorado para los íconos
+        .menu-icon {
+          i, span, app-keenicon {
+            font-size: 1.4rem !important;
+            transition: all 0.3s ease;
+          }
+        }
+
+        // Efecto hover
+        &:hover {
+          .menu-icon {
+            i, span, app-keenicon {
+              color: var(--bs-primary, #009ef7) !important;
+              transform: translateY(-2px);
+            }
+          }
+
+          .menu-title {
+            color: var(--bs-primary, #009ef7) !important;
+            transform: translateX(3px);
+          }
+        }
+
+        // Efecto de transición para el texto
+        .menu-title {
+          transition: all 0.3s ease;
+        }
+
+        // Efecto de ripple al hacer clic
+        &::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 0;
+          height: 0;
+          background: rgba(0, 158, 247, 0.15);
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+          opacity: 0;
+          transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+        }
+
+        &:active::before {
+          width: 300px;
+          height: 300px;
+          opacity: 1;
+          transition: width 0.4s ease, height 0.4s ease, opacity 0s;
+        }
+      }
+
+      // Estilo para el elemento activo
+      .menu-link.active {
+        .menu-icon {
+          i, span, app-keenicon {
+            animation: pulseIcon 1.5s infinite ease-in-out;
+            filter: drop-shadow(0 0 3px rgba(0, 158, 247, 0.5));
+          }
+        }
+      }
+    }
+  }
+}
+
+// Mejoras para los íconos y animaciones en el header
+.app-header {
+  .btn-icon {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+
+    i, span, app-keenicon {
+      font-size: 1.3rem !important;
+      transition: all 0.3s ease;
+    }
+
+    &:hover {
+      i, span, app-keenicon {
+        transform: scale(1.15);
+      }
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    // Efecto de ripple al hacer clic
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(0, 158, 247, 0.15);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+    }
+
+    &:active::before {
+      width: 120px;
+      height: 120px;
+      opacity: 1;
+      transition: width 0.4s ease, height 0.4s ease, opacity 0s;
+    }
+  }
+}
+
+// Mejoras para el Header Menu
+.app-header-menu {
+  .menu-item {
+    .menu-link {
+      position: relative;
+      overflow: hidden;
+
+      // Efecto de ripple al hacer clic
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(0, 158, 247, 0.15);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+      }
+
+      &:active::before {
+        width: 300px;
+        height: 300px;
+        opacity: 1;
+        transition: width 0.4s ease, height 0.4s ease, opacity 0s;
+      }
+
+      // Título del menú con animación
+      .menu-title {
+        transition: all 0.3s ease;
+      }
+
+      // Efecto hover
+      &:hover {
+        .menu-title {
+          transform: translateY(-2px);
+        }
+      }
+
+      // Estilo para íconos en header menu
+      .menu-icon {
+        i, span, app-keenicon {
+          font-size: 1.3rem !important;
+          transition: all 0.3s ease;
+        }
+      }
+
+      &:hover {
+        .menu-icon {
+          i, span, app-keenicon {
+            transform: translateY(-2px);
+            color: var(--bs-primary, #009ef7) !important;
+          }
+        }
+      }
+
+      &:active {
+        transform: scale(0.97);
+      }
+    }
+
+    // Estilo para elementos activos
+    .menu-link.active, .menu-link.menu-here {
+      .menu-icon {
+        i, span, app-keenicon {
+          animation: pulseIcon 1.5s infinite ease-in-out;
+          filter: drop-shadow(0 0 3px rgba(0, 158, 247, 0.5));
+        }
+      }
+
+      .menu-title {
+        font-weight: 600;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: var(--bs-primary, #009ef7);
+        animation: slideInFromBottom 0.3s ease-out;
+      }
+    }
+  }
+
+  // Animación específica para el menú desplegable
+  .menu-sub-dropdown {
+    animation: fadeInDropdown 0.3s ease;
+
+    .menu-item {
+      .menu-link {
+        transition: all 0.2s ease;
+
+        &:hover {
+          padding-left: 1.5rem !important;
+
+          .menu-title {
+            transform: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animación para íconos activos
+@keyframes pulseIcon {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInFromBottom {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes fadeInDropdown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Soporte para tema oscuro
+[data-bs-theme="dark"] {
+  .app-sidebar-menu .menu .menu-item .menu-link,
+  .app-header .btn-icon,
+  .app-header-menu .menu-item .menu-link {
+    &::before {
+      background: rgba(0, 158, 247, 0.2);
+    }
+  }
+
+  .app-sidebar-menu .menu .menu-item .menu-link.active .menu-icon i,
+  .app-header-menu .menu-item .menu-link.active .menu-icon i,
+  .app-header-menu .menu-item .menu-link.menu-here .menu-icon i {
+    filter: drop-shadow(0 0 3px rgba(0, 158, 247, 0.7));
+  }
+}

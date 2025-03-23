@@ -5,21 +5,34 @@ import { StudentService } from '../services/student.service';
 import { CreateStudentModalComponent } from './modals/create-student-modal/create-student-modal.component';
 import { UpdateStudentModalComponent } from './modals/update-student-modal/update-student-modal.component';
 import { DeleteStudentModalComponent } from './modals/delete-student-modal/delete-student-modal.component';
+import { AuthService } from '../../auth';
+import { UserRole } from '../../auth/services/role.service';
 
 @Component({
   selector: 'app-students',
   templateUrl: './students.component.html',
 })
 export class StudentsComponent implements OnInit {
+  currentUser: any;
   students: Student[] = [];
   isLoading: boolean = false;
+  isAdmin: boolean = false;
+  isRepresentative: boolean = false;
 
   constructor(
     private studentService: StudentService,
-    private modalService: NgbModal
+    private authService: AuthService,
+    private modalService: NgbModal,
   ) {}
 
   ngOnInit(): void {
+    this.currentUser = this.authService.currentUserValue;
+
+    if (this.currentUser) {
+      this.isAdmin = this.currentUser.roles.includes(UserRole.Administrator);
+      this.isRepresentative = this.currentUser.roles.includes(UserRole.Representative);
+    }
+
     this.loadStudents();
   }
 
@@ -73,23 +86,6 @@ export class StudentsComponent implements OnInit {
       },
       () => {}
     );
-  }
-
-  generateUser(student: Student) {
-    // Aquí iría la lógica para generar un usuario para el estudiante
-    // Por ahora, solo mostraremos un mensaje en la consola
-    console.log(`Generando usuario para el estudiante: ${student.name}`);
-
-    // Ejemplo de cómo podría ser la implementación real:
-    // this.studentService.generateUser(student.id).subscribe({
-    //   next: (response) => {
-    //     // Mostrar mensaje de éxito o realizar alguna acción
-    //     console.log('Usuario generado exitosamente', response);
-    //   },
-    //   error: (error) => {
-    //     console.error('Error al generar usuario', error);
-    //   }
-    // });
   }
 
   getAvatarPath(avatar: string): string {

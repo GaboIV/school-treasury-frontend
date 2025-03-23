@@ -1,0 +1,30 @@
+// Mobile menu styles
+.mobile-menu-container {
+  background-color: #ffffff;
+  border-top: 1px solid #e4e6ef;
+  box-shadow: 0px -1px 10px rgba(0, 0, 0, 0.05);
+  height: 60px;
+  z-index: 100;
+}
+
+// Ajustar contenido principal cuando el menú móvil está presente
+@media (max-width: 991.98px) {
+  .app-content {
+    padding-bottom: 70px !important; // Para evitar que el contenido quede detrás del menú móvil
+  }
+
+  .app-content .container,
+  .app-content .container-fluid {
+    padding-bottom: 10px;
+  }
+
+  // Ocultar el footer en dispositivos móviles para evitar solapamiento con el menú
+  .app-footer {
+    display: none !important;
+  }
+
+  // Asegurar que los elementos de desplazamiento no queden detrás del menú
+  .scrolltop {
+    bottom: 70px !important;
+  }
+}

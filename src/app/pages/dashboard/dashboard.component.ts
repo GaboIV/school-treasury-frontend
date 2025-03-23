@@ -1,6 +1,7 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { ModalConfig, ModalComponent } from '../../_metronic/partials';
 import { DashboardService, DashboardData } from '../../services/dashboard.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,7 +20,10 @@ export class DashboardComponent implements OnInit {
   isLoading: boolean = true;
   error: string | null = null;
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(
+    private dashboardService: DashboardService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -42,5 +46,17 @@ export class DashboardComponent implements OnInit {
 
   async openModal() {
     return await this.modalComponent.open();
+  }
+
+  navigateToCollections() {
+    this.router.navigate(['/balance/cobros']);
+  }
+
+  navigateToStudents() {
+    this.router.navigate(['/accesos/estudiantes']);
+  }
+
+  navigateToPettyCash() {
+    this.router.navigate(['/balance/caja-chica']);
   }
 }

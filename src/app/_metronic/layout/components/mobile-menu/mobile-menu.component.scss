@@ -1,0 +1,125 @@
+.mobile-menu-container {
+  background-color: var(--bs-body-bg, #ffffff);
+  border-top: 1px solid var(--bs-border-color, #e4e6ef);
+  box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  padding: 8px 0;
+  transition: all 0.3s ease;
+}
+
+[data-bs-theme="dark"] .mobile-menu-container {
+  background-color: var(--bs-dark, #151521);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-menu {
+  .menu-item {
+    color: var(--bs-gray-600, #a1a5b7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &.active {
+      color: var(--bs-primary, #009ef7);
+
+      .menu-icon {
+        transform: translateY(-2px);
+
+        i, span, app-keenicon {
+          color: var(--bs-primary, #009ef7);
+        }
+      }
+    }
+
+    .menu-icon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+      transition: transform 0.2s ease;
+
+      i, span, app-keenicon {
+        color: var(--bs-gray-600, #a1a5b7);
+        font-size: 1.5rem;
+        transition: color 0.3s ease;
+      }
+    }
+
+    .menu-title {
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    &:hover {
+      .menu-icon {
+        transform: translateY(-2px);
+
+        i, span, app-keenicon {
+          color: var(--bs-primary, #009ef7);
+        }
+      }
+    }
+  }
+}
+
+// Indicador de menú activo con animación
+.menu-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 4px;
+  background-color: var(--bs-primary, #009ef7);
+  border-radius: 4px 4px 0 0;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 40%;
+    opacity: 1;
+  }
+}
+
+// Efecto de ripple al hacer clic
+.menu-item {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(0, 158, 247, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+  }
+
+  &:active::before {
+    width: 120px;
+    height: 120px;
+    opacity: 1;
+    transition: width 0.4s ease, height 0.4s ease, opacity 0s;
+  }
+}

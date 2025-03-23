@@ -14,8 +14,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class LoginComponent implements OnInit, OnDestroy {
   // Credenciales por defecto
   defaultAuth: any = {
-    username: 'Alonso',
-    password: 'Alonso',
+    username: null,
+    password: null,
   };
   loginForm: FormGroup;
   hasError: boolean;

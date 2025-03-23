@@ -75,7 +75,7 @@ const languages = [
   {
     lang: 'es',
     name: 'Español',
-    flag: './assets/media/flags/spain.svg',
+    flag: './assets/media/flags/peru.svg',
   },
   // {
   //   lang: 'ja',

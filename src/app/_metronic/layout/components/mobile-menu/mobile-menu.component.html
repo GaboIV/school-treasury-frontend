@@ -1,0 +1,56 @@
+<!-- Menú móvil inferior para dispositivos móviles -->
+<div class="mobile-menu-container fixed-bottom d-lg-none">
+  <div class="mobile-menu">
+    <div class="row g-0">
+      <!-- Elemento de menú: Inicio -->
+      <div class="col text-center position-relative">
+        <a class="menu-item py-3 px-1" routerLink="/dashboard" routerLinkActive="active">
+          <div class="menu-icon">
+            <i class="fa-solid fa-house"></i>
+          </div>
+          <div class="menu-title small" translate="MENU.DASHBOARD"></div>
+        </a>
+      </div>
+
+      <!-- Elemento de menú: Cobros -->
+      <div class="col text-center position-relative">
+        <a class="menu-item py-3 px-1" routerLink="balance/caja-chica" routerLinkActive="active">
+          <div class="menu-icon">
+            <i class="fa-solid fa-cash-register"></i>
+          </div>
+          <div class="menu-title small" translate="BALANCE.PETTY_CASH"></div>
+        </a>
+      </div>
+
+       <!-- Elemento de menú: Caja Chica -->
+       <div class="col text-center position-relative">
+        <a class="menu-item py-3 px-1" routerLink="balance/cobros" routerLinkActive="active">
+          <div class="menu-icon">
+            <i class="fa-solid fa-sack-dollar"></i>
+          </div>
+          <div class="menu-title small" translate="BALANCE.COLLECTIONS"></div>
+        </a>
+      </div>
+
+      <!-- Elemento de menú: Gastos -->
+      <div class="col text-center position-relative">
+        <a class="menu-item py-3 px-1" routerLink="balance/gastos" routerLinkActive="active">
+          <div class="menu-icon">
+            <i class="fa-solid fa-money-bills"></i>
+          </div>
+          <div class="menu-title small" translate="BALANCE.EXPENSES"></div>
+        </a>
+      </div>
+
+      <!-- Elemento de menú: Estudiantes -->
+      <div class="col text-center position-relative">
+        <a class="menu-item py-3 px-1" routerLink="accesos/estudiantes" routerLinkActive="active">
+          <div class="menu-icon">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div class="menu-title small" translate="ACCESS.STUDENTS"></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

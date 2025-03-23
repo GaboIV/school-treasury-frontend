@@ -4,7 +4,7 @@
       <span class="card-label fw-bold fs-3 mb-1" translate="ACCESS.STUDENTS"></span>
       <span class="text-muted mt-1 fw-semibold fs-7" translate="ACCESS.STUDENTS_DESCRIPTION"></span>
     </h3>
-    <div class="card-toolbar">
+    <div class="card-toolbar" *ngIf="isAdmin">
       <button type="button" class="btn btn-sm btn-primary" (click)="openCreateModal()">
         <span class="svg-icon svg-icon-2">
           <app-keenicon name="plus" class="fs-2"></app-keenicon>
@@ -37,7 +37,7 @@
               </div>
 
               <!-- Botones de acción -->
-              <div class="d-flex justify-content-center border-top p-4">
+              <div class="d-flex justify-content-center border-top p-4" *ngIf="isAdmin || currentUser.studentId == student.id">
                 <button class="btn btn-icon btn-sm btn-color-gray-400 btn-active-icon-primary me-2"
                         (click)="openUpdateModal(student)"
                         data-bs-toggle="tooltip"
@@ -49,7 +49,8 @@
                         (click)="openDeleteModal(student)"
                         data-bs-toggle="tooltip"
                         data-bs-placement="top"
-                        [title]="'ACCESS.DELETE_STUDENT' | translate">
+                        [title]="'ACCESS.DELETE_STUDENT' | translate"
+                        *ngIf="isAdmin">
                   <app-keenicon name="trash" class="fs-3"></app-keenicon>
                 </button>
                 <!-- <button class="btn btn-icon btn-sm btn-color-gray-400 btn-active-icon-success"
