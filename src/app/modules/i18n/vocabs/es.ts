@@ -16,6 +16,10 @@ export const locale = {
       BALANCE: 'Balance',
       ACCESS: 'Accesos'
     },
+    MYBALANCE: {
+      MYBALANCE: 'Mi Balance',
+      MYPAYMENTS: 'Mis Pagos'
+    },
     BALANCE: {
       SUMMARY: 'Resumen',
       COLLECTIONS: 'Cobros',

@@ -1,0 +1,238 @@
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+  <!--begin::Post-->
+  <div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+      <!--begin::Card-->
+      <div class="card mb-5 mb-xl-8">
+        <!--begin::Header-->
+        <div class="card-header border-0 pt-5">
+          <h3 class="card-title align-items-start flex-column">
+            <span class="card-label fw-bolder fs-3 mb-1">Mis Pagos</span>
+            <span class="text-muted mt-1 fw-bold fs-7">Listado de mis pagos</span>
+          </h3>
+          <div class="card-toolbar">
+            <button class="btn btn-sm btn-light-primary" (click)="loadPayments()">
+              <i class="fa fa-sync"></i>
+              <span *ngIf="!isMobile" class="ms-1">Actualizar</span>
+            </button>
+          </div>
+        </div>
+        <!--end::Header-->
+
+        <!--begin::Body-->
+        <div class="card-body py-3">
+          <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+
+          <div *ngIf="error" class="alert alert-danger">
+            {{ error }}
+          </div>
+
+          <!-- Vista de escritorio (tabla) -->
+          <div class="table-responsive" *ngIf="!isLoading && !error && !isMobile">
+            <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
+              <thead>
+                <tr class="fw-bolder text-muted">
+                  <th class="min-w-150px">Cobro</th>
+                  <th class="min-w-120px">Monto Individual</th>
+                  <th class="min-w-120px">Monto Ajustado</th>
+                  <th class="min-w-120px">Excedente</th>
+                  <th class="min-w-120px">Monto Pagado</th>
+                  <th class="min-w-120px">Pendiente</th>
+                  <th class="min-w-100px">Estado</th>
+                  <th class="min-w-120px">Fecha de Pago</th>
+                  <th class="min-w-100px">Imágenes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let payment of payments">
+                  <td>{{ payment.collectionName }}</td>
+                  <td>{{ payment.amountCollection | currency: 'S/ ' }}</td>
+                  <td>
+                    {{ (payment.adjustedAmountCollection || payment.amountCollection) | currency: 'S/ ' }}
+                    <span *ngIf="payment.adjustedAmountCollection && payment.adjustedAmountCollection !== payment.amountCollection"
+                          [ngClass]="payment.adjustedAmountCollection < payment.amountCollection ? 'text-success' : 'text-danger'"
+                          class="fw-bold d-block fs-7">
+                      {{ payment.adjustedAmountCollection < payment.amountCollection ? '↓' : '↑' }}
+                      {{ getPercentageDifference(payment.amountCollection, payment.adjustedAmountCollection) }}%
+                    </span>
+                  </td>
+                  <td>
+                    <span *ngIf="payment.surplus && payment.surplus > 0" class="text-success fw-bold">
+                      {{ payment.surplus | currency: 'S/ ' }}
+                      <span class="text-muted fw-normal d-block fs-7">Caja chica</span>
+                    </span>
+                    <span *ngIf="!payment.surplus || payment.surplus <= 0" class="text-muted">
+                      S/ 0.00
+                    </span>
+                  </td>
+                  <td>{{ payment.amountPaid | currency: 'S/ ' }}</td>
+                  <td>
+                    <span *ngIf="payment.adjustedAmountCollection">
+                      {{ (payment.adjustedAmountCollection - payment.amountPaid) | currency: 'S/ ' }}
+                    </span>
+                    <span *ngIf="!payment.adjustedAmountCollection">
+                      {{ payment.pending | currency: 'S/ ' }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="getPaymentStatusClass(payment.paymentStatus)">
+                      {{ getPaymentStatusText(payment.paymentStatus) }}
+                    </span>
+                  </td>
+                  <td>{{ payment.paymentDate | date: 'dd/MM/yyyy' }}</td>
+                  <td>
+                    <!-- Miniaturas de imágenes -->
+                    <div class="d-flex gap-1" *ngIf="payment.images && payment.images.length > 0">
+                      <div
+                        *ngFor="let image of payment.images.slice(0, 3); let i = index"
+                        class="position-relative cursor-pointer"
+                        (click)="openImagePreview(payment.images, i)"
+                      >
+                        <img
+                          [src]="image"
+                          class="img-thumbnail"
+                          style="width: 40px; height: 40px; object-fit: cover;"
+                          [alt]="'Imagen ' + (i + 1)"
+                        >
+                      </div>
+                      <div
+                        *ngIf="payment.images.length > 3"
+                        class="d-flex justify-content-center align-items-center bg-light rounded cursor-pointer"
+                        style="width: 40px; height: 40px;"
+                        (click)="openImagePreview(payment.images, 3)"
+                      >
+                        <span class="text-muted">+{{ payment.images.length - 3 }}</span>
+                      </div>
+                    </div>
+                    <span *ngIf="!payment.images || payment.images.length === 0" class="text-muted">
+                      Sin imágenes
+                    </span>
+                  </td>
+                </tr>
+                <tr *ngIf="payments.length === 0">
+                  <td colspan="9" class="text-center py-5">
+                    <span class="text-muted">No hay pagos registrados</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Vista móvil (tarjetas) -->
+          <div *ngIf="!isLoading && !error && isMobile" class="mobile-view">
+            <div *ngIf="payments.length === 0" class="text-center py-5">
+              <span class="text-muted">No hay pagos registrados</span>
+            </div>
+
+            <!-- Indicador de desplazamiento -->
+            <div *ngIf="payments.length > 1" class="text-center mb-2 swipe-indicator">
+              <div class="d-flex flex-column align-items-center">
+                <i class="fa fa-chevron-down text-primary fs-4 mb-1 bounce"></i>
+                <span class="text-muted small">Desliza para ver más</span>
+              </div>
+            </div>
+
+            <div class="payment-cards theme-cards">
+              <div
+                *ngFor="let payment of payments; let i = index"
+                class="card payment-card"
+                [ngClass]="getPaymentStatusClass(payment.paymentStatus)"
+                [style.--animation-order]="i"
+              >
+                <div class="card-body">
+                  <!-- Encabezado de la tarjeta -->
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title fw-bold text-truncate">{{ payment.collectionName || 'string' }}</h5>
+                    <span class="badge status-badge" [ngClass]="getPaymentStatusClass(payment.paymentStatus)">
+                      {{ getPaymentStatusText(payment.paymentStatus) }}
+                    </span>
+                  </div>
+
+                  <!-- Información del pago -->
+                  <div class="payment-info">
+                    <div class="payment-info-row">
+                      <div class="payment-info-col">
+                        <div class="text-muted small">Monto Individual</div>
+                        <div class="fw-bold payment-value">{{ payment.amountCollection | currency: 'S/ ' }}</div>
+                      </div>
+                      <div class="payment-info-col">
+                        <div class="text-muted small">Monto Ajustado</div>
+                        <div class="fw-bold payment-value">
+                          {{ (payment.adjustedAmountCollection || payment.amountCollection) | currency: 'S/ ' }}
+                          <span *ngIf="payment.adjustedAmountCollection && payment.adjustedAmountCollection !== payment.amountCollection"
+                                [ngClass]="payment.adjustedAmountCollection < payment.amountCollection ? 'text-success' : 'text-danger'"
+                                class="small">
+                            {{ payment.adjustedAmountCollection < payment.amountCollection ? '↓' : '↑' }}
+                            {{ getPercentageDifference(payment.amountCollection, payment.adjustedAmountCollection) }}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="payment-info-row">
+                      <div class="payment-info-col">
+                        <div class="text-muted small">Excedente</div>
+                        <div>
+                          <span *ngIf="payment.surplus && payment.surplus > 0" class="text-success fw-bold">
+                            {{ payment.surplus | currency: 'S/ ' }}
+                            <span class="text-muted fw-normal d-block small">Caja chica</span>
+                          </span>
+                          <span *ngIf="!payment.surplus || payment.surplus <= 0" class="text-muted">
+                            S/ 0.00
+                          </span>
+                        </div>
+                      </div>
+                      <div class="payment-info-col">
+                        <div class="text-muted small">Monto Pagado</div>
+                        <div class="fw-bold payment-value">{{ payment.amountPaid | currency: 'S/ ' }}</div>
+                      </div>
+                    </div>
+                    <div class="payment-info-row">
+                      <div class="payment-info-col">
+                        <div class="text-muted small">Pendiente</div>
+                        <div class="fw-bold text-danger">
+                          <span *ngIf="payment.adjustedAmountCollection">
+                            {{ (payment.adjustedAmountCollection - payment.amountPaid) | currency: 'S/ ' }}
+                          </span>
+                          <span *ngIf="!payment.adjustedAmountCollection">
+                            {{ payment.pending | currency: 'S/ ' }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="payment-info-col">
+                        <div class="text-muted small">Fecha de Pago</div>
+                        <div class="payment-value">{{ payment.paymentDate ? (payment.paymentDate | date: 'dd/MM/yyyy') : 'No registrado' }}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Imágenes -->
+                  <div *ngIf="payment.images && payment.images.length > 0">
+                    <div class="text-muted small mb-1">Imágenes</div>
+                    <div class="card-images">
+                      <div
+                        *ngFor="let image of payment.images; let i = index"
+                        class="card-image-container cursor-pointer"
+                        (click)="openImagePreview(payment.images, i)"
+                      >
+                        <img [src]="image" class="img-thumbnail card-image" [alt]="'Imagen ' + (i + 1)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--end::Body-->
+      </div>
+      <!--end::Card-->
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::Post-->
+</div>
+<!--end::Content-->
