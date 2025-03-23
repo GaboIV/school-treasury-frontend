@@ -90,10 +90,16 @@ export class LoginComponent implements OnInit, OnDestroy {
           if (user) {
             console.log("LoginComponent: Login exitoso, verificando estado de contraseña");
 
+            console.log("LoginComponent: Usuario", user);
+            console.log("LoginComponent: Tipo de hasChangedPassword:", typeof user.hasChangedPassword);
+            console.log("LoginComponent: Valor de hasChangedPassword:", user.hasChangedPassword);
+
             // Verificar si el usuario necesita cambiar su contraseña
-            if (user.hasChangedPassword === false) {
+            if (user.hasChangedPassword !== true) {
               console.log("LoginComponent: El usuario necesita cambiar su contraseña");
               this.showPasswordChangeRequiredModal();
+            } else {
+              console.log("LoginComponent: El usuario NO necesita cambiar su contraseña");
             }
 
             console.log("LoginComponent: Redirigiendo a", this.returnUrl);

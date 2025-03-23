@@ -135,6 +135,14 @@ export class PasswordChangeRequiredModalComponent implements OnInit {
         if (this.authService.currentUserValue) {
           this.authService.currentUserValue.hasChangedPassword = true;
           console.log("PasswordChangeRequiredModal: Se actualizó hasChangedPassword a true");
+
+          // También actualizamos en localStorage para persistir el cambio
+          const auth = this.getAuthFromLocalStorage();
+          if (auth) {
+            auth.hasChangedPassword = true;
+            this.saveAuthToLocalStorage(auth);
+            console.log("PasswordChangeRequiredModal: Se actualizó hasChangedPassword en localStorage");
+          }
         }
 
         setTimeout(() => {
@@ -172,5 +180,14 @@ export class PasswordChangeRequiredModalComponent implements OnInit {
       console.error('Error al obtener datos de autenticación del localStorage:', error);
       return undefined;
     }
+  }
+
+  // Método para guardar la autenticación en localStorage
+  private saveAuthToLocalStorage(auth: any): boolean {
+    if (auth) {
+      localStorage.setItem(`${environment.appVersion}-${environment.USERDATA_KEY}`, JSON.stringify(auth));
+      return true;
+    }
+    return false;
   }
 }

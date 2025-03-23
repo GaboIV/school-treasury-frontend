@@ -117,6 +117,14 @@ export class ChangePasswordModalComponent implements OnInit {
         if (this.authService.currentUserValue) {
           this.authService.currentUserValue.hasChangedPassword = true;
           console.log("ChangePasswordModal: Se actualizó hasChangedPassword a true");
+
+          // También actualizamos en localStorage para persistir el cambio
+          const auth = this.getAuthFromLocalStorage();
+          if (auth) {
+            auth.hasChangedPassword = true;
+            this.saveAuthToLocalStorage(auth);
+            console.log("ChangePasswordModal: Se actualizó hasChangedPassword en localStorage");
+          }
         }
 
         setTimeout(() => {
@@ -154,5 +162,14 @@ export class ChangePasswordModalComponent implements OnInit {
       console.error('Error al obtener datos de autenticación del localStorage:', error);
       return undefined;
     }
+  }
+
+  // Método para guardar la autenticación en localStorage
+  private saveAuthToLocalStorage(auth: any): boolean {
+    if (auth) {
+      localStorage.setItem(`${environment.appVersion}-${environment.USERDATA_KEY}`, JSON.stringify(auth));
+      return true;
+    }
+    return false;
   }
 }

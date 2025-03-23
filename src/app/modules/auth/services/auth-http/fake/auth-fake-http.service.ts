@@ -39,6 +39,7 @@ export class AuthHTTPService {
         auth.username = result.username;
         auth.email = result.email || '';
         auth.fullName = result.fullName;
+        auth.hasChangedPassword = result.hasChangedPassword || false;
         auth.role = result.role;
         auth.studentId = result.studentId;
         auth.expiresIn = new Date(Date.now() + 100 * 24 * 60 * 60 * 1000);
@@ -71,6 +72,7 @@ export class AuthHTTPService {
         user.email = response.email || '';
         user.fullname = response.fullName || '';
         user.studentId = response.studentId || '';
+        user.hasChangedPassword = response.hasChangedPassword || false;
         user.authToken = token;
 
         console.log(user)
