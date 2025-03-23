@@ -1,26 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../../../../modules/auth';
+import { ChangePasswordModalComponent } from '../change-password-modal/change-password-modal.component';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../../../../environments/environment';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 
 @Component({
-  selector: 'app-change-password-modal',
-  templateUrl: './change-password-modal.component.html',
+  selector: 'app-password-change-required-modal',
+  templateUrl: './password-change-required-modal.component.html',
 })
-export class ChangePasswordModalComponent implements OnInit {
+export class PasswordChangeRequiredModalComponent implements OnInit {
   passwordForm: FormGroup;
   isLoading = false;
+  showPasswordForm = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
 
   constructor(
     public modal: NgbActiveModal,
-    private fb: FormBuilder,
+    private modalService: NgbModal,
     private authService: AuthService,
+    private fb: FormBuilder,
     private http: HttpClient
   ) {}
 
@@ -77,6 +80,21 @@ export class ChangePasswordModalComponent implements OnInit {
     return control.hasError(validation) && (control.dirty || control.touched);
   }
 
+  openChangePasswordForm() {
+    this.showPasswordForm = true;
+  }
+
+  dismiss() {
+    this.modal.dismiss();
+  }
+
+  cancelPasswordChange() {
+    this.showPasswordForm = false;
+    this.passwordForm.reset();
+    this.errorMessage = null;
+    this.successMessage = null;
+  }
+
   changePassword() {
     if (this.passwordForm.invalid) return;
 
@@ -92,7 +110,7 @@ export class ChangePasswordModalComponent implements OnInit {
     const requestBody = {
       currentPassword: formValues.currentPassword,
       newPassword: formValues.newPassword,
-      confirmPassword: formValues.confirmPassword // Añadimos este campo según la API
+      confirmPassword: formValues.confirmPassword
     };
 
     // Obtenemos el token de autenticación del localStorage
@@ -116,11 +134,11 @@ export class ChangePasswordModalComponent implements OnInit {
         // Actualizar el estado de hasChangedPassword en el objeto del usuario
         if (this.authService.currentUserValue) {
           this.authService.currentUserValue.hasChangedPassword = true;
-          console.log("ChangePasswordModal: Se actualizó hasChangedPassword a true");
+          console.log("PasswordChangeRequiredModal: Se actualizó hasChangedPassword a true");
         }
 
         setTimeout(() => {
-          this.modal.close(true); // Pasar true para indicar que el cambio fue exitoso
+          this.modal.close(true);
         }, 1500);
       }),
       catchError(error => {

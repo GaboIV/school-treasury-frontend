@@ -2,18 +2,6 @@
 <form class="form w-100" [formGroup]="loginForm" novalidate="novalidate" id="kt_login_signin_form"
   (ngSubmit)="submit()">
 
-  <!-- begin::Alert info-->
-  <!-- <ng-container *ngIf="!hasError">
-    <div class="mb-10 bg-light-info p-8 rounded">
-      <div class="text-info">
-        Use account <strong>{{ defaultAuth.username }}</strong> and password
-        <strong>{{ defaultAuth.password }}</strong> to continue.
-      </div>
-    </div>
-  </ng-container> -->
-  <!-- end::Alert info-->
-
-
   <!-- begin::Alert error-->
   <ng-container *ngIf="hasError">
     <div class="mb-lg-15 alert alert-danger">
@@ -105,14 +93,6 @@
       </ng-container>
     </button>
   </div>
-
-  <!-- <div class="text-gray-500 text-center fw-semibold fs-6">
-    ¿No eres miembro aún?
-
-    <a routerLink="/auth/registration" class="link-primary">
-      Regístrate
-    </a>
-  </div> -->
 
   <!--end::Action-->
 </form>

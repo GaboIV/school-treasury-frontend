@@ -25,6 +25,8 @@ export class UserModel extends AuthModel {
     sms: boolean;
     phone: boolean;
   };
+  // password status
+  hasChangedPassword: boolean = false;
   // email settings
   emailSettings?: {
     emailNotification: boolean;
@@ -64,9 +66,14 @@ export class UserModel extends AuthModel {
     console.log("UserModel: Valor original de roles:", user.roles);
     this.roles = Array.isArray(user.roles) ? user.roles : [this.role];
 
+    // Procesar el estado de cambio de contraseña
+    console.log("UserModel: Valor de hasChangedPassword:", user.hasChangedPassword);
+    this.hasChangedPassword = user.hasChangedPassword !== undefined ? user.hasChangedPassword : false;
+
     console.log("UserModel: Valores finales:", {
       role: this.role,
-      roles: this.roles
+      roles: this.roles,
+      hasChangedPassword: this.hasChangedPassword
     });
 
     this.occupation = user.occupation || '';
