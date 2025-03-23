@@ -5,6 +5,9 @@ import { CollectionsComponent } from './collections/collections.component';
 import { CollectionTypesComponent } from './collection-types/collection-types.component';
 import { PettyCashComponent } from './petty-cash/petty-cash.component';
 import { ExpensesComponent } from './expenses/expenses.component';
+import { RoleGuard } from '../auth/services/role.guard';
+import { MyPaysComponent } from './my-pays/my-pays.component';
+import { UserRole } from '../auth/services/role.service';
 
 const routes: Routes = [
   {
@@ -26,6 +29,12 @@ const routes: Routes = [
       {
         path: 'caja-chica',
         component: PettyCashComponent,
+      },
+      {
+        path: 'mis-pagos',
+        component: MyPaysComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [UserRole.Representative] }
       },
       { path: '', redirectTo: 'caja-chica', pathMatch: 'full' },
       { path: '**', redirectTo: 'caja-chica', pathMatch: 'full' },

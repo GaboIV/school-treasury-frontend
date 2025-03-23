@@ -17,6 +17,10 @@ export class StudentPaymentService {
     return this.http.get<StudentPaymentResponse>(`${this.apiUrl}/collection/${collectionId}`);
   }
 
+  getPaymentsByStudent(studentId: string): Observable<StudentPaymentResponse> {
+    return this.http.get<StudentPaymentResponse>(`${this.apiUrl}/student/${studentId}`);
+  }
+
   registerPayment(payment: {
     id: string;
     amountPaid: number;
