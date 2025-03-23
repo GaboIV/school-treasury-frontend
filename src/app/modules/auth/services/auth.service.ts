@@ -50,10 +50,27 @@ export class AuthService implements OnDestroy {
     return this.authHttpService.login(username, password).pipe(
       tap((auth: AuthModel) => {
         console.log("AuthService: Respuesta de login recibida:", auth);
+        console.log("AuthService: hasChangedPassword en respuesta de login:", auth.hasChangedPassword);
+        console.log("AuthService: Tipo de hasChangedPassword:", typeof auth.hasChangedPassword);
       }),
       map((auth: AuthModel) => {
+        // Asegurarse de que hasChangedPassword esté explícitamente definido
+        if (auth.hasChangedPassword === true) {
+          console.log("AuthService: Conservando hasChangedPassword=true del login");
+        } else {
+          console.log("AuthService: Estableciendo hasChangedPassword=false en auth");
+          auth.hasChangedPassword = false;
+        }
+
         const result = this.setAuthFromLocalStorage(auth);
         console.log("AuthService: Token guardado en localStorage:", result);
+
+        // Verificar que se guardó correctamente en localStorage
+        const savedAuth = this.getAuthFromLocalStorage();
+        if (savedAuth) {
+          console.log("AuthService: hasChangedPassword en localStorage:", savedAuth.hasChangedPassword);
+        }
+
         return result;
       }),
       switchMap(() => {
@@ -67,6 +84,9 @@ export class AuthService implements OnDestroy {
       finalize(() => {
         console.log("AuthService: Finalizando proceso de login");
         console.log("AuthService: Usuario después de login", this.currentUserValue);
+        if (this.currentUserValue) {
+          console.log("AuthService: hasChangedPassword final:", this.currentUserValue.hasChangedPassword);
+        }
         this.isLoadingSubject.next(false);
       })
     );
@@ -99,10 +119,15 @@ export class AuthService implements OnDestroy {
     }
 
     console.log("AuthService: Obteniendo usuario con token:", auth.authToken);
+    console.log("AuthService: Valor de hasChangedPassword en auth:", auth.hasChangedPassword);
+
     this.isLoadingSubject.next(true);
     return this.authHttpService.getUserByToken(auth.authToken).pipe(
       tap((user: UserType) => {
         console.log("AuthService: Usuario obtenido por token:", user);
+        if (user) {
+          console.log("AuthService: hasChangedPassword del usuario obtenido:", user.hasChangedPassword);
+        }
       }),
       map((user: UserType) => {
         if (user) {
@@ -135,12 +160,33 @@ export class AuthService implements OnDestroy {
             user.roles = [user.role];
           }
 
+          // CLAVE: Si hasChangedPassword está en el auth del localStorage y es true,
+          // siempre lo respetamos y usamos ese valor
+          if (auth.hasChangedPassword === true) {
+            console.log("AuthService: Sobreescribiendo hasChangedPassword con el valor true del localStorage");
+            user.hasChangedPassword = true;
+          }
+          // Si en localStorage es false o undefined, revisamos si viene del API
+          else if (user.hasChangedPassword === true) {
+            console.log("AuthService: Conservando hasChangedPassword=true del API");
+            // Si el usuario tiene hasChangedPassword=true, actualizamos también el localStorage
+            auth.hasChangedPassword = true;
+            this.setAuthFromLocalStorage(auth);
+            console.log("AuthService: Actualizado hasChangedPassword=true en localStorage");
+          } else {
+            console.log("AuthService: Estableciendo hasChangedPassword=false (valor por defecto)");
+            user.hasChangedPassword = false;
+          }
+
           this.currentUserSubject.next(user);
         } else {
           console.log("AuthService: Usuario no encontrado, cerrando sesión");
           this.logout();
         }
         console.log("AuthService: Retornando usuario:", user);
+        if (user) {
+          console.log("AuthService: hasChangedPassword final:", user.hasChangedPassword);
+        }
         return user;
       }),
       finalize(() => this.isLoadingSubject.next(false))

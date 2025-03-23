@@ -2,6 +2,8 @@ import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { TranslationService } from '../../../../../../modules/i18n';
 import { AuthService, UserType } from '../../../../../../modules/auth';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ChangePasswordModalComponent } from '../../../../layout/modals/change-password-modal/change-password-modal.component';
 
 @Component({
   selector: 'app-user-inner',
@@ -19,7 +21,8 @@ export class UserInnerComponent implements OnInit, OnDestroy {
 
   constructor(
     private auth: AuthService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private modalService: NgbModal
   ) {}
 
   ngOnInit(): void {
@@ -30,6 +33,13 @@ export class UserInnerComponent implements OnInit, OnDestroy {
   logout() {
     this.auth.logout();
     document.location.reload();
+  }
+
+  openChangePasswordModal() {
+    const modalRef = this.modalService.open(ChangePasswordModalComponent, {
+      centered: true,
+      size: 'lg'
+    });
   }
 
   selectLanguage(lang: string) {

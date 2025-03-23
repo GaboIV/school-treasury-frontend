@@ -1,13 +1,264 @@
 :host {
   width: 100%;
-  @media (min-width: 992px) {
-    .login-form {
-      width: 100%;
-      max-width: 450px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-      .mat-form-field {
-        width: 100%;
+// Variables de colores
+$navy-blue: #0c1e4a;
+$kelly-green: #00c16e;
+$neon-green: #39ff14;
+$light-gray: #f5f8fa;
+
+.login-container {
+  position: relative;
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 0rem 2rem;
+  background-color: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: fadeIn 0.6s ease-in-out;
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  .logo-image {
+    height: 75px;
+    margin-bottom: 0.5rem;
+    animation: pulse 2s infinite;
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  }
+
+  .school-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $navy-blue;
+    margin: 0.5rem 0;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+}
+
+.form-container {
+  padding: 1rem 0;
+}
+
+.welcome-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: $navy-blue;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.login-subtitle {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.input-group {
+  display: flex;
+  margin-bottom: 1.5rem;
+  position: relative;
+
+  .input-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    color: $navy-blue;
+    font-size: 1.1rem;
+    position: absolute;
+    left: 15px;
+    top: 38px;
+    z-index: 1;
+  }
+
+  .input-field {
+    flex: 1;
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: $navy-blue;
+    }
+
+    .form-control {
+      height: 48px;
+      padding-left: 45px;
+      border: 2px solid #e4e6ef;
+      border-radius: 0.85rem;
+      transition: all 0.3s ease;
+
+      &:focus {
+        border-color: $kelly-green;
+        box-shadow: 0 0 0 0.2rem rgba(0, 193, 110, 0.25);
       }
+
+      &.is-invalid {
+        border-color: #f64e60;
+      }
+
+      &.is-valid {
+        border-color: $kelly-green;
+      }
+    }
+  }
+}
+
+.fv-plugins-message-container {
+  margin-top: 0.5rem;
+
+  span {
+    color: #f64e60;
+    font-size: 0.85rem;
+  }
+}
+
+.login-button {
+  height: 50px;
+  background: linear-gradient(135deg, $kelly-green, $neon-green);
+  border: none;
+  border-radius: 0.85rem;
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  .button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: all 0.6s ease;
+  }
+
+  &:hover, &:focus {
+    background: linear-gradient(135deg, darken($kelly-green, 5%), darken($neon-green, 5%));
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 193, 110, 0.4);
+
+    &:before {
+      left: 100%;
+    }
+  }
+
+  &:disabled {
+    background: #e4e6ef;
+    color: #a1a5b7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .indicator-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.decoration-element {
+  position: absolute;
+  border-radius: 50%;
+
+  &.top-left {
+    top: -20px;
+    left: -20px;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, $kelly-green, $neon-green);
+    opacity: 0.1;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  &.bottom-right {
+    bottom: -30px;
+    right: -30px;
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, $navy-blue, $kelly-green);
+    opacity: 0.1;
+    animation: float 8s ease-in-out infinite reverse;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+  }
+}
+
+// Media queries para responsividad
+@media (max-width: 576px) {
+  .login-container {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    max-width: 100%;
+    box-shadow: none;
+    background-color: rgba(255, 255, 255, 0.95);
+  }
+
+  .logo-image {
+    height: 60px !important;
+  }
+
+  .welcome-text {
+    font-size: 1.5rem;
+  }
+
+  .input-group .input-field .form-control {
+    height: 44px;
+  }
+
+  .login-button {
+    height: 44px;
+  }
+
+  .decoration-element {
+    &.top-left {
+      width: 70px;
+      height: 70px;
+    }
+
+    &.bottom-right {
+      width: 100px;
+      height: 100px;
     }
   }
 }

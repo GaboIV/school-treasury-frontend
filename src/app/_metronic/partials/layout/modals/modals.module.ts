@@ -8,6 +8,10 @@ import {UpgradePlanModalComponent} from './upgrade-plan-modal/upgrade-plan-modal
 import {ModalComponent} from './modal/modal.component';
 import {NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
 import {SharedModule} from "../../../shared/shared.module";
+import { ChangePasswordModalComponent } from './change-password-modal/change-password-modal.component';
+import { PasswordChangeRequiredModalComponent } from './password-change-required-modal/password-change-required-modal.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -15,6 +19,8 @@ import {SharedModule} from "../../../shared/shared.module";
     MainModalComponent,
     UpgradePlanModalComponent,
     ModalComponent,
+    ChangePasswordModalComponent,
+    PasswordChangeRequiredModalComponent,
   ],
   imports: [
     CommonModule,
@@ -22,12 +28,16 @@ import {SharedModule} from "../../../shared/shared.module";
     RouterModule,
     NgbModalModule,
     SharedModule,
+    ReactiveFormsModule,
+    HttpClientModule,
   ],
   exports: [
     InviteUsersModalComponent,
     MainModalComponent,
     UpgradePlanModalComponent,
     ModalComponent,
+    ChangePasswordModalComponent,
+    PasswordChangeRequiredModalComponent,
   ],
 })
 export class ModalsModule {

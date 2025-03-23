@@ -64,9 +64,20 @@ export class UserModel extends AuthModel {
     console.log("UserModel: Valor original de roles:", user.roles);
     this.roles = Array.isArray(user.roles) ? user.roles : [this.role];
 
+    // Procesar el estado de cambio de contraseña solo si viene definido
+    if (user.hasChangedPassword !== undefined) {
+      console.log("UserModel: Valor original de hasChangedPassword:", user.hasChangedPassword);
+      // No realizamos ninguna transformación, solo asignamos
+      this.hasChangedPassword = user.hasChangedPassword;
+      console.log("UserModel: hasChangedPassword asignado:", this.hasChangedPassword);
+    } else {
+      console.log("UserModel: hasChangedPassword no definido en objeto de entrada");
+    }
+
     console.log("UserModel: Valores finales:", {
       role: this.role,
-      roles: this.roles
+      roles: this.roles,
+      hasChangedPassword: this.hasChangedPassword
     });
 
     this.occupation = user.occupation || '';

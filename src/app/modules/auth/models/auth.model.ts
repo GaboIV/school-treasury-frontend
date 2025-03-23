@@ -8,6 +8,7 @@ export class AuthModel {
   fullName: string;
   role: number;
   studentId?: string;
+  hasChangedPassword?: boolean;
 
   setAuth(auth: AuthModel) {
     this.authToken = auth.authToken;
@@ -19,5 +20,6 @@ export class AuthModel {
     this.fullName = auth.fullName;
     this.role = auth.role;
     this.studentId = auth.studentId;
+    this.hasChangedPassword = auth.hasChangedPassword;
   }
 }

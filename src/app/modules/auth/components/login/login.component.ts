@@ -5,6 +5,8 @@ import { first } from 'rxjs/operators';
 import { UserModel } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PasswordChangeRequiredModalComponent } from '../../../../_metronic/partials/layout/modals/password-change-required-modal/password-change-required-modal.component';
 
 @Component({
   selector: 'app-login',
@@ -30,7 +32,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private authService: AuthService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private modalService: NgbModal
   ) {
     this.isLoading$ = this.authService.isLoading$;
     // redirect to home if already logged in
@@ -85,7 +88,21 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe(
         (user: UserModel | undefined) => {
           if (user) {
-            console.log("LoginComponent: Login exitoso, redirigiendo a", this.returnUrl);
+            console.log("LoginComponent: Login exitoso, verificando estado de contraseña");
+
+            console.log("LoginComponent: Usuario", user);
+            console.log("LoginComponent: Tipo de hasChangedPassword:", typeof user.hasChangedPassword);
+            console.log("LoginComponent: Valor de hasChangedPassword:", user.hasChangedPassword);
+
+            // Verificar si el usuario necesita cambiar su contraseña
+            if (user.hasChangedPassword !== true) {
+              console.log("LoginComponent: El usuario necesita cambiar su contraseña");
+              this.showPasswordChangeRequiredModal();
+            } else {
+              console.log("LoginComponent: El usuario NO necesita cambiar su contraseña");
+            }
+
+            console.log("LoginComponent: Redirigiendo a", this.returnUrl);
             // Forzar la redirección al dashboard directamente
             if (this.returnUrl === '/') {
               console.log("LoginComponent: Redirigiendo directamente al dashboard");
@@ -111,6 +128,17 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
       );
     this.unsubscribe.push(loginSubscr);
+  }
+
+  showPasswordChangeRequiredModal() {
+    console.log("LoginComponent: Mostrando modal de cambio de contraseña requerido");
+
+    const modalRef = this.modalService.open(PasswordChangeRequiredModalComponent, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false
+    });
   }
 
   ngOnDestroy() {

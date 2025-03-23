@@ -24,6 +24,8 @@ export class AuthHTTPService {
     }).pipe(
       tap(response => {
         console.log("AuthHTTPService: Respuesta completa del login", response);
+        console.log("AuthHTTPService: Valor de hasChangedPassword en login:", response.hasChangedPassword);
+        console.log("AuthHTTPService: Tipo de hasChangedPassword en login:", typeof response.hasChangedPassword);
       }),
       map(response => {
         console.log("AuthHTTPService: Respuesta recibida", response);
@@ -35,6 +37,18 @@ export class AuthHTTPService {
         auth.fullName = response.fullName;
         auth.role = response.role;
         auth.studentId = response.studentId;
+
+        // IMPORTANTE: Forzar el valor de hasChangedPassword a true/false explícito
+        // Si viene en la respuesta del API como true, lo establecemos como true
+        if (response.hasChangedPassword === true) {
+          console.log("AuthHTTPService: Forzando hasChangedPassword a true");
+          auth.hasChangedPassword = true;
+        } else {
+          console.log("AuthHTTPService: Estableciendo hasChangedPassword a false (valor por defecto)");
+          auth.hasChangedPassword = false;
+        }
+
+        console.log("AuthHTTPService: Valor hasChangedPassword asignado a AuthModel:", auth.hasChangedPassword);
 
         // Establecer una fecha de expiración basada en el token
         // Por defecto, 7 días desde ahora
@@ -72,20 +86,35 @@ export class AuthHTTPService {
     return this.http.get<any>(`${API_AUTH_URL}/me`, { headers: httpHeaders }).pipe(
       tap(response => {
         console.log("AuthHTTPService: Respuesta completa de /me", response);
+        console.log("AuthHTTPService: Valor de hasChangedPassword en respuesta:", response.hasChangedPassword);
+        console.log("AuthHTTPService: Tipo de hasChangedPassword en respuesta:", typeof response.hasChangedPassword);
       }),
       map(response => {
         console.log("AuthHTTPService: Respuesta de /me", response);
 
         // Crear y configurar el modelo de usuario con la respuesta
         const user = new UserModel();
-        user.id = response.id;
-        user.username = response.username || '';
-        user.email = response.email || '';
-        user.fullname = response.fullName || '';
-        user.authToken = token;
 
-        // Asegurarse de que el rol esté configurado correctamente
-        user.role = response.role;
+        // Primero, forzamos la inicialización completa del modelo con los valores básicos
+        user.setUser({
+          id: response.id,
+          username: response.username || '',
+          email: response.email || '',
+          fullname: response.fullName || '',
+          authToken: token,
+          role: response.role
+        });
+
+        // Tratar hasChangedPassword explícitamente
+        if (response.hasChangedPassword === true) {
+          console.log("AuthHTTPService: Estableciendo hasChangedPassword a true desde API");
+          user.hasChangedPassword = true;
+        } else {
+          console.log("AuthHTTPService: Estableciendo hasChangedPassword a false (valor por defecto)");
+          user.hasChangedPassword = false;
+        }
+
+        console.log("AuthHTTPService: hasChangedPassword después de procesamiento:", user.hasChangedPassword);
 
         // Configurar el array de roles según la respuesta
         if (response.role === 2) {
@@ -102,6 +131,7 @@ export class AuthHTTPService {
           username: user.username,
           role: user.role,
           roles: user.roles,
+          hasChangedPassword: user.hasChangedPassword,
           hasRoleProperty: user.hasOwnProperty('role'),
           hasRolesProperty: user.hasOwnProperty('roles'),
           roleType: typeof user.role,
@@ -127,13 +157,30 @@ export class AuthHTTPService {
       if (tokenParts.length === 3) {
         const payload = JSON.parse(atob(tokenParts[1]));
         console.log("AuthHTTPService: Payload del token", payload);
+        console.log("AuthHTTPService: Valor de hasChangedPassword en payload:", payload.hasChangedPassword);
+        console.log("AuthHTTPService: Tipo de hasChangedPassword en payload:", typeof payload.hasChangedPassword);
 
         const user = new UserModel();
-        user.id = payload.nameid;
-        user.username = payload.unique_name || '';
-        user.email = payload.email || '';
-        user.fullname = payload.FullName || '';
-        user.authToken = token;
+
+        // Usar setUser para inicializar el modelo completamente con valores básicos
+        user.setUser({
+          id: payload.nameid,
+          username: payload.unique_name || '',
+          email: payload.email || '',
+          fullname: payload.FullName || '',
+          authToken: token
+        });
+
+        // Tratar hasChangedPassword explícitamente
+        if (payload.hasChangedPassword === true) {
+          console.log("AuthHTTPService: Estableciendo hasChangedPassword a true desde token");
+          user.hasChangedPassword = true;
+        } else {
+          console.log("AuthHTTPService: Estableciendo hasChangedPassword a false (valor por defecto)");
+          user.hasChangedPassword = false;
+        }
+
+        console.log("AuthHTTPService: hasChangedPassword después de procesamiento:", user.hasChangedPassword);
 
         // Asegurarse de que el rol esté configurado correctamente
         if (payload.role === 'Administrator') {
@@ -153,6 +200,7 @@ export class AuthHTTPService {
           username: user.username,
           role: user.role,
           roles: user.roles,
+          hasChangedPassword: user.hasChangedPassword,
           hasRoleProperty: user.hasOwnProperty('role'),
           hasRolesProperty: user.hasOwnProperty('roles'),
           roleType: typeof user.role,
