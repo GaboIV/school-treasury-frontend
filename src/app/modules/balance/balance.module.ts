@@ -33,7 +33,8 @@ import { ExpensesComponent } from './expenses/expenses.component';
 import { DeleteExpenseModalComponent } from './expenses/modals/delete-expense-modal/delete-expense-modal.component';
 import { CreateExpenseModalComponent } from './expenses/modals/create-expense-modal/create-expense-modal.component';
 import { UpdateExpenseModalComponent } from './expenses/modals/update-expense-modal/update-expense-modal.component';
-import { MyPaymentsComponent } from './my-payments/my-payments.component';
+import { MyPaysComponent } from './my-pays/my-pays.component';
+import { PaymentDetailsModalComponent } from './my-pays/modals/payment-details-modal/payment-details-modal.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { MyPaymentsComponent } from './my-payments/my-payments.component';
     CreateExpenseModalComponent,
     DeleteExpenseModalComponent,
     UpdateExpenseModalComponent,
-    MyPaymentsComponent
+    MyPaysComponent,
+    PaymentDetailsModalComponent,
   ],
   imports: [
     CommonModule,
