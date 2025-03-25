@@ -5,6 +5,17 @@ import { StudentPaymentService } from '../../../services/student-payment.service
 import { StudentPayment } from '../../../models/student-payment.model';
 import { first } from 'rxjs/operators';
 import { LocationStrategy } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
+
+// Interfaz para la colección que llega desde el modal de detalles de pago
+export interface CollectionInfo {
+  id: number;
+  studentId: number;
+  studentName: string;
+  name: string;
+  amount: number;
+  pendingAmount: number;
+}
 
 @Component({
   selector: 'app-register-payment-modal',
@@ -12,6 +23,8 @@ import { LocationStrategy } from '@angular/common';
 })
 export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
   @Input() payment: StudentPayment;
+  @Input() collection: CollectionInfo; // Nueva propiedad para recibir datos desde PaymentDetailsModal
+
   paymentForm: FormGroup;
   isLoading: boolean = false;
   error: string = '';
@@ -34,10 +47,14 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     public activeModal: NgbActiveModal,
     private studentPaymentService: StudentPaymentService,
-    private locationStrategy: LocationStrategy
+    private locationStrategy: LocationStrategy,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
+    // Verificar si los datos vienen desde collection o payment
+    this.initializeFromInputs();
+
     // Si hay un monto pendiente, siempre permitir guardar (comportamiento normal)
     if (this.getPendingAmount() > 0) {
       this.formChanged = true;
@@ -45,8 +62,8 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
 
     this.initForm();
 
-    // Cargar imágenes existentes si las hay
-    if (this.payment.images && this.payment.images.length > 0) {
+    // Cargar imágenes existentes si las hay (solo si proviene de payment)
+    if (this.payment?.images && this.payment.images.length > 0) {
       this.existingImages = [...this.payment.images];
       this.imagePreviewUrls = [...this.payment.images];
       this.initialImages = [...this.payment.images];
@@ -77,6 +94,33 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
     );
   }
 
+  // Método para inicializar propiedades según los inputs recibidos
+  private initializeFromInputs() {
+    // Si payment es nulo pero collection es válido, crear un objeto payment con los datos de collection
+    if (!this.payment && this.collection) {
+      this.payment = {
+        id: '0', // Se generará al guardar
+        collectionId: this.collection.id.toString(),
+        studentId: this.collection.studentId.toString(),
+        studentName: this.collection.studentName,
+        collectionName: this.collection.name,
+        amountCollection: this.collection.amount,
+        amountPaid: 0,
+        pending: this.collection.pendingAmount,
+        paymentStatus: 0, // Pendiente
+        paymentDate: null,
+        paymentType: 0, // Por defecto
+        images: [],
+        comment: null,
+        surplus: 0,
+        voucher: null,
+        excedent: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      } as StudentPayment;
+    }
+  }
+
   // Manejar el evento de navegación hacia atrás
   @HostListener('window:popstate', ['$event'])
   onPopState(event: PopStateEvent) {
@@ -104,17 +148,21 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
 
       let paymentDateValue: string = '';
 
-      if (this.payment.paymentDate) {
+      if (this.payment?.paymentDate) {
         const paymentDate = new Date(this.payment.paymentDate);
         paymentDateValue = paymentDate.toISOString().split('T')[0]; // Formato YYYY-MM-DD
         console.log('Fecha original:', this.payment.paymentDate);
         console.log('Fecha para el formulario:', paymentDateValue);
+      } else {
+        // Si no hay fecha de pago, usar la fecha actual
+        const today = new Date();
+        paymentDateValue = today.toISOString().split('T')[0];
       }
 
       this.paymentForm = this.fb.group({
-        id: [this.payment.id],
+        id: [this.payment?.id || 0],
         amountPaid: [defaultAmount, [Validators.required, Validators.min(0), Validators.max(pendingAmount)]],
-        comment: [this.payment.comment || ''],
+        comment: [this.payment?.comment || ''],
         paymentDate: [paymentDateValue, Validators.required]
       });
   }
@@ -191,7 +239,7 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
 
     // Crear FormData para enviar archivos
     const formData = new FormData();
-    formData.append('id', paymentData.id);
+    formData.append('id', paymentData.id.toString());
 
     // Si es un pago completo (edición) o si hay un monto pendiente (nuevo pago)
     // Solo enviamos amountPaid si es un nuevo pago o hay monto pendiente

@@ -1,0 +1,142 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ 'MYBALANCE.REQUEST_PAYMENT_REGISTRATION' | translate }}</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<form [formGroup]="requestForm" (ngSubmit)="submit()">
+  <div class="modal-body">
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <div class="alert alert-info mb-4">
+      <div class="d-flex">
+        <i class="bi bi-info-circle-fill me-2 fs-5"></i>
+        <div>
+          <p class="mb-0">
+            <strong>{{ 'GENERAL.NOTE' | translate }}:</strong> {{ 'MYBALANCE.PAYMENT_REQUEST_INFO' | translate }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <h5>{{ 'GENERAL.PAYMENT_INFORMATION' | translate }}</h5>
+      <div class="d-flex flex-column">
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">{{ 'GENERAL.STUDENT' | translate }}:</span>
+          <span class="fw-bold">{{ paymentData.studentName }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">{{ 'GENERAL.COLLECTION' | translate }}:</span>
+          <span class="fw-bold">{{ paymentData.collectionName }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">{{ 'GENERAL.AMOUNT' | translate }}:</span>
+          <span class="fw-bold">{{ paymentData.amount | currency: 'S/ ' }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">{{ 'GENERAL.PENDING' | translate }}:</span>
+          <span class="fw-bold text-danger">
+            {{ paymentData.pendingAmount | currency: 'S/ ' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Campos del formulario -->
+    <div class="mb-3">
+      <label class="form-label required">{{ 'MYBALANCE.AMOUNT_TO_PAY' | translate }}</label>
+      <input type="number" class="form-control" formControlName="amountPaid" [ngClass]="{
+        'is-invalid': isControlInvalid('amountPaid'),
+        'is-valid': isControlValid('amountPaid')
+      }" />
+      <div class="invalid-feedback" *ngIf="controlHasError('required', 'amountPaid')">
+        {{ 'VALIDATION.AMOUNT_REQUIRED' | translate }}
+      </div>
+      <div class="invalid-feedback" *ngIf="controlHasError('max', 'amountPaid')">
+        {{ 'VALIDATION.AMOUNT_MAX' | translate }} ({{ paymentData.pendingAmount | currency: 'S/ ' }})
+      </div>
+    </div>
+
+    <!-- Campo de fecha de pago -->
+    <div class="mb-3">
+      <label class="form-label required">{{ 'GENERAL.PAYMENT_DATE' | translate }}</label>
+      <div class="input-group">
+        <input
+          type="date"
+          class="form-control"
+          formControlName="paymentDate"
+          [ngClass]="{
+            'is-invalid': isControlInvalid('paymentDate'),
+            'is-valid': isControlValid('paymentDate')
+          }"
+        />
+        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+      </div>
+      <div class="invalid-feedback" *ngIf="controlHasError('required', 'paymentDate')">
+        {{ 'VALIDATION.PAYMENT_DATE_REQUIRED' | translate }}
+      </div>
+    </div>
+
+    <!-- Campo de comentario -->
+    <div class="mb-3">
+      <label class="form-label">{{ 'GENERAL.COMMENT_OPTIONAL' | translate }}</label>
+      <textarea class="form-control" formControlName="comment" rows="3"></textarea>
+    </div>
+
+    <!-- Sección de carga de imágenes -->
+    <div class="mb-3">
+      <label class="form-label required">{{ 'MYBALANCE.PAYMENT_PROOF_IMAGES' | translate }}</label>
+      <div class="dropzone border rounded p-4 text-center position-relative"
+        [ngClass]="{ 'bg-light-primary border-primary': isDragging }" (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" (click)="fileInput.click()"
+        style="cursor: pointer; transition: all 0.2s ease;">
+        <div *ngIf="uploadedImages.length === 0" class="py-4">
+          <div class="mb-3">
+            <i class="bi bi-cloud-upload fs-1 text-primary"></i>
+          </div>
+          <h6 class="mb-2">{{ 'GENERAL.DRAG_DROP_HERE' | translate }}</h6>
+          <p class="text-muted mb-0">{{ 'GENERAL.OR_CLICK_TO_SELECT' | translate }}</p>
+        </div>
+        <div *ngIf="imagePreviewUrls.length > 0" class="d-flex flex-wrap gap-3 justify-content-center py-3">
+          <div *ngFor="let url of imagePreviewUrls; let i = index" class="position-relative">
+            <div class="image-preview-container"
+              style="width: 120px; height: 120px; overflow: hidden; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <img [src]="url" class="w-100 h-100" style="object-fit: cover;" />
+              <div class="position-absolute top-0 end-0 m-1">
+                <button type="button" class="btn btn-icon btn-sm btn-danger rounded-circle"
+                  style="width: 24px; height: 24px; padding: 0; line-height: 24px;"
+                  (click)="removeImage(i); $event.stopPropagation();">
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex align-items-center justify-content-center">
+            <div class="add-more-container"
+              style="width: 120px; height: 120px; border: 2px dashed var(--bs-primary); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <i class="bi bi-plus-circle fs-2 text-primary mb-2"></i>
+              <span class="text-primary small">{{ 'GENERAL.ADD_MORE' | translate }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <input #fileInput type="file" accept="image/*" multiple class="d-none" (change)="onFileSelected($event)" />
+      <div class="form-text text-muted mt-2">
+        <i class="bi bi-info-circle me-1"></i> {{ 'GENERAL.ALLOWED_FORMATS' | translate }}
+      </div>
+      <div class="text-danger mt-2" *ngIf="uploadedImages.length === 0">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ 'VALIDATION.IMAGES_REQUIRED' | translate }}
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="activeModal.dismiss()">{{ 'GENERAL.CANCEL' | translate }}</button>
+    <button type="submit" class="btn btn-primary" [disabled]="requestForm.invalid || uploadedImages.length === 0 || isLoading">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+      {{ 'MYBALANCE.SEND_REQUEST' | translate }}
+    </button>
+  </div>
+</form>

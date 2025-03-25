@@ -29,6 +29,16 @@
       </a>
     </div>
 
+    <!-- Solicitudes de pago (solo para representantes) -->
+    <div class="menu-item" *appHasRole="['Representative']">
+      <a class="menu-link without-sub" routerLinkActive="active" routerLink="/balance/solicitudes-pago">
+        <span class="menu-icon">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+        </span>
+        <span class="menu-title" translate="MYBALANCE.PAYMENTREQUESTS"></span>
+      </a>
+    </div>
+
     <!-- Separator -->
     <div class="menu-item">
       <div class="menu-content pt-8 pb-2">
@@ -66,6 +76,18 @@
         </span>
         <span
           class="menu-title" translate="BALANCE.EXPENSES">
+        </span>
+      </a>
+    </div>
+
+    <!-- Gestión de solicitudes de pago (solo para administradores) -->
+    <div class="menu-item" *appHasRole="['Admin']">
+      <a class="menu-link without-sub" routerLinkActive="active" routerLink="balance/gestion-solicitudes">
+        <span class="menu-icon">
+          <i class="fa-solid fa-clipboard-check"></i>
+        </span>
+        <span
+          class="menu-title" translate="BALANCE.PAYMENT_REQUESTS_MANAGEMENT">
         </span>
       </a>
     </div>

@@ -1,0 +1,823 @@
+<div class="card mb-5 mb-xl-10">
+  <div class="card-header border-0 pt-5">
+    <h3 class="card-title align-items-start flex-column">
+      <span class="card-label fw-bold fs-3 mb-1" translate="BALANCE.PAYMENT_REQUESTS.TITLE"></span>
+    </h3>
+  </div>
+  <div class="card-body py-3">
+    <!-- Estado y filtros mejorados visualmente -->
+    <div class="mb-5">
+      <div class="row mb-6">
+        <div class="col-lg-12">
+          <!-- Tabs para pantallas grandes -->
+          <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x fs-6 fw-bold border-0 scrollable-tabs d-none d-lg-flex">
+            <li class="nav-item">
+              <a class="nav-link text-active-primary pb-4 cursor-pointer" [class.active]="activeTab === 'all'" (click)="$event.preventDefault(); activeTab = 'all'; refreshData()">
+                <span class="d-flex align-items-center">
+                  <span class="me-2">{{ 'GENERAL.ALL' | translate }}</span>
+                  <span class="badge badge-circle" [ngClass]="{'bg-primary text-white': activeTab === 'all', 'bg-light text-dark': activeTab !== 'all'}">{{ paymentRequests.length }}</span>
+                </span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-active-primary pb-4 cursor-pointer" [class.active]="activeTab === 'pending'" (click)="$event.preventDefault(); activeTab = 'pending'; refreshData()">
+                <span class="d-flex align-items-center">
+                  <span class="me-2">{{ 'BALANCE.PAYMENT_REQUESTS.PENDING' | translate }}</span>
+                  <span class="badge badge-circle" [ngClass]="{'bg-warning text-white': activeTab === 'pending', 'badge-light-warning': activeTab !== 'pending'}">{{ pendingRequests.length }}</span>
+                </span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-active-primary pb-4 cursor-pointer" [class.active]="activeTab === 'underReview'" (click)="$event.preventDefault(); activeTab = 'underReview'; refreshData()">
+                <span class="d-flex align-items-center">
+                  <span class="me-2">{{ 'BALANCE.PAYMENT_REQUESTS.UNDER_REVIEW' | translate }}</span>
+                  <span class="badge badge-circle" [ngClass]="{'bg-primary text-white': activeTab === 'underReview', 'badge-light-primary': activeTab !== 'underReview'}">{{ underReviewRequests.length }}</span>
+                </span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-active-primary pb-4 cursor-pointer" [class.active]="activeTab === 'approved'" (click)="$event.preventDefault(); activeTab = 'approved'; refreshData()">
+                <span class="d-flex align-items-center">
+                  <span class="me-2">{{ 'BALANCE.PAYMENT_REQUESTS.APPROVED' | translate }}</span>
+                  <span class="badge badge-circle" [ngClass]="{'bg-success text-white': activeTab === 'approved', 'badge-light-success': activeTab !== 'approved'}">{{ approvedRequests.length }}</span>
+                </span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-active-primary pb-4 cursor-pointer" [class.active]="activeTab === 'rejected'" (click)="$event.preventDefault(); activeTab = 'rejected'; refreshData()">
+                <span class="d-flex align-items-center">
+                  <span class="me-2">{{ 'BALANCE.PAYMENT_REQUESTS.REJECTED' | translate }}</span>
+                  <span class="badge badge-circle" [ngClass]="{'bg-danger text-white': activeTab === 'rejected', 'badge-light-danger': activeTab !== 'rejected'}">{{ rejectedRequests.length }}</span>
+                </span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-active-primary pb-4 cursor-pointer" [class.active]="activeTab === 'needsChanges'" (click)="$event.preventDefault(); activeTab = 'needsChanges'; refreshData()">
+                <span class="d-flex align-items-center">
+                  <span class="me-2">{{ 'BALANCE.PAYMENT_REQUESTS.NEEDS_CHANGES' | translate }}</span>
+                  <span class="badge badge-circle" [ngClass]="{'bg-info text-white': activeTab === 'needsChanges', 'badge-light-info': activeTab !== 'needsChanges'}">{{ needsChangesRequests.length }}</span>
+                </span>
+              </a>
+            </li>
+          </ul>
+
+          <!-- Matriz de filtros 2x3 para móviles -->
+          <div class="d-lg-none filter-grid">
+            <div class="row g-2">
+              <div class="col-6">
+                <a class="filter-item cursor-pointer" [class.active]="activeTab === 'all'" (click)="$event.preventDefault(); activeTab = 'all'; refreshData()">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="filter-title">{{ 'GENERAL.ALL' | translate }}</span>
+                    <span class="badge badge-circle badge-sm" [ngClass]="{'bg-primary text-white': activeTab === 'all', 'bg-light text-dark': activeTab !== 'all'}">{{ paymentRequests.length }}</span>
+                  </div>
+                </a>
+              </div>
+              <div class="col-6">
+                <a class="filter-item cursor-pointer" [class.active]="activeTab === 'pending'" (click)="$event.preventDefault(); activeTab = 'pending'; refreshData()">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="filter-title">{{ 'BALANCE.PAYMENT_REQUESTS.PENDING' | translate }}</span>
+                    <span class="badge badge-circle badge-sm" [ngClass]="{'bg-warning text-white': activeTab === 'pending', 'badge-light-warning': activeTab !== 'pending'}">{{ pendingRequests.length }}</span>
+                  </div>
+                </a>
+              </div>
+              <div class="col-6">
+                <a class="filter-item cursor-pointer" [class.active]="activeTab === 'underReview'" (click)="$event.preventDefault(); activeTab = 'underReview'; refreshData()">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="filter-title">{{ 'BALANCE.PAYMENT_REQUESTS.UNDER_REVIEW' | translate }}</span>
+                    <span class="badge badge-circle badge-sm" [ngClass]="{'bg-primary text-white': activeTab === 'underReview', 'badge-light-primary': activeTab !== 'underReview'}">{{ underReviewRequests.length }}</span>
+                  </div>
+                </a>
+              </div>
+              <div class="col-6">
+                <a class="filter-item cursor-pointer" [class.active]="activeTab === 'approved'" (click)="$event.preventDefault(); activeTab = 'approved'; refreshData()">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="filter-title">{{ 'BALANCE.PAYMENT_REQUESTS.APPROVED' | translate }}</span>
+                    <span class="badge badge-circle badge-sm" [ngClass]="{'bg-success text-white': activeTab === 'approved', 'badge-light-success': activeTab !== 'approved'}">{{ approvedRequests.length }}</span>
+                  </div>
+                </a>
+              </div>
+              <div class="col-6">
+                <a class="filter-item cursor-pointer" [class.active]="activeTab === 'rejected'" (click)="$event.preventDefault(); activeTab = 'rejected'; refreshData()">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="filter-title">{{ 'BALANCE.PAYMENT_REQUESTS.REJECTED' | translate }}</span>
+                    <span class="badge badge-circle badge-sm" [ngClass]="{'bg-danger text-white': activeTab === 'rejected', 'badge-light-danger': activeTab !== 'rejected'}">{{ rejectedRequests.length }}</span>
+                  </div>
+                </a>
+              </div>
+              <div class="col-6">
+                <a class="filter-item cursor-pointer" [class.active]="activeTab === 'needsChanges'" (click)="$event.preventDefault(); activeTab = 'needsChanges'; refreshData()">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="filter-title">{{ 'BALANCE.PAYMENT_REQUESTS.NEEDS_CHANGES' | translate }}</span>
+                    <span class="badge badge-circle badge-sm" [ngClass]="{'bg-info text-white': activeTab === 'needsChanges', 'badge-light-info': activeTab !== 'needsChanges'}">{{ needsChangesRequests.length }}</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de solicitudes para escritorio -->
+    <div class="tab-content">
+      <!-- Versión desktop para cada pestaña -->
+      <div class="d-none d-lg-block">
+        <div class="tab-pane fade" [ngClass]="{'show active': activeTab === 'all'}" id="kt_tab_pane_all">
+          <div class="table-responsive">
+            <table class="table align-middle gs-0 gy-4">
+              <thead>
+                <tr class="fw-bold text-muted bg-light">
+                  <th class="ps-4 min-w-150px rounded-start">{{ 'BALANCE.PAYMENT_REQUESTS.STUDENT' | translate }}</th>
+                  <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.AMOUNT' | translate }}</th>
+                  <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.CONCEPT' | translate }}</th>
+                  <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.DATE' | translate }}</th>
+                  <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.STATUS' | translate }}</th>
+                  <th class="min-w-120px">{{ 'BALANCE.PAYMENT_REQUESTS.IMAGES' | translate }}</th>
+                  <th class="min-w-100px text-end rounded-end pe-4">{{ 'BALANCE.PAYMENT_REQUESTS.ACTIONS' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Mensaje cuando no hay datos -->
+                <tr *ngIf="paymentRequests.length === 0">
+                  <td colspan="7" class="text-center py-5">
+                    <span class="text-muted">No hay solicitudes disponibles</span>
+                  </td>
+                </tr>
+
+                <!-- Aquí se renderizarán las solicitudes de pago cuando haya datos -->
+                <tr *ngFor="let request of paymentRequests">
+                  <td style="padding-left: 1rem;">
+                    <div class="d-flex align-items-center">
+                      <div class="d-flex justify-content-start flex-column">
+                        <span class="text-dark fw-bold text-hover-primary mb-1 fs-6">{{ request.studentName }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="text-dark fw-bold d-block mb-1 fs-6">S/ {{ request.amountPaid | number:'1.2-2' }}</span>
+                    <span class="text-muted fw-bold text-muted d-block fs-7">de S/ {{ request.pendingAmount | number:'1.2-2' }} pendiente</span>
+                  </td>
+                  <td>
+                    <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.collection.name || 'Pago regular' }}</span>
+                    <span class="text-muted fw-semibold d-block fs-7" *ngIf="request.periodDescription">{{ request.periodDescription }}</span>
+                  </td>
+                  <td>
+                    <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.paymentDate | date:'shortDate' }}</span>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+                      {{ getStatusText(request.status) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div *ngIf="request.images && request.images.length > 0" class="card-images">
+                      <div
+                        *ngFor="let image of request.images.slice(0, 3); let i = index"
+                        class="card-image-container cursor-pointer"
+                        (click)="openImageViewer(request.images, i)"
+                      >
+                        <img [src]="image" class="card-image" [alt]="'Imagen ' + (i + 1)">
+                      </div>
+                      <div
+                        *ngIf="request.images.length > 3"
+                        class="more-images cursor-pointer"
+                        (click)="openImageViewer(request.images, 3)"
+                      >
+                        +{{ request.images.length - 3 }}
+                      </div>
+                    </div>
+                    <span class="text-muted fs-7" *ngIf="!request.images || request.images.length === 0">Sin imágenes</span>
+                  </td>
+                  <td class="text-end">
+                    <button type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" (click)="onView(request)" title="Ver detalles">
+                      <i class="fa-solid fa-eye"></i>
+                    </button>
+                    <button *ngIf="request.status === 0 || request.status === 1" type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" (click)="onEdit(request)" title="Editar solicitud">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button *ngIf="request.status === 0" type="button" class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm" (click)="onDelete(request)" title="Eliminar solicitud">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Las pestañas restantes con estructura idéntica pero datos filtrados -->
+        <div class="tab-pane fade" [ngClass]="{'show active': activeTab === 'pending'}" id="kt_tab_pane_pending">
+          <div class="table-responsive">
+            <table class="table align-middle gs-0 gy-4">
+              <thead>
+                <tr class="fw-bold text-muted bg-light">
+                  <th class="ps-4 min-w-150px rounded-start">{{ 'BALANCE.PAYMENT_REQUESTS.STUDENT' | translate }}</th>
+                  <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.AMOUNT' | translate }}</th>
+                  <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.CONCEPT' | translate }}</th>
+                  <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.DATE' | translate }}</th>
+                  <th class="min-w-100px">{{ 'BALANCE.PAYMENT_REQUESTS.STATUS' | translate }}</th>
+                  <th class="min-w-120px">{{ 'BALANCE.PAYMENT_REQUESTS.IMAGES' | translate }}</th>
+                  <th class="min-w-100px text-end rounded-end pe-4">{{ 'BALANCE.PAYMENT_REQUESTS.ACTIONS' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="pendingRequests.length === 0">
+                  <td colspan="7" class="text-center py-5">
+                    <span class="text-muted">No hay solicitudes pendientes</span>
+                  </td>
+                </tr>
+                <tr *ngFor="let request of pendingRequests">
+                  <td style="padding-left: 1rem;">
+                    <div class="d-flex align-items-center">
+                      <div class="d-flex justify-content-start flex-column">
+                        <span class="text-dark fw-bold text-hover-primary mb-1 fs-6">{{ request.studentName }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="text-dark fw-bold d-block mb-1 fs-6">S/ {{ request.amountPaid | number:'1.2-2' }}</span>
+                  </td>
+                  <td>
+                    <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.collection.name || 'Pago regular' }}</span>
+                    <span class="text-muted fw-semibold d-block fs-7" *ngIf="request.periodDescription">{{ request.periodDescription }}</span>
+                  </td>
+                  <td>
+                    <span class="text-dark fw-bold d-block mb-1 fs-6">{{ request.paymentDate | date:'shortDate' }}</span>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+                      {{ getStatusText(request.status) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div *ngIf="request.images && request.images.length > 0" class="card-images">
+                      <div
+                        *ngFor="let image of request.images.slice(0, 3); let i = index"
+                        class="card-image-container cursor-pointer"
+                        (click)="openImageViewer(request.images, i)"
+                      >
+                        <img [src]="image" class="card-image" [alt]="'Imagen ' + (i + 1)">
+                      </div>
+                      <div
+                        *ngIf="request.images.length > 3"
+                        class="more-images cursor-pointer"
+                        (click)="openImageViewer(request.images, 3)"
+                      >
+                        +{{ request.images.length - 3 }}
+                      </div>
+                    </div>
+                    <span class="text-muted fs-7" *ngIf="!request.images || request.images.length === 0">Sin imágenes</span>
+                  </td>
+                  <td class="text-end">
+                    <button type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" (click)="onView(request)" title="Ver detalles">
+                      <i class="fa-solid fa-eye"></i>
+                    </button>
+                    <button type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" (click)="onEdit(request)" title="Editar solicitud">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button type="button" class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm" (click)="onDelete(request)" title="Eliminar solicitud">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="tab-pane fade" [ngClass]="{'show active': activeTab === 'underReview'}" id="kt_tab_pane_under_review">
+          <!-- Misma estructura de tabla para en revisión -->
+        </div>
+        <div class="tab-pane fade" [ngClass]="{'show active': activeTab === 'approved'}" id="kt_tab_pane_approved">
+          <!-- Misma estructura de tabla para aprobados -->
+        </div>
+        <div class="tab-pane fade" [ngClass]="{'show active': activeTab === 'rejected'}" id="kt_tab_pane_rejected">
+          <!-- Misma estructura de tabla para rechazados -->
+        </div>
+        <div class="tab-pane fade" [ngClass]="{'show active': activeTab === 'needsChanges'}" id="kt_tab_pane_needs_changes">
+          <!-- Misma estructura de tabla para necesita cambios -->
+        </div>
+      </div>
+
+      <!-- Vista móvil con tarjetas -->
+      <div class="d-lg-none">
+        <!-- Indicador de desplazamiento -->
+        <div *ngIf="(activeTab === 'all' && paymentRequests.length > 1) || 
+                   (activeTab === 'pending' && pendingRequests.length > 1) || 
+                   (activeTab === 'underReview' && underReviewRequests.length > 1) ||
+                   (activeTab === 'approved' && approvedRequests.length > 1) ||
+                   (activeTab === 'rejected' && rejectedRequests.length > 1) ||
+                   (activeTab === 'needsChanges' && needsChangesRequests.length > 1)" 
+             class="text-center mb-3 swipe-indicator">
+          <div class="d-flex flex-column align-items-center">
+            <i class="bi bi-chevron-down text-primary fs-4 mb-1"></i>
+            <span class="text-muted small">Desliza para ver más</span>
+          </div>
+        </div>
+
+        <!-- Tarjetas para todas las solicitudes -->
+        <div *ngIf="activeTab === 'all'" class="request-cards">
+          <div *ngIf="paymentRequests.length === 0" class="text-center py-5">
+            <span class="text-muted">No hay solicitudes disponibles</span>
+          </div>
+
+          <div *ngFor="let request of paymentRequests; let i = index" 
+               class="card payment-request-card mb-4"
+               [ngClass]="getStatusCardClass(request.status)"
+               [style.--animation-order]="i">
+            <div class="card-body p-3">
+              <!-- Encabezado de la tarjeta -->
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0 text-truncate">{{ request.studentName }}</h5>
+                <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+                  {{ getStatusText(request.status) }}
+                </span>
+              </div>
+
+              <!-- Información de la solicitud -->
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <div class="text-muted small">Monto</div>
+                  <div class="fw-bold">S/ {{ request.amountPaid | number:'1.2-2' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Pendiente</div>
+                  <div class="fw-bold">S/ {{ request.pendingAmount | number:'1.2-2' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Concepto</div>
+                  <div class="fw-bold text-truncate">{{ request.collection.name || 'Pago regular' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Fecha</div>
+                  <div>{{ request.paymentDate | date: 'dd/MM/yyyy' }}</div>
+                </div>
+              </div>
+
+              <!-- Imágenes de pago -->
+              <div *ngIf="request.images && request.images.length > 0" class="mb-3">
+                <div class="text-muted small mb-1">Comprobantes</div>
+                <div class="d-flex gap-2">
+                  <div *ngFor="let image of request.images.slice(0, 3); let i = index" 
+                       class="position-relative cursor-pointer" 
+                       (click)="openImageViewer(request.images, i)">
+                    <img [src]="image" 
+                         class="img-thumbnail" 
+                         style="width: 40px; height: 40px; object-fit: cover;">
+                  </div>
+                  <div *ngIf="request.images.length > 3" 
+                       class="d-flex justify-content-center align-items-center bg-light rounded cursor-pointer" 
+                       style="width: 40px; height: 40px;" 
+                       (click)="openImageViewer(request.images, 3)">
+                    <span class="text-muted">+{{ request.images.length - 3 }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-primary btn-sm" (click)="onView(request)">
+                  <i class="fa-solid fa-eye me-1"></i> Ver
+                </button>
+                <button *ngIf="request.status === 0 || request.status === 1" class="btn btn-light btn-sm" (click)="onEdit(request)">
+                  <i class="fa-solid fa-pen me-1"></i> Editar
+                </button>
+                <button *ngIf="request.status === 0" class="btn btn-light btn-sm" (click)="onDelete(request)">
+                  <i class="fa-solid fa-trash me-1"></i> Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjetas para solicitudes pendientes -->
+        <div *ngIf="activeTab === 'pending'" class="request-cards">
+          <div *ngIf="pendingRequests.length === 0" class="text-center py-5">
+            <span class="text-muted">No hay solicitudes pendientes</span>
+          </div>
+
+          <div *ngFor="let request of pendingRequests; let i = index" 
+               class="card payment-request-card mb-4"
+               [ngClass]="getStatusCardClass(request.status)"
+               [style.--animation-order]="i">
+            <div class="card-body p-3">
+              <!-- Encabezado de la tarjeta -->
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0 text-truncate">{{ request.studentName }}</h5>
+                <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+                  {{ getStatusText(request.status) }}
+                </span>
+              </div>
+
+              <!-- Información de la solicitud -->
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <div class="text-muted small">Monto</div>
+                  <div class="fw-bold">S/ {{ request.amountPaid | number:'1.2-2' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Pendiente</div>
+                  <div class="fw-bold">S/ {{ request.pendingAmount | number:'1.2-2' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Concepto</div>
+                  <div class="fw-bold text-truncate">{{ request.collection.name || 'Pago regular' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Fecha</div>
+                  <div>{{ request.paymentDate | date: 'dd/MM/yyyy' }}</div>
+                </div>
+              </div>
+
+              <!-- Imágenes de pago -->
+              <div *ngIf="request.images && request.images.length > 0" class="mb-3">
+                <div class="text-muted small mb-1">Comprobantes</div>
+                <div class="d-flex gap-2">
+                  <div *ngFor="let image of request.images.slice(0, 3); let i = index" 
+                       class="position-relative cursor-pointer" 
+                       (click)="openImageViewer(request.images, i)">
+                    <img [src]="image" 
+                         class="img-thumbnail" 
+                         style="width: 40px; height: 40px; object-fit: cover;">
+                  </div>
+                  <div *ngIf="request.images.length > 3" 
+                       class="d-flex justify-content-center align-items-center bg-light rounded cursor-pointer" 
+                       style="width: 40px; height: 40px;" 
+                       (click)="openImageViewer(request.images, 3)">
+                    <span class="text-muted">+{{ request.images.length - 3 }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-primary btn-sm" (click)="onView(request)">
+                  <i class="fa-solid fa-eye me-1"></i> Ver
+                </button>
+                <button class="btn btn-light btn-sm" (click)="onEdit(request)">
+                  <i class="fa-solid fa-pen me-1"></i> Editar
+                </button>
+                <button class="btn btn-light btn-sm" (click)="onDelete(request)">
+                  <i class="fa-solid fa-trash me-1"></i> Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjetas para solicitudes en revisión -->
+        <div *ngIf="activeTab === 'underReview'" class="request-cards">
+          <div *ngIf="underReviewRequests.length === 0" class="text-center py-5">
+            <span class="text-muted">No hay solicitudes en revisión</span>
+          </div>
+
+          <div *ngFor="let request of underReviewRequests; let i = index" 
+               class="card payment-request-card mb-4"
+               [ngClass]="getStatusCardClass(request.status)"
+               [style.--animation-order]="i">
+            <div class="card-body p-3">
+              <!-- Encabezado de la tarjeta -->
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0 text-truncate">{{ request.studentName }}</h5>
+                <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+                  {{ getStatusText(request.status) }}
+                </span>
+              </div>
+
+              <!-- Información de la solicitud -->
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <div class="text-muted small">Monto</div>
+                  <div class="fw-bold">S/ {{ request.amountPaid | number:'1.2-2' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Pendiente</div>
+                  <div class="fw-bold">S/ {{ request.pendingAmount | number:'1.2-2' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Concepto</div>
+                  <div class="fw-bold text-truncate">{{ request.collection.name || 'Pago regular' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Fecha</div>
+                  <div>{{ request.paymentDate | date: 'dd/MM/yyyy' }}</div>
+                </div>
+              </div>
+
+              <!-- Imágenes de pago -->
+              <div *ngIf="request.images && request.images.length > 0" class="mb-3">
+                <div class="text-muted small mb-1">Comprobantes</div>
+                <div class="d-flex gap-2">
+                  <div *ngFor="let image of request.images.slice(0, 3); let i = index" 
+                       class="position-relative cursor-pointer" 
+                       (click)="openImageViewer(request.images, i)">
+                    <img [src]="image" 
+                         class="img-thumbnail" 
+                         style="width: 40px; height: 40px; object-fit: cover;">
+                  </div>
+                  <div *ngIf="request.images.length > 3" 
+                       class="d-flex justify-content-center align-items-center bg-light rounded cursor-pointer" 
+                       style="width: 40px; height: 40px;" 
+                       (click)="openImageViewer(request.images, 3)">
+                    <span class="text-muted">+{{ request.images.length - 3 }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-primary btn-sm" (click)="onView(request)">
+                  <i class="fa-solid fa-eye me-1"></i> Ver
+                </button>
+                <button *ngIf="request.status === 1" class="btn btn-light btn-sm" (click)="onEdit(request)">
+                  <i class="fa-solid fa-pen me-1"></i> Editar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjetas para solicitudes aprobadas -->
+        <div *ngIf="activeTab === 'approved'" class="request-cards">
+          <div *ngIf="approvedRequests.length === 0" class="text-center py-5">
+            <span class="text-muted">No hay solicitudes aprobadas</span>
+          </div>
+
+          <div *ngFor="let request of approvedRequests; let i = index" 
+               class="card payment-request-card mb-4"
+               [ngClass]="getStatusCardClass(request.status)"
+               [style.--animation-order]="i">
+            <div class="card-body p-3">
+              <!-- Encabezado de la tarjeta -->
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0 text-truncate">{{ request.studentName }}</h5>
+                <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+                  {{ getStatusText(request.status) }}
+                </span>
+              </div>
+
+              <!-- Información de la solicitud -->
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <div class="text-muted small">Monto</div>
+                  <div class="fw-bold">S/ {{ request.amountPaid | number:'1.2-2' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Pendiente</div>
+                  <div class="fw-bold">S/ {{ request.pendingAmount | number:'1.2-2' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Concepto</div>
+                  <div class="fw-bold text-truncate">{{ request.collection.name || 'Pago regular' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Fecha</div>
+                  <div>{{ request.paymentDate | date: 'dd/MM/yyyy' }}</div>
+                </div>
+              </div>
+
+              <!-- Imágenes de pago -->
+              <div *ngIf="request.images && request.images.length > 0" class="mb-3">
+                <div class="text-muted small mb-1">Comprobantes</div>
+                <div class="d-flex gap-2">
+                  <div *ngFor="let image of request.images.slice(0, 3); let i = index" 
+                       class="position-relative cursor-pointer" 
+                       (click)="openImageViewer(request.images, i)">
+                    <img [src]="image" 
+                         class="img-thumbnail" 
+                         style="width: 40px; height: 40px; object-fit: cover;">
+                  </div>
+                  <div *ngIf="request.images.length > 3" 
+                       class="d-flex justify-content-center align-items-center bg-light rounded cursor-pointer" 
+                       style="width: 40px; height: 40px;" 
+                       (click)="openImageViewer(request.images, 3)">
+                    <span class="text-muted">+{{ request.images.length - 3 }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-primary btn-sm" (click)="onView(request)">
+                  <i class="fa-solid fa-eye me-1"></i> Ver
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjetas para solicitudes rechazadas -->
+        <div *ngIf="activeTab === 'rejected'" class="request-cards">
+          <div *ngIf="rejectedRequests.length === 0" class="text-center py-5">
+            <span class="text-muted">No hay solicitudes rechazadas</span>
+          </div>
+
+          <div *ngFor="let request of rejectedRequests; let i = index" 
+               class="card payment-request-card mb-4"
+               [ngClass]="getStatusCardClass(request.status)"
+               [style.--animation-order]="i">
+            <div class="card-body p-3">
+              <!-- Encabezado de la tarjeta -->
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0 text-truncate">{{ request.studentName }}</h5>
+                <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+                  {{ getStatusText(request.status) }}
+                </span>
+              </div>
+
+              <!-- Información de la solicitud -->
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <div class="text-muted small">Monto</div>
+                  <div class="fw-bold">S/ {{ request.amountPaid | number:'1.2-2' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Pendiente</div>
+                  <div class="fw-bold">S/ {{ request.pendingAmount | number:'1.2-2' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Concepto</div>
+                  <div class="fw-bold text-truncate">{{ request.collection.name || 'Pago regular' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Fecha</div>
+                  <div>{{ request.paymentDate | date: 'dd/MM/yyyy' }}</div>
+                </div>
+              </div>
+
+              <!-- Imágenes de pago -->
+              <div *ngIf="request.images && request.images.length > 0" class="mb-3">
+                <div class="text-muted small mb-1">Comprobantes</div>
+                <div class="d-flex gap-2">
+                  <div *ngFor="let image of request.images.slice(0, 3); let i = index" 
+                       class="position-relative cursor-pointer" 
+                       (click)="openImageViewer(request.images, i)">
+                    <img [src]="image" 
+                         class="img-thumbnail" 
+                         style="width: 40px; height: 40px; object-fit: cover;">
+                  </div>
+                  <div *ngIf="request.images.length > 3" 
+                       class="d-flex justify-content-center align-items-center bg-light rounded cursor-pointer" 
+                       style="width: 40px; height: 40px;" 
+                       (click)="openImageViewer(request.images, 3)">
+                    <span class="text-muted">+{{ request.images.length - 3 }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-primary btn-sm" (click)="onView(request)">
+                  <i class="fa-solid fa-eye me-1"></i> Ver
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjetas para solicitudes que necesitan cambios -->
+        <div *ngIf="activeTab === 'needsChanges'" class="request-cards">
+          <div *ngIf="needsChangesRequests.length === 0" class="text-center py-5">
+            <span class="text-muted">No hay solicitudes que requieran cambios</span>
+          </div>
+
+          <div *ngFor="let request of needsChangesRequests; let i = index" 
+               class="card payment-request-card mb-4"
+               [ngClass]="getStatusCardClass(request.status)"
+               [style.--animation-order]="i">
+            <div class="card-body p-3">
+              <!-- Encabezado de la tarjeta -->
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0 text-truncate">{{ request.studentName }}</h5>
+                <span class="badge" [ngClass]="getStatusBadgeClass(request.status)">
+                  {{ getStatusText(request.status) }}
+                </span>
+              </div>
+
+              <!-- Información de la solicitud -->
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <div class="text-muted small">Monto</div>
+                  <div class="fw-bold">S/ {{ request.amountPaid | number:'1.2-2' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Pendiente</div>
+                  <div class="fw-bold">S/ {{ request.pendingAmount | number:'1.2-2' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Concepto</div>
+                  <div class="fw-bold text-truncate">{{ request.collection.name || 'Pago regular' }}</div>
+                </div>
+                <div class="col-6">
+                  <div class="text-muted small">Fecha</div>
+                  <div>{{ request.paymentDate | date: 'dd/MM/yyyy' }}</div>
+                </div>
+              </div>
+
+              <!-- Imágenes de pago -->
+              <div *ngIf="request.images && request.images.length > 0" class="mb-3">
+                <div class="text-muted small mb-1">Comprobantes</div>
+                <div class="d-flex gap-2">
+                  <div *ngFor="let image of request.images.slice(0, 3); let i = index" 
+                       class="position-relative cursor-pointer" 
+                       (click)="openImageViewer(request.images, i)">
+                    <img [src]="image" 
+                         class="img-thumbnail" 
+                         style="width: 40px; height: 40px; object-fit: cover;">
+                  </div>
+                  <div *ngIf="request.images.length > 3" 
+                       class="d-flex justify-content-center align-items-center bg-light rounded cursor-pointer" 
+                       style="width: 40px; height: 40px;" 
+                       (click)="openImageViewer(request.images, 3)">
+                    <span class="text-muted">+{{ request.images.length - 3 }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botones de acción -->
+              <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-primary btn-sm" (click)="onView(request)">
+                  <i class="fa-solid fa-eye me-1"></i> Ver
+                </button>
+                <button class="btn btn-light btn-sm" (click)="onEdit(request)">
+                  <i class="fa-solid fa-pen me-1"></i> Editar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Se mantiene el modal pero ya no es accesible a través del botón -->
+<div class="modal fade" id="kt_modal_create_payment_request" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered mw-650px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>{{ 'BALANCE.PAYMENT_REQUESTS.CREATE' | translate }}</h2>
+        <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+          <i class="fa-solid fa-xmark fs-1"></i>
+        </div>
+      </div>
+      <div class="modal-body py-10 px-lg-17">
+        <!-- Formulario de solicitud de pago -->
+        <form class="form mb-15" method="post">
+          <div class="row mb-6">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+              <div class="fv-row mb-0">
+                <label class="form-label fs-6 fw-bolder text-dark">{{ 'BALANCE.PAYMENT_REQUESTS.STUDENT' | translate }}</label>
+                <select class="form-select form-select-solid" name="studentId">
+                  <option value="">Seleccione un estudiante</option>
+                  <!-- Opciones de estudiantes -->
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="fv-row mb-0">
+                <label class="form-label fs-6 fw-bolder text-dark">{{ 'BALANCE.PAYMENT_REQUESTS.AMOUNT' | translate }}</label>
+                <input type="number" class="form-control form-control-lg form-control-solid" name="amountPaid" step="0.01" min="0.01" />
+              </div>
+            </div>
+          </div>
+          <div class="row mb-6">
+            <div class="col-lg-12">
+              <div class="fv-row mb-0">
+                <label class="form-label fs-6 fw-bolder text-dark">{{ 'BALANCE.PAYMENT_REQUESTS.DATE' | translate }}</label>
+                <input type="date" class="form-control form-control-lg form-control-solid" name="paymentDate" />
+              </div>
+            </div>
+          </div>
+          <div class="row mb-6">
+            <div class="col-lg-12">
+              <div class="fv-row mb-0">
+                <label class="form-label fs-6 fw-bolder text-dark">{{ 'BALANCE.PAYMENT_REQUESTS.COMMENT' | translate }}</label>
+                <textarea class="form-control form-control-lg form-control-solid" name="comment" rows="4"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-6">
+            <div class="col-lg-12">
+              <div class="fv-row mb-0">
+                <label class="form-label fs-6 fw-bolder text-dark">{{ 'BALANCE.PAYMENT_REQUESTS.IMAGES' | translate }}</label>
+                <div class="dropzone" id="kt_dropzone_payment_request">
+                  <div class="dz-message needsclick">
+                    <i class="bi bi-file-earmark-arrow-up text-primary fs-3x"></i>
+                    <div class="ms-4">
+                      <h3 class="fs-5 fw-bold text-gray-900 mb-1">{{ 'BALANCE.PAYMENT_REQUESTS.UPLOAD_IMAGES' | translate }}</h3>
+                      <span class="fs-7 fw-semibold text-gray-400">Arrastre los archivos o haga clic para cargar</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer flex-center">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">{{ 'GENERAL.CANCEL' | translate }}</button>
+        <button type="button" class="btn btn-primary">{{ 'GENERAL.SAVE' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>

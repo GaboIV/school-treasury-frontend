@@ -9,7 +9,7 @@ import { filter, map } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class StudentPaymentService {
-  private apiUrl = `${environment.apiUrl}/api/StudentPayment`;
+  private apiUrl = `${environment.apiUrl}/api/v1/StudentPayment`;
 
   constructor(private http: HttpClient) { }
 
