@@ -1,4 +1,5 @@
 import type { CapacitorConfig } from '@capacitor/cli';
+import { registerPlugin } from '@capacitor/core';
 
 const config: CapacitorConfig = {
   appId: 'com.gabonet.creativosatreasury',
@@ -23,5 +24,7 @@ const config: CapacitorConfig = {
     },
   },
 };
+
+const PushNotifications = registerPlugin('PushNotifications');
 
 export default config;

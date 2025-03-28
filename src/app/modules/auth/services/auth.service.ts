@@ -46,8 +46,12 @@ export class AuthService implements OnDestroy {
   // public methods
   login(username: string, password: string): Observable<UserType> {
     console.log("AuthService: Iniciando login con username:", username);
+    // Obtener el token FCM del localStorage
+    const fcmToken = localStorage.getItem('fcm_token') || '';
+    console.log("AuthService: FCM Token para login:", fcmToken);
+
     this.isLoadingSubject.next(true);
-    return this.authHttpService.login(username, password).pipe(
+    return this.authHttpService.login(username, password, fcmToken).pipe(
       tap((auth: AuthModel) => {
         console.log("AuthService: Respuesta de login recibida:", auth);
         console.log("AuthService: hasChangedPassword en respuesta de login:", auth.hasChangedPassword);

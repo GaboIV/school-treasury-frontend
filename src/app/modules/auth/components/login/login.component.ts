@@ -79,8 +79,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.hasError = false;
     const username = this.f.username.value;
     const password = this.f.password.value;
+    const fcmToken = localStorage.getItem('fcm_token') || '';
 
     console.log("LoginComponent: Enviando credenciales", { username, password });
+    console.log("LoginComponent: FCM Token enviado", fcmToken);
 
     const loginSubscr = this.authService
       .login(username, password)
