@@ -1,4 +1,4 @@
-package com.gabonet.treasuryschool;
+package com.gabonet.creativosatreasury;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -1,12 +1,27 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.gabonet.treasuryschool',
-  appName: 'TreasurySchool',
+  appId: 'com.gabonet.creativosatreasury',
+  appName: 'Creativos A - Tesorería',
   webDir: 'dist',
-  server: {
-    allowNavigation: ["api.creativos.uno"]
-  }
+  plugins: {
+    SplashScreen: {
+      launchShowDuration: 1000,
+      launchAutoHide: true,
+      launchFadeOutDuration: 1000,
+      backgroundColor: "#ffffffff",
+      androidSplashResourceName: "splash",
+      androidScaleType: "CENTER_CROP",
+      showSpinner: true,
+      androidSpinnerStyle: "small",
+      iosSpinnerStyle: "small",
+      spinnerColor: "#ffffffff",
+      splashFullScreen: true,
+      splashImmersive: true,
+      layoutName: "launch_screen",
+      useDialog: true,
+    },
+  },
 };
 
 export default config;

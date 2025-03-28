@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">TreasurySchool</string>
-    <string name="title_activity_main">TreasurySchool</string>
-    <string name="package_name">com.gabonet.treasuryschool</string>
-    <string name="custom_url_scheme">com.gabonet.treasuryschool</string>
+    <string name="app_name">Creativos A - Tesorería</string>
+    <string name="title_activity_main">Creativos A - Tesorería</string>
+    <string name="package_name">com.gabonet.creativosatreasury</string>
+    <string name="custom_url_scheme">com.gabonet.creativosatreasury</string>
 </resources>
