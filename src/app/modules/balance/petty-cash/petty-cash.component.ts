@@ -54,7 +54,7 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   minSwipeDistance: number = 50; // Distancia mínima para considerar swipe - pública para depuración
 
   // Valores de depuración para swipe
-  debugSwipe: boolean = true;
+  debugSwipe: boolean = false; // Desactivado por defecto, activar solo para depuración
   swipeDistance: number = 0;
   swipeStartX: number = 0;
   swipeEndX: number = 0;
@@ -63,6 +63,9 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   showPageChangeToast: boolean = false;
   pageChangeMessage: string = '';
   pageChangeToastTimeout: any = null;
+
+  // Para animación de transición entre páginas
+  isPageChanging: boolean = false;
 
   constructor(
     private pettyCashService: PettyCashService,
@@ -206,15 +209,26 @@ export class PettyCashComponent implements OnInit, OnDestroy {
 
   loadTransactions(pageIndex: number): void {
     this.loading = true;
+    this.isPageChanging = true; // Iniciar animación
+
     this.pettyCashService.getTransactions(pageIndex, this.pageSize).subscribe(
       (result) => {
-        this.paginatedResult = result;
-        this.transactions = result.items;
-        this.loading = false;
+        // Aplicar una breve transición antes de mostrar los nuevos datos
+        setTimeout(() => {
+          this.paginatedResult = result;
+          this.transactions = result.items;
+          this.loading = false;
+
+          // Finalizar la animación después de un breve retraso
+          setTimeout(() => {
+            this.isPageChanging = false;
+          }, 150);
+        }, 100);
       },
       (error) => {
         console.error('Error al cargar las transacciones:', error);
         this.loading = false;
+        this.isPageChanging = false;
       }
     );
   }

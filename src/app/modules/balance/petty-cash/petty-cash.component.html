@@ -87,7 +87,8 @@
   <!-- Cuerpo de la tarjeta -->
   <div class="card-body py-3">
     <!-- Vista de escritorio (tabla) -->
-    <div class="table-responsive d-none d-md-block" *ngIf="transactions.length > 0">
+    <div class="table-responsive d-none d-md-block" *ngIf="transactions.length > 0"
+         [ngClass]="{'page-transition': isPageChanging}">
       <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
         <thead>
           <tr class="fw-bolder text-muted">
@@ -154,7 +155,8 @@
     <div class="d-md-none swipe-container" *ngIf="transactions.length > 0"
          #transactionsContainer
          (touchstart)="handleTouchStart($event)"
-         (touchend)="handleTouchEnd($event)">
+         (touchend)="handleTouchEnd($event)"
+         [ngClass]="{'page-transition': isPageChanging}">
       <div class="swipe-hint" *ngIf="isSmallScreen && paginatedResult && paginatedResult.totalCount > pageSize">
         <div class="swipe-indicator">
           <i class="bi bi-arrow-left-right me-2"></i>

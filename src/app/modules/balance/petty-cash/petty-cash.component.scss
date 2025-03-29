@@ -203,3 +203,25 @@
     font-weight: 500;
   }
 }
+
+// Animación de transición entre páginas
+.page-transition {
+  animation: fade-transition 0.5s ease-in-out;
+  opacity: 0.6;
+  transition: opacity 0.5s ease-in-out;
+}
+
+@keyframes fade-transition {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.3;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
