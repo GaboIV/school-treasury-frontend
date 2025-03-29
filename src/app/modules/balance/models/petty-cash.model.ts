@@ -20,6 +20,15 @@ export interface Transaction {
   createdBy: string | null;
   relatedEntityId?: string;
   relatedEntityType?: string;
+  studentId?: string;
+  studentName?: string;
+  expenseId?: string | null;
+  expenseName?: string | null;
+  paymentId?: string;
+  paymentStatus?: string;
+  notes?: string | null;
+  previousBalance?: number;
+  newBalance?: number;
 }
 
 export interface TransactionDto {

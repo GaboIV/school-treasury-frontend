@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit, ViewChild, HostListener } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, HostListener, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef, NgbToast } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { CreateTransactionDto, PaginatedResult, Transaction, TransactionSummary, TransactionType } from '../models/petty-cash.model';
 import { PettyCashService } from '../services/petty-cash.service';
@@ -17,6 +17,10 @@ import { AuthService } from '../../auth';
 })
 export class PettyCashComponent implements OnInit, OnDestroy {
   @ViewChild('transactionModal') transactionModal: any;
+  @ViewChild('transactionsContainer') transactionsContainer: ElementRef;
+
+  // Exponemos Math para usarlo en la plantilla
+  Math = Math;
 
   currentUser: any;
   isAdmin: boolean = false;
@@ -43,6 +47,25 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   // Para manejar el modal
   private activeModalRef: NgbModalRef | null = null;
   private modalOpen = false;
+
+  // Para el control de gestos
+  private touchStartX: number = 0;
+  private touchEndX: number = 0;
+  minSwipeDistance: number = 50; // Distancia mínima para considerar swipe - pública para depuración
+
+  // Valores de depuración para swipe
+  debugSwipe: boolean = false; // Desactivado por defecto, activar solo para depuración
+  swipeDistance: number = 0;
+  swipeStartX: number = 0;
+  swipeEndX: number = 0;
+
+  // Para el toast de notificación de cambio de página
+  showPageChangeToast: boolean = false;
+  pageChangeMessage: string = '';
+  pageChangeToastTimeout: any = null;
+
+  // Para animación de transición entre páginas
+  isPageChanging: boolean = false;
 
   constructor(
     private pettyCashService: PettyCashService,
@@ -77,6 +100,80 @@ export class PettyCashComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngAfterViewInit(): void {
+    console.log('View init - contenedor transacciones:', this.transactionsContainer?.nativeElement);
+  }
+
+  // Configurar detección de gestos para swipe
+  setupSwipeGestures(): void {
+    // No necesario ahora ya que usamos los eventos directamente en el HTML
+    console.log('Swipe gestures configurados por HTML');
+  }
+
+  // Manejar inicio de toque
+  handleTouchStart(e: TouchEvent): void {
+    console.log('Touch start event:', e);
+    this.touchStartX = e.touches[0].screenX;
+    this.swipeStartX = this.touchStartX; // Para depuración
+    console.log('Touch start:', this.touchStartX);
+  }
+
+  // Manejar fin de toque y determinar si fue swipe
+  handleTouchEnd(e: TouchEvent): void {
+    console.log('Touch end event:', e);
+    this.touchEndX = e.changedTouches[0].screenX;
+    this.swipeEndX = this.touchEndX; // Para depuración
+    console.log('Touch end:', this.touchEndX);
+    this.checkSwipeDirection();
+  }
+
+  // Verificar dirección del swipe y cambiar página si es necesario
+  checkSwipeDirection(): void {
+    const swipeDistance = this.touchEndX - this.touchStartX;
+    this.swipeDistance = swipeDistance; // Para depuración
+
+    console.log('Swipe distance:', swipeDistance);
+
+    // Si el gesto fue muy corto, ignorarlo
+    if (Math.abs(swipeDistance) < this.minSwipeDistance) {
+      console.log('Swipe ignorado - distancia insuficiente');
+      return;
+    }
+
+    if (swipeDistance > 0) {
+      // Swipe a la derecha - página anterior
+      console.log('Swipe derecha detectado');
+      if (this.pageIndex > 0) {
+        this.pageChanged('prev');
+        this.showPageChangeNotification('anterior');
+      }
+    } else {
+      // Swipe a la izquierda - página siguiente
+      console.log('Swipe izquierda detectado');
+      if (this.paginatedResult && this.pageIndex < Math.ceil(this.paginatedResult.totalCount / this.pageSize) - 1) {
+        this.pageChanged('next');
+        this.showPageChangeNotification('siguiente');
+      }
+    }
+  }
+
+  // Mostrar notificación de cambio de página
+  showPageChangeNotification(direction: string): void {
+    // Limpiar timeout anterior si existe
+    if (this.pageChangeToastTimeout) {
+      clearTimeout(this.pageChangeToastTimeout);
+    }
+
+    // Mostrar notificación
+    this.pageChangeMessage = `Página ${direction}: ${this.pageIndex + 1}`;
+    this.showPageChangeToast = true;
+
+    // Ocultar después de 2 segundos
+    this.pageChangeToastTimeout = setTimeout(() => {
+      this.showPageChangeToast = false;
+    }, 2000);
+  }
+
   // Manejar el evento de navegación hacia atrás
   @HostListener('window:popstate', ['$event'])
   onPopState(event: PopStateEvent) {
@@ -88,6 +185,11 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // Limpiar timeout si existe
+    if (this.pageChangeToastTimeout) {
+      clearTimeout(this.pageChangeToastTimeout);
+    }
+
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
@@ -107,15 +209,26 @@ export class PettyCashComponent implements OnInit, OnDestroy {
 
   loadTransactions(pageIndex: number): void {
     this.loading = true;
+    this.isPageChanging = true; // Iniciar animación
+
     this.pettyCashService.getTransactions(pageIndex, this.pageSize).subscribe(
       (result) => {
-        this.paginatedResult = result;
-        this.transactions = result.items;
-        this.loading = false;
+        // Aplicar una breve transición antes de mostrar los nuevos datos
+        setTimeout(() => {
+          this.paginatedResult = result;
+          this.transactions = result.items;
+          this.loading = false;
+
+          // Finalizar la animación después de un breve retraso
+          setTimeout(() => {
+            this.isPageChanging = false;
+          }, 150);
+        }, 100);
       },
       (error) => {
         console.error('Error al cargar las transacciones:', error);
         this.loading = false;
+        this.isPageChanging = false;
       }
     );
   }
@@ -174,12 +287,75 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   }
 
   pageChanged(event: any): void {
-    this.pageIndex = event - 1;
-    this.loadTransactions(this.pageIndex);
+    // Si el evento es un número, lo consideramos como el número de página
+    let newPageIndex = typeof event === 'number' ? event - 1 : this.pageIndex;
+
+    // Si es el botón anterior
+    if (event === 'prev') {
+      newPageIndex = Math.max(0, this.pageIndex - 1);
+    }
+    // Si es el botón siguiente
+    else if (event === 'next') {
+      newPageIndex = this.pageIndex + 1;
+    }
+    // Si es el botón primera página
+    else if (event === 'first') {
+      newPageIndex = 0;
+    }
+    // Si es el botón última página y tenemos datos de paginación
+    else if (event === 'last' && this.paginatedResult) {
+      newPageIndex = Math.ceil(this.paginatedResult.totalCount / this.pageSize) - 1;
+    }
+
+    // Solo cargamos si hay cambio de página
+    if (newPageIndex !== this.pageIndex) {
+      this.pageIndex = newPageIndex;
+      this.loadTransactions(this.pageIndex);
+    }
   }
 
   getTransactionTypeClass(type: TransactionType): string {
     return type === TransactionType.Income ? 'badge badge-light-success' : 'badge badge-light-danger';
+  }
+
+  /**
+   * Genera un array con los números de página a mostrar en la paginación
+   * considerando la página actual y el total de páginas
+   */
+  getPageNumbers(): number[] {
+    if (!this.paginatedResult) {
+      return [];
+    }
+
+    const totalPages = Math.ceil(this.paginatedResult.totalCount / this.pageSize);
+    const currentPage = this.pageIndex + 1;
+    const maxPagesToShow = 5;
+    const pages: number[] = [];
+
+    // Para menos de 6 páginas, mostrar todas
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+      return pages;
+    }
+
+    // Calcular rango a mostrar considerando la página actual y dejándola en el centro
+    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = startPage + maxPagesToShow - 1;
+
+    // Ajustar si el rango se pasa del final
+    if (endPage > totalPages) {
+      endPage = totalPages;
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+
+    // Generar array con los números de página
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
 
   // Formateador de moneda

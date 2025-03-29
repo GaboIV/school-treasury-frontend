@@ -70,7 +70,7 @@
   </div>
 </div>
 
-<!-- Tabla de transacciones -->
+<!-- Tabla/Cards de transacciones -->
 <div class="card">
   <!-- Encabezado de la tarjeta -->
   <div class="card-header border-0 pt-6">
@@ -86,8 +86,9 @@
 
   <!-- Cuerpo de la tarjeta -->
   <div class="card-body py-3">
-    <!-- Tabla -->
-    <div class="table-responsive" *ngIf="transactions.length > 0">
+    <!-- Vista de escritorio (tabla) -->
+    <div class="table-responsive d-none d-md-block" *ngIf="transactions.length > 0"
+         [ngClass]="{'page-transition': isPageChanging}">
       <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
         <thead>
           <tr class="fw-bolder text-muted">
@@ -95,7 +96,9 @@
             <th class="min-w-150px">Descripción</th>
             <th class="min-w-100px">Tipo</th>
             <th class="min-w-100px text-end">Monto</th>
-            <th class="min-w-100px" *ngIf="!isSmallScreen">Origen</th>
+            <th class="min-w-100px">Origen</th>
+            <th class="min-w-100px text-end">Saldo previo</th>
+            <th class="min-w-100px text-end">Saldo nuevo</th>
           </tr>
         </thead>
         <tbody>
@@ -123,18 +126,112 @@
                 {{ transaction.amount | currencyPEN }}
               </span>
             </td>
-            <td *ngIf="!isSmallScreen">
+            <td>
               <span *ngIf="transaction.relatedEntityType" class="badge badge-light-primary">
                 {{ transaction.relatedEntityType === 'StudentPayment' ? 'Pago de Estudiante' :
-                   transaction.relatedEntityType === 'Collection' ? 'Cobro' : transaction.relatedEntityType }}
+                   transaction.relatedEntityType === 'Collection' ? 'Cobro' :
+                   transaction.relatedEntityType === 'Payment' ? 'Pago' : transaction.relatedEntityType }}
               </span>
               <span *ngIf="!transaction.relatedEntityType" class="text-muted fw-bold d-block fs-7">
                 Manual
               </span>
             </td>
+            <td class="text-end">
+              <span class="text-muted fw-bold d-block fs-7" *ngIf="transaction.previousBalance !== undefined">
+                {{ transaction.previousBalance | currencyPEN }}
+              </span>
+            </td>
+            <td class="text-end">
+              <span class="text-muted fw-bold d-block fs-7" *ngIf="transaction.newBalance !== undefined">
+                {{ transaction.newBalance | currencyPEN }}
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Vista móvil (cards) -->
+    <div class="d-md-none swipe-container" *ngIf="transactions.length > 0"
+         #transactionsContainer
+         (touchstart)="handleTouchStart($event)"
+         (touchend)="handleTouchEnd($event)"
+         [ngClass]="{'page-transition': isPageChanging}">
+      <div class="swipe-hint" *ngIf="isSmallScreen && paginatedResult && paginatedResult.totalCount > pageSize">
+        <div class="swipe-indicator">
+          <i class="bi bi-arrow-left-right me-2"></i>
+          <span>Desliza para cambiar de página</span>
+        </div>
+      </div>
+
+      <!-- Panel de depuración de swipe -->
+      <div class="debug-panel" *ngIf="debugSwipe">
+        <div class="card bg-light mb-3">
+          <div class="card-header bg-warning text-dark">Debug Swipe</div>
+          <div class="card-body p-2">
+            <p class="mb-1 small">Start X: {{ swipeStartX }}</p>
+            <p class="mb-1 small">End X: {{ swipeEndX }}</p>
+            <p class="mb-1 small">Distance: {{ swipeDistance }}</p>
+            <p class="mb-1 small">Min Dist: {{ minSwipeDistance }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-12" *ngFor="let transaction of transactions">
+          <div class="card card-stretch mb-5 card-bordered border-1"
+               [ngClass]="{'border-success': transaction.type === TransactionType.Income, 'border-danger': transaction.type === TransactionType.Expense}">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between mb-3">
+                <div>
+                  <span [ngClass]="getTransactionTypeClass(transaction.type)">
+                    {{ getTransactionTypeText(transaction.type) }}
+                  </span>
+                </div>
+                <div class="fw-bolder"
+                     [ngClass]="{'text-success': transaction.type === TransactionType.Income, 'text-danger': transaction.type === TransactionType.Expense}">
+                  {{ transaction.amount | currencyPEN }}
+                </div>
+              </div>
+
+              <h5 class="card-title text-dark fw-bolder">{{ transaction.description }}</h5>
+
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <span class="text-muted fs-7">
+                  {{ transaction.date | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+                <span *ngIf="transaction.relatedEntityType" class="badge badge-light-primary">
+                  {{ transaction.relatedEntityType === 'StudentPayment' ? 'Pago de Estudiante' :
+                     transaction.relatedEntityType === 'Collection' ? 'Cobro' :
+                     transaction.relatedEntityType === 'Payment' ? 'Pago' : transaction.relatedEntityType }}
+                </span>
+                <span *ngIf="!transaction.relatedEntityType" class="badge badge-light-dark">
+                  Manual
+                </span>
+              </div>
+
+              <!-- Saldos -->
+              <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                <div class="text-start">
+                  <span class="text-muted fs-8">Saldo previo</span>
+                  <p class="fw-bold mb-0" *ngIf="transaction.previousBalance !== undefined">
+                    {{ transaction.previousBalance | currencyPEN }}
+                  </p>
+                </div>
+                <div class="text-center">
+                  <i class="bi bi-arrow-right text-muted fs-2"></i>
+                </div>
+                <div class="text-end">
+                  <span class="text-muted fs-8">Saldo nuevo</span>
+                  <p class="fw-bold mb-0" *ngIf="transaction.newBalance !== undefined">
+                    {{ transaction.newBalance | currencyPEN }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Estado vacío -->
@@ -155,22 +252,70 @@
     </div>
 
     <!-- Paginación -->
-    <div class="d-flex justify-content-between align-items-center flex-wrap" *ngIf="paginatedResult && paginatedResult.totalCount > 0">
-      <div class="d-flex flex-wrap py-2 mr-3">
-        <ngb-pagination
-          [page]="pageIndex + 1"
-          [pageSize]="pageSize"
-          [collectionSize]="paginatedResult.totalCount"
-          [maxSize]="5"
-          [rotate]="true"
-          [boundaryLinks]="true"
-          (pageChange)="pageChanged($event)">
-        </ngb-pagination>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-5" *ngIf="paginatedResult && paginatedResult.totalCount > 0">
+      <!-- Paginación personalizada -->
+      <div class="pagination-wrapper mb-3 mb-md-0">
+        <nav aria-label="Navegación de transacciones">
+          <ul class="pagination pagination-circle pagination-sm m-0">
+            <!-- Primera página -->
+            <li class="page-item" [class.disabled]="pageIndex === 0">
+              <a class="page-link" href="javascript:;" (click)="pageChanged('first')" aria-label="Primera">
+                <i class="bi bi-chevron-double-left fs-7"></i>
+              </a>
+            </li>
+
+            <!-- Anterior -->
+            <li class="page-item" [class.disabled]="pageIndex === 0">
+              <a class="page-link" href="javascript:;" (click)="pageChanged('prev')" aria-label="Anterior">
+                <i class="bi bi-chevron-left fs-7"></i>
+              </a>
+            </li>
+
+            <!-- Páginas (versión escritorio) -->
+            <ng-container *ngIf="!isSmallScreen">
+              <!-- Rango de páginas para mostrar -->
+              <ng-container *ngFor="let page of getPageNumbers()">
+                <li class="page-item" [class.active]="page === pageIndex + 1">
+                  <a class="page-link" href="javascript:;" (click)="pageChanged(page)">{{ page }}</a>
+                </li>
+              </ng-container>
+            </ng-container>
+
+            <!-- Versión móvil compacta -->
+            <li *ngIf="isSmallScreen" class="page-item active">
+              <span class="page-link">{{ pageIndex + 1 }}</span>
+            </li>
+
+            <!-- Siguiente -->
+            <li class="page-item" [class.disabled]="pageIndex >= Math.ceil(paginatedResult.totalCount / pageSize) - 1">
+              <a class="page-link" href="javascript:;" (click)="pageChanged('next')" aria-label="Siguiente">
+                <i class="bi bi-chevron-right fs-7"></i>
+              </a>
+            </li>
+
+            <!-- Última página -->
+            <li class="page-item" [class.disabled]="pageIndex >= Math.ceil(paginatedResult.totalCount / pageSize) - 1">
+              <a class="page-link" href="javascript:;" (click)="pageChanged('last')" aria-label="Última">
+                <i class="bi bi-chevron-double-right fs-7"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
-      <div class="d-flex align-items-center py-3">
-        <span class="text-muted">Mostrando {{transactions.length}} de {{paginatedResult.totalCount}} registros</span>
+
+      <!-- Indicador de registros mostrados -->
+      <div class="text-muted">
+        Mostrando {{ (pageIndex * pageSize) + 1 }} - {{ Math.min((pageIndex + 1) * pageSize, paginatedResult.totalCount) }} de {{ paginatedResult.totalCount }} registros
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Toast de notificación para cambio de página -->
+<div class="page-change-toast" *ngIf="showPageChangeToast">
+  <div class="toast-content">
+    <i class="bi" [ngClass]="{'bi-arrow-right-circle': pageChangeMessage.includes('siguiente'), 'bi-arrow-left-circle': pageChangeMessage.includes('anterior')}"></i>
+    <span>{{ pageChangeMessage }}</span>
   </div>
 </div>
 
