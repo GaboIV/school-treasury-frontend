@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit, ViewChild, HostListener } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, HostListener, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef, NgbToast } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { CreateTransactionDto, PaginatedResult, Transaction, TransactionSummary, TransactionType } from '../models/petty-cash.model';
 import { PettyCashService } from '../services/petty-cash.service';
@@ -17,6 +17,7 @@ import { AuthService } from '../../auth';
 })
 export class PettyCashComponent implements OnInit, OnDestroy {
   @ViewChild('transactionModal') transactionModal: any;
+  @ViewChild('transactionsContainer') transactionsContainer: ElementRef;
 
   // Exponemos Math para usarlo en la plantilla
   Math = Math;
@@ -46,6 +47,22 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   // Para manejar el modal
   private activeModalRef: NgbModalRef | null = null;
   private modalOpen = false;
+
+  // Para el control de gestos
+  private touchStartX: number = 0;
+  private touchEndX: number = 0;
+  minSwipeDistance: number = 50; // Distancia mínima para considerar swipe - pública para depuración
+
+  // Valores de depuración para swipe
+  debugSwipe: boolean = true;
+  swipeDistance: number = 0;
+  swipeStartX: number = 0;
+  swipeEndX: number = 0;
+
+  // Para el toast de notificación de cambio de página
+  showPageChangeToast: boolean = false;
+  pageChangeMessage: string = '';
+  pageChangeToastTimeout: any = null;
 
   constructor(
     private pettyCashService: PettyCashService,
@@ -80,6 +97,80 @@ export class PettyCashComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngAfterViewInit(): void {
+    console.log('View init - contenedor transacciones:', this.transactionsContainer?.nativeElement);
+  }
+
+  // Configurar detección de gestos para swipe
+  setupSwipeGestures(): void {
+    // No necesario ahora ya que usamos los eventos directamente en el HTML
+    console.log('Swipe gestures configurados por HTML');
+  }
+
+  // Manejar inicio de toque
+  handleTouchStart(e: TouchEvent): void {
+    console.log('Touch start event:', e);
+    this.touchStartX = e.touches[0].screenX;
+    this.swipeStartX = this.touchStartX; // Para depuración
+    console.log('Touch start:', this.touchStartX);
+  }
+
+  // Manejar fin de toque y determinar si fue swipe
+  handleTouchEnd(e: TouchEvent): void {
+    console.log('Touch end event:', e);
+    this.touchEndX = e.changedTouches[0].screenX;
+    this.swipeEndX = this.touchEndX; // Para depuración
+    console.log('Touch end:', this.touchEndX);
+    this.checkSwipeDirection();
+  }
+
+  // Verificar dirección del swipe y cambiar página si es necesario
+  checkSwipeDirection(): void {
+    const swipeDistance = this.touchEndX - this.touchStartX;
+    this.swipeDistance = swipeDistance; // Para depuración
+
+    console.log('Swipe distance:', swipeDistance);
+
+    // Si el gesto fue muy corto, ignorarlo
+    if (Math.abs(swipeDistance) < this.minSwipeDistance) {
+      console.log('Swipe ignorado - distancia insuficiente');
+      return;
+    }
+
+    if (swipeDistance > 0) {
+      // Swipe a la derecha - página anterior
+      console.log('Swipe derecha detectado');
+      if (this.pageIndex > 0) {
+        this.pageChanged('prev');
+        this.showPageChangeNotification('anterior');
+      }
+    } else {
+      // Swipe a la izquierda - página siguiente
+      console.log('Swipe izquierda detectado');
+      if (this.paginatedResult && this.pageIndex < Math.ceil(this.paginatedResult.totalCount / this.pageSize) - 1) {
+        this.pageChanged('next');
+        this.showPageChangeNotification('siguiente');
+      }
+    }
+  }
+
+  // Mostrar notificación de cambio de página
+  showPageChangeNotification(direction: string): void {
+    // Limpiar timeout anterior si existe
+    if (this.pageChangeToastTimeout) {
+      clearTimeout(this.pageChangeToastTimeout);
+    }
+
+    // Mostrar notificación
+    this.pageChangeMessage = `Página ${direction}: ${this.pageIndex + 1}`;
+    this.showPageChangeToast = true;
+
+    // Ocultar después de 2 segundos
+    this.pageChangeToastTimeout = setTimeout(() => {
+      this.showPageChangeToast = false;
+    }, 2000);
+  }
+
   // Manejar el evento de navegación hacia atrás
   @HostListener('window:popstate', ['$event'])
   onPopState(event: PopStateEvent) {
@@ -91,6 +182,11 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // Limpiar timeout si existe
+    if (this.pageChangeToastTimeout) {
+      clearTimeout(this.pageChangeToastTimeout);
+    }
+
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 

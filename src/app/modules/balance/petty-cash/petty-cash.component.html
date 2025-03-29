@@ -151,7 +151,30 @@
     </div>
 
     <!-- Vista móvil (cards) -->
-    <div class="d-md-none" *ngIf="transactions.length > 0">
+    <div class="d-md-none swipe-container" *ngIf="transactions.length > 0"
+         #transactionsContainer
+         (touchstart)="handleTouchStart($event)"
+         (touchend)="handleTouchEnd($event)">
+      <div class="swipe-hint" *ngIf="isSmallScreen && paginatedResult && paginatedResult.totalCount > pageSize">
+        <div class="swipe-indicator">
+          <i class="bi bi-arrow-left-right me-2"></i>
+          <span>Desliza para cambiar de página</span>
+        </div>
+      </div>
+
+      <!-- Panel de depuración de swipe -->
+      <div class="debug-panel" *ngIf="debugSwipe">
+        <div class="card bg-light mb-3">
+          <div class="card-header bg-warning text-dark">Debug Swipe</div>
+          <div class="card-body p-2">
+            <p class="mb-1 small">Start X: {{ swipeStartX }}</p>
+            <p class="mb-1 small">End X: {{ swipeEndX }}</p>
+            <p class="mb-1 small">Distance: {{ swipeDistance }}</p>
+            <p class="mb-1 small">Min Dist: {{ minSwipeDistance }}</p>
+          </div>
+        </div>
+      </div>
+
       <div class="row g-3">
         <div class="col-12" *ngFor="let transaction of transactions">
           <div class="card card-stretch mb-5 card-bordered border-1"
@@ -283,6 +306,14 @@
         Mostrando {{ (pageIndex * pageSize) + 1 }} - {{ Math.min((pageIndex + 1) * pageSize, paginatedResult.totalCount) }} de {{ paginatedResult.totalCount }} registros
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Toast de notificación para cambio de página -->
+<div class="page-change-toast" *ngIf="showPageChangeToast">
+  <div class="toast-content">
+    <i class="bi" [ngClass]="{'bi-arrow-right-circle': pageChangeMessage.includes('siguiente'), 'bi-arrow-left-circle': pageChangeMessage.includes('anterior')}"></i>
+    <span>{{ pageChangeMessage }}</span>
   </div>
 </div>
 
