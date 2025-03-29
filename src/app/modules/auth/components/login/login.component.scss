@@ -11,6 +11,7 @@ $navy-blue: #0c1e4a;
 $kelly-green: #00c16e;
 $neon-green: #39ff14;
 $light-gray: #f5f8fa;
+$danger-red: #f64e60;
 
 .login-container {
   position: relative;
@@ -77,67 +78,130 @@ $light-gray: #f5f8fa;
   text-align: center;
 }
 
-.input-group {
-  display: flex;
+// Estilos para los grupos de formulario
+.form-group {
   margin-bottom: 1.5rem;
-  position: relative;
+}
 
-  .input-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    color: $navy-blue;
-    font-size: 1.1rem;
-    position: absolute;
-    left: 15px;
-    top: 38px;
-    z-index: 1;
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: $navy-blue;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  color: $navy-blue;
+  font-size: 1rem;
+  z-index: 2;
+  pointer-events: none; // Previene interferencias con clicks
+}
+
+.form-control {
+  width: 100%;
+  height: 48px;
+  padding: 0.75rem 0.75rem 0.75rem 45px;
+  font-size: 1rem;
+  border: 2px solid #e4e6ef;
+  border-radius: 0.85rem;
+  background-color: transparent;
+  transition: all 0.3s ease;
+
+  // Prevenir cualquier comportamiento nativo del navegador
+  &::-ms-reveal,
+  &::-ms-clear {
+    display: none !important;
   }
 
-  .input-field {
-    flex: 1;
+  &:focus {
+    outline: none;
+    border-color: $kelly-green;
+    box-shadow: 0 0 0 0.2rem rgba(0, 193, 110, 0.25);
+  }
 
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: $navy-blue;
-    }
+  &.input-error {
+    border-color: $danger-red;
+  }
 
-    .form-control {
-      height: 48px;
-      padding-left: 45px;
-      border: 2px solid #e4e6ef;
-      border-radius: 0.85rem;
-      transition: all 0.3s ease;
-
-      &:focus {
-        border-color: $kelly-green;
-        box-shadow: 0 0 0 0.2rem rgba(0, 193, 110, 0.25);
-      }
-
-      &.is-invalid {
-        border-color: #f64e60;
-      }
-
-      &.is-valid {
-        border-color: $kelly-green;
-      }
-    }
+  &.input-valid {
+    border-color: $kelly-green;
   }
 }
 
-.fv-plugins-message-container {
+// Botón de mostrar/ocultar contraseña
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: $navy-blue;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  z-index: 10; // Asegurar que esté por encima de todo
+
+  &:hover, &:focus {
+    color: $kelly-green;
+    outline: none;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Estilos para mensajes de error
+.error-messages {
   margin-top: 0.5rem;
+  color: $danger-red;
+  font-size: 0.85rem;
 
   span {
-    color: #f64e60;
-    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 0.2rem;
   }
 }
 
-.login-button {
+// Contenedor de opciones (recuperar contraseña, etc.)
+.options-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.forgot-link {
+  color: $navy-blue;
+  text-decoration: none;
+  font-size: 0.9rem;
+
+  &:hover {
+    color: $kelly-green;
+    text-decoration: underline;
+  }
+}
+
+// Contenedor del botón de envío
+.submit-container {
+  margin-bottom: 1rem;
+}
+
+// Botón de envío
+.submit-button {
+  width: 100%;
   height: 50px;
   background: linear-gradient(135deg, $kelly-green, $neon-green);
   border: none;
@@ -185,14 +249,16 @@ $light-gray: #f5f8fa;
     transform: none;
     box-shadow: none;
   }
-
-  .indicator-label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 }
 
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+// Elementos decorativos
 .decoration-element {
   position: absolute;
   border-radius: 50%;
@@ -224,6 +290,19 @@ $light-gray: #f5f8fa;
   }
 }
 
+// Alerta de error
+.alert {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+
+  &.alert-danger {
+    background-color: rgba($danger-red, 0.1);
+    border: 1px solid rgba($danger-red, 0.2);
+    color: $danger-red;
+  }
+}
+
 // Media queries para responsividad
 @media (max-width: 576px) {
   .login-container {
@@ -242,11 +321,11 @@ $light-gray: #f5f8fa;
     font-size: 1.5rem;
   }
 
-  .input-group .input-field .form-control {
+  .form-control {
     height: 44px;
   }
 
-  .login-button {
+  .submit-button {
     height: 44px;
   }
 

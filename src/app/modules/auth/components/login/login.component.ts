@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   errorMessage: string = 'Los datos de inicio de sesión son incorrectos';
   returnUrl: string;
   isLoading$: Observable<boolean>;
+  showPassword: boolean = false;
 
   // private fields
   private unsubscribe: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
@@ -73,6 +74,10 @@ export class LoginComponent implements OnInit, OnDestroy {
         ]),
       ],
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
   }
 
   submit() {
