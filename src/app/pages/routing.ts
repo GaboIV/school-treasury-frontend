@@ -61,6 +61,10 @@ const Routing: Routes = [
     loadChildren: () => import('./permission/permission.module').then((m) => m.PermissionModule),
   },
   {
+    path: 'notifications',
+    loadChildren: () => import('../modules/notifications/notifications.module').then((m) => m.NotificationsModule),
+  },
+  {
     path: '',
     redirectTo: '/dashboard',
     pathMatch: 'full',

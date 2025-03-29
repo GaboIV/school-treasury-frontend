@@ -1,0 +1,132 @@
+<div class="card mb-5 mb-xl-8">
+  <div class="card-header border-0 pt-5">
+    <h3 class="card-title align-items-start flex-column">
+      <span class="card-label fw-bold fs-3 mb-1">Notificaciones</span>
+      <span class="text-muted mt-1 fw-semibold fs-7">Listado de notificaciones del sistema</span>
+    </h3>
+    <div class="card-toolbar">
+      <button type="button" class="btn btn-sm btn-primary" routerLink="/notifications/crear" *ngIf="roleService.isAdmin()">
+        <i class="fas fa-plus fs-6"></i> Nueva Notificación
+      </button>
+    </div>
+  </div>
+
+  <div class="card-body py-3">
+    <!-- Filtros de tipo -->
+    <div class="d-flex flex-wrap mb-5">
+      <button type="button" class="btn btn-light-primary btn-sm me-3 mb-2"
+              [ngClass]="{'active': selectedType === 'all'}"
+              (click)="filterByType('all')">
+        Todas
+      </button>
+      <button type="button" class="btn btn-light-primary btn-sm me-3 mb-2"
+              [ngClass]="{'active': selectedType === notificationTypes.General}"
+              (click)="filterByType(notificationTypes.General)">
+        Generales
+      </button>
+      <button type="button" class="btn btn-light-primary btn-sm me-3 mb-2"
+              [ngClass]="{'active': selectedType === notificationTypes.Administrator}"
+              (click)="filterByType(notificationTypes.Administrator)"
+              *ngIf="roleService.isAdmin()">
+        Administradores
+      </button>
+      <button type="button" class="btn btn-light-primary btn-sm me-3 mb-2"
+              [ngClass]="{'active': selectedType === notificationTypes.Representative}"
+              (click)="filterByType(notificationTypes.Representative)"
+              *ngIf="roleService.isAdmin() || roleService.isRepresentative()">
+        Representantes
+      </button>
+      <button type="button" class="btn btn-light-primary btn-sm me-3 mb-2"
+              [ngClass]="{'active': selectedType === notificationTypes.Custom}"
+              (click)="filterByType(notificationTypes.Custom)"
+              *ngIf="roleService.isAdmin()">
+        Personalizadas
+      </button>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="loading" class="d-flex justify-content-center my-10">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Cargando...</span>
+      </div>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <!-- Lista de notificaciones -->
+    <div *ngIf="!loading && notifications.length > 0">
+      <div class="table-responsive">
+        <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
+          <thead>
+            <tr class="fw-bold text-muted">
+              <th class="min-w-150px">Título</th>
+              <th class="min-w-100px">Tipo</th>
+              <th class="min-w-100px">Estado</th>
+              <th class="min-w-100px">Fecha Envío</th>
+              <th class="min-w-100px text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let notification of notifications" [ngClass]="{'bg-light-primary': !notification.isRead}">
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="d-flex justify-content-start flex-column">
+                    <a class="text-dark fw-bold text-hover-primary fs-6">{{ notification.title }}</a>
+                    <span class="text-muted fw-semibold text-muted d-block fs-7">{{ notification.message }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge"
+                      [ngClass]="{
+                        'badge-light-primary': notification.type === notificationTypes.General,
+                        'badge-light-danger': notification.type === notificationTypes.Administrator,
+                        'badge-light-success': notification.type === notificationTypes.Representative,
+                        'badge-light-warning': notification.type === notificationTypes.Custom
+                      }">
+                  {{ getTypeText(notification.type) }}
+                </span>
+              </td>
+              <td>
+                <span class="badge"
+                      [ngClass]="{
+                        'badge-light-info': notification.status === 'draft',
+                        'badge-light-warning': notification.status === 'scheduled',
+                        'badge-light-success': notification.status === 'sent',
+                        'badge-light-danger': notification.status === 'failed'
+                      }">
+                  {{ getStatusText(notification.status) }}
+                </span>
+              </td>
+              <td>
+                <span>{{ notification.sentDate | date:'dd/MM/yyyy HH:mm' }}</span>
+              </td>
+              <td class="text-end">
+                <button type="button" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                        (click)="markAsRead(notification)"
+                        *ngIf="!notification.isRead"
+                        title="Marcar como leída">
+                  <i class="fas fa-check fs-6"></i>
+                </button>
+                <button type="button" class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm"
+                        (click)="deleteNotification(notification)"
+                        title="Eliminar notificación"
+                        *ngIf="roleService.isAdmin()">
+                  <i class="fas fa-trash fs-6"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sin notificaciones -->
+    <div *ngIf="!loading && notifications.length === 0" class="text-center py-10">
+      <span class="text-muted">No hay notificaciones disponibles</span>
+    </div>
+  </div>
+</div>
