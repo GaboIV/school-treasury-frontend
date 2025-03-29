@@ -23,31 +23,33 @@
     </div>
 
     <!-- Separator -->
-    <div class="menu-item" *appHasRole="['Representative']">
-      <div class="menu-content pt-8 pb-2">
-        <span class="menu-section text-muted text-uppercase fs-8 ls-1" translate="MYBALANCE.MYBALANCE"></span>
+    <ng-container *appHasRole="['Representative']">
+      <div class="menu-item" *ngIf="currentUser?.studentId">
+        <div class="menu-content pt-8 pb-2">
+          <span class="menu-section text-muted text-uppercase fs-8 ls-1" translate="MYBALANCE.MYBALANCE"></span>
+        </div>
       </div>
-    </div>
 
-    <!-- Mis pagos (solo para representantes) -->
-    <div class="menu-item" *appHasRole="['Representative']">
-      <a class="menu-link without-sub" routerLinkActive="active" routerLink="/balance/mis-pagos">
-        <span class="menu-icon">
-          <i class="fa-solid fa-receipt"></i>
-        </span>
-        <span class="menu-title" translate="MYBALANCE.MYPAYMENTS"></span>
-      </a>
-    </div>
+      <!-- Mis pagos (solo para representantes) -->
+      <div class="menu-item" *ngIf="currentUser?.studentId">
+        <a class="menu-link without-sub" routerLinkActive="active" routerLink="/balance/mis-pagos">
+          <span class="menu-icon">
+            <i class="fa-solid fa-receipt"></i>
+          </span>
+          <span class="menu-title" translate="MYBALANCE.MYPAYMENTS"></span>
+        </a>
+      </div>
 
-    <!-- Solicitudes de pago (solo para representantes) -->
-    <div class="menu-item" *appHasRole="['Representative']">
-      <a class="menu-link without-sub" routerLinkActive="active" routerLink="/balance/solicitudes-pago">
-        <span class="menu-icon">
-          <i class="fa-solid fa-file-invoice-dollar"></i>
-        </span>
-        <span class="menu-title" translate="MYBALANCE.PAYMENTREQUESTS"></span>
-      </a>
-    </div>
+      <!-- Solicitudes de pago (solo para representantes) -->
+      <div class="menu-item" *ngIf="currentUser?.studentId">
+        <a class="menu-link without-sub" routerLinkActive="active" routerLink="/balance/solicitudes-pago">
+          <span class="menu-icon">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+          </span>
+          <span class="menu-title" translate="MYBALANCE.PAYMENTREQUESTS"></span>
+        </a>
+      </div>
+    </ng-container>
 
     <!-- Separator -->
     <div class="menu-item">
