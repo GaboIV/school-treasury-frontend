@@ -18,6 +18,9 @@ import { AuthService } from '../../auth';
 export class PettyCashComponent implements OnInit, OnDestroy {
   @ViewChild('transactionModal') transactionModal: any;
 
+  // Exponemos Math para usarlo en la plantilla
+  Math = Math;
+
   currentUser: any;
   isAdmin: boolean = false;
   isRepresentative: boolean = false;
