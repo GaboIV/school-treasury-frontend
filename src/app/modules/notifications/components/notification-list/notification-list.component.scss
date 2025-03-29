@@ -1,0 +1,35 @@
+// Estilos para la lista de notificaciones
+.btn-light-primary.active {
+  background-color: var(--kt-primary) !important;
+  color: var(--kt-primary-inverse) !important;
+}
+
+td {
+  vertical-align: middle;
+}
+
+// Estilo para notificaciones no leídas
+.bg-light-primary {
+  background-color: rgba(var(--kt-primary-rgb), 0.1) !important;
+}
+
+// Animación para nuevas notificaciones
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.table tr {
+  transition: background-color 0.3s ease;
+}
+
+// Estilos responsivos para la tabla
+@media (max-width: 768px) {
+  .table th, .table td {
+    padding: 0.5rem;
+  }
+
+  .min-w-150px, .min-w-100px {
+    min-width: auto !important;
+  }
+}

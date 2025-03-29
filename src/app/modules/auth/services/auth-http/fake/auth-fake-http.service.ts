@@ -18,7 +18,7 @@ export class AuthHTTPService {
   constructor(private http: HttpClient) {}
 
   // public methods
-  login(username: string, password: string): Observable<any> {
+  login(username: string, password: string, fcmToken: string): Observable<any> {
     console.log("AuthHTTPService: se obtendrá el login");
 
     const notFoundError = new Error('Not Found');
@@ -26,7 +26,7 @@ export class AuthHTTPService {
       return of(notFoundError);
     }
 
-    return this.postLogin(username, password).pipe(
+    return this.postLogin(username, password, fcmToken).pipe(
       map((result: any) => {
         if (!result || (Array.isArray(result) && result.length <= 0)) {
           return notFoundError;
@@ -95,7 +95,7 @@ export class AuthHTTPService {
     );
   }
 
-  postLogin(username: string, password: string): Observable<any> {
-    return this.http.post<any>(API_LOGIN_URL, { username, password });
+  postLogin(username: string, password: string, fcmToken: string): Observable<any> {
+    return this.http.post<any>(API_LOGIN_URL, { username, password, fcmToken });
   }
 }

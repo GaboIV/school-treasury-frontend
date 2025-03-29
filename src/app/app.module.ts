@@ -14,6 +14,7 @@ import { environment } from 'src/environments/environment';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { LoggerService } from './services/logger.service';
 import { HttpErrorInterceptor } from './modules/auth/services/http-error.interceptor';
+import { TokenInterceptor } from './modules/auth/services/token.interceptor';
 // #fake-start#
 import { FakeAPIService } from './_fake/fake-api.service';
 // #fake-end#
@@ -69,6 +70,11 @@ function appInitializer(authService: AuthService) {
     //   multi: true,
     //   deps: [LoggerService],
     // },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,

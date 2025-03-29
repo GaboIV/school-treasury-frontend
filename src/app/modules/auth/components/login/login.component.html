@@ -10,7 +10,7 @@
     <p class="login-subtitle">Ingresa tus credenciales para continuar</p>
 
     <form class="form w-100" [formGroup]="loginForm" novalidate="novalidate" id="kt_login_signin_form"
-      (ngSubmit)="submit()">
+      (ngSubmit)="submit()" autocomplete="off">
 
       <!-- begin::Alert error-->
       <ng-container *ngIf="hasError">
@@ -22,85 +22,69 @@
       </ng-container>
       <!-- end::Alert error-->
 
-      <!--begin::Form group-->
-      <div class="fv-row mb-8 input-group">
-        <div class="input-icon">
-          <i class="fas fa-user"></i>
+      <!--begin::Form group - Usuario-->
+      <div class="form-group">
+        <label class="form-label">Usuario</label>
+        <div class="input-wrapper">
+          <i class="fas fa-user input-icon"></i>
+          <input
+            class="form-control"
+            type="text"
+            name="username"
+            formControlName="username"
+            autocomplete="username"
+            [ngClass]="{'input-error': loginForm.controls['username'].invalid && (loginForm.controls['username'].dirty || loginForm.controls['username'].touched),
+                       'input-valid': loginForm.controls['username'].valid && (loginForm.controls['username'].dirty || loginForm.controls['username'].touched)}"
+          />
         </div>
-        <div class="input-field">
-          <label class="form-label fs-6 fw-bolder text-gray-900">Usuario</label>
-          <input class="form-control bg-transparent" type="text" name="username" formControlName="username" autocomplete="off"
-            [ngClass]="{
-              'is-invalid': loginForm.controls['username'].invalid && (loginForm.controls['username'].dirty || loginForm.controls['username'].touched),
-              'is-valid': loginForm.controls['username'].valid && (loginForm.controls['username'].dirty || loginForm.controls['username'].touched)
-            }" />
-          <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{
-              validation: 'required',
-              message: 'El nombre de usuario es requerido',
-              control: loginForm.controls['username']
-            }"></ng-container>
-          <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{
-              validation: 'minLength',
-              message: 'El nombre de usuario debe tener al menos 3 caracteres',
-              control: loginForm.controls['username']
-            }"></ng-container>
-          <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{
-              validation: 'maxLength',
-              message: 'El nombre de usuario debe tener máximo 100 caracteres',
-              control: loginForm.controls['username']
-            }"></ng-container>
+        <div class="error-messages" *ngIf="loginForm.controls['username'].invalid && (loginForm.controls['username'].dirty || loginForm.controls['username'].touched)">
+          <span *ngIf="loginForm.controls['username'].hasError('required')">El nombre de usuario es requerido</span>
+          <span *ngIf="loginForm.controls['username'].hasError('minlength')">El nombre de usuario debe tener al menos 3 caracteres</span>
+          <span *ngIf="loginForm.controls['username'].hasError('maxlength')">El nombre de usuario debe tener máximo 100 caracteres</span>
         </div>
       </div>
       <!--end::Form group-->
 
-      <!--begin::Form group-->
-      <div class="fv-row mb-8 input-group">
-        <div class="input-icon">
-          <i class="fas fa-lock"></i>
+      <!--begin::Form group - Contraseña-->
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock input-icon"></i>
+          <input
+            class="form-control"
+            [type]="showPassword ? 'text' : 'password'"
+            name="password"
+            formControlName="password"
+            autocomplete="current-password"
+            [ngClass]="{'input-error': loginForm.controls['password'].invalid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched),
+                       'input-valid': loginForm.controls['password'].valid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)}"
+          />
+          <button type="button" class="toggle-password" (click)="togglePasswordVisibility()" tabindex="-1">
+            <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </button>
         </div>
-        <div class="input-field">
-          <label class="form-label fw-bolder text-gray-900 fs-6 mb-0">Contraseña</label>
-          <input class="form-control bg-transparent" type="password" name="password" autocomplete="off"
-            formControlName="password" [ngClass]="{
-              'is-invalid': loginForm.controls['password'].invalid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched),
-              'is-valid': loginForm.controls['password'].valid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)
-            }" />
-          <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{
-              validation: 'required',
-              message: 'La contraseña es requerida',
-              control: loginForm.controls['password']
-            }"></ng-container>
-          <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{
-              validation: 'minlength',
-              message: 'La contraseña debe tener al menos 3 caracteres',
-              control: loginForm.controls['password']
-            }"></ng-container>
-          <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{
-              validation: 'maxLength',
-              message: 'La contraseña debe tener máximo 100 caracteres',
-              control: loginForm.controls['password']
-            }"></ng-container>
+        <div class="error-messages" *ngIf="loginForm.controls['password'].invalid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)">
+          <span *ngIf="loginForm.controls['password'].hasError('required')">La contraseña es requerida</span>
+          <span *ngIf="loginForm.controls['password'].hasError('minlength')">La contraseña debe tener al menos 3 caracteres</span>
+          <span *ngIf="loginForm.controls['password'].hasError('maxlength')">La contraseña debe tener máximo 100 caracteres</span>
         </div>
       </div>
       <!--end::Form group-->
 
       <!--begin::Wrapper-->
-      <div class="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8">
+      <div class="options-container">
         <div></div>
-
-        <!--begin::Link-->
-        <!-- <a routerLink="/auth/forgot-password" class="link-primary">
+        <!-- <a routerLink="/auth/forgot-password" class="forgot-link">
           ¿Olvidaste tu contraseña?
         </a> -->
-        <!--end::Link-->
       </div>
       <!--end::Wrapper-->
 
       <!--begin::Action-->
-      <div class="d-grid mb-10">
-        <button type="submit" id="kt_sign_in_submit" class="btn login-button" [disabled]="loginForm.invalid">
+      <div class="submit-container">
+        <button type="submit" id="kt_sign_in_submit" class="submit-button" [disabled]="loginForm.invalid">
           <ng-container *ngIf="isLoading$ | async">
-            <span class="indicator-progress" [style.display]="'block'">
+            <span class="loading-indicator">
               Por favor espere...
               <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
             </span>

@@ -1,0 +1,172 @@
+<div class="modal-header">
+  <h4 class="modal-title d-flex align-items-center">
+    <i class="fas fa-bell fs-4 me-2"></i>
+    Nueva Notificación
+  </h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="cancelar()"></button>
+</div>
+
+<div class="modal-body">
+  <!-- Alertas -->
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+  <div *ngIf="success" class="alert alert-success">
+    {{ success }}
+  </div>
+
+  <!-- Formulario -->
+  <form [formGroup]="notificationForm">
+    <!-- Título -->
+    <div class="mb-5">
+      <label class="form-label required">Título</label>
+      <input
+        type="text"
+        class="form-control form-control-solid"
+        formControlName="title"
+        [ngClass]="{'is-invalid': submitted && f['title'].errors}"
+      />
+      <div *ngIf="submitted && f['title'].errors" class="invalid-feedback">
+        <div *ngIf="f['title'].errors['required']">El título es obligatorio</div>
+        <div *ngIf="f['title'].errors['maxlength']">El título no puede exceder los 100 caracteres</div>
+      </div>
+    </div>
+
+    <!-- Mensaje -->
+    <div class="mb-5">
+      <label class="form-label required">Mensaje</label>
+      <textarea
+        class="form-control form-control-solid"
+        rows="5"
+        formControlName="message"
+        [ngClass]="{'is-invalid': submitted && f['message'].errors}"
+      ></textarea>
+      <div *ngIf="submitted && f['message'].errors" class="invalid-feedback">
+        <div *ngIf="f['message'].errors['required']">El mensaje es obligatorio</div>
+        <div *ngIf="f['message'].errors['maxlength']">El mensaje no puede exceder los 500 caracteres</div>
+      </div>
+      <div class="form-text" *ngIf="f['message'].value">
+        {{ 500 - f['message'].value.length }} caracteres restantes
+      </div>
+    </div>
+
+    <!-- Tipo de notificación -->
+    <div class="mb-5">
+      <label class="form-label required">Tipo de notificación</label>
+      <select
+        class="form-select form-select-solid"
+        formControlName="type"
+        [ngClass]="{'is-invalid': submitted && f['type'].errors}"
+      >
+        <option [value]="notificationTypes.TopicNotification">Por tema</option>
+        <option [value]="notificationTypes.UserSpecificNotification">Usuarios específicos</option>
+        <option [value]="notificationTypes.ScheduledNotification">Programada</option>
+      </select>
+      <div *ngIf="submitted && f['type'].errors" class="invalid-feedback">
+        <div *ngIf="f['type'].errors['required']">El tipo de notificación es obligatorio</div>
+      </div>
+    </div>
+
+    <!-- Campo de tema (solo visible si type es TopicNotification) -->
+    <div class="mb-5" *ngIf="f['type'].value === notificationTypes.TopicNotification">
+      <label class="form-label required">Tópico</label>
+      <select
+        class="form-select form-select-solid"
+        formControlName="topic"
+        [ngClass]="{'is-invalid': submitted && f['topic'].errors}"
+      >
+        <option [value]="notificationTopics.General">General</option>
+        <option [value]="notificationTopics.Representative">Representantes</option>
+        <option [value]="notificationTopics.Administrator">Administradores</option>
+      </select>
+      <div *ngIf="submitted && f['topic'].errors" class="invalid-feedback">
+        <div *ngIf="f['topic'].errors['required']">El tópico es obligatorio</div>
+      </div>
+      <div class="form-text">
+        Los usuarios suscritos a este tópico recibirán la notificación
+      </div>
+    </div>
+
+    <!-- Destinatarios personalizados (solo visible si type es UserSpecificNotification) -->
+    <div class="mb-5" *ngIf="f['type'].value === notificationTypes.UserSpecificNotification">
+      <label class="form-label">Buscar destinatarios</label>
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          class="form-control form-control-solid"
+          placeholder="Buscar por nombre o email (mínimo 3 caracteres)"
+          formControlName="recipientSearch"
+        />
+        <span class="input-group-text" *ngIf="loading">
+          <i class="fas fa-spinner fa-spin"></i>
+        </span>
+      </div>
+
+      <!-- Resultados de búsqueda -->
+      <div class="search-results mb-3" *ngIf="recipientSearchResults.length > 0">
+        <div class="list-group">
+          <button
+            type="button"
+            class="list-group-item list-group-item-action"
+            *ngFor="let recipient of recipientSearchResults"
+            (click)="addRecipient(recipient)"
+          >
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ recipient.username }}</strong>
+                <div class="text-muted small">{{ recipient.email }}</div>
+              </div>
+              <span class="badge bg-primary rounded-pill">+</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Destinatarios seleccionados -->
+      <div class="selected-recipients mb-3" *ngIf="selectedRecipients.length > 0">
+        <label class="form-label">Destinatarios seleccionados ({{ selectedRecipients.length }})</label>
+        <div class="d-flex flex-wrap gap-2">
+          <div class="badge badge-light-primary p-2" *ngFor="let recipient of selectedRecipients">
+            {{ recipient.username }}
+            <button type="button" class="btn btn-sm btn-icon ms-1" (click)="removeRecipient(recipient.id)">
+              <i class="fas fa-times fs-7"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Opciones de programación -->
+    <div class="mb-5 form-check form-switch">
+      <input class="form-check-input" type="checkbox" id="isScheduled" formControlName="isScheduled">
+      <label class="form-check-label" for="isScheduled">Programar envío para más tarde</label>
+    </div>
+
+    <!-- Fecha y hora de programación -->
+    <div class="mb-5" *ngIf="f['type'].value === notificationTypes.ScheduledNotification || f['isScheduled'].value">
+      <label class="form-label required">Fecha y hora de envío</label>
+      <input
+        type="datetime-local"
+        class="form-control form-control-solid"
+        formControlName="scheduledDate"
+        [ngClass]="{'is-invalid': submitted && f['scheduledDate'].errors}"
+      />
+      <div *ngIf="submitted && f['scheduledDate'].errors" class="invalid-feedback">
+        <div *ngIf="f['scheduledDate'].errors['required']">La fecha de programación es obligatoria</div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="cancelar()">Cancelar</button>
+  <button
+    type="button"
+    class="btn btn-primary"
+    [disabled]="loading"
+    (click)="onSubmit()"
+  >
+    <span *ngIf="loading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+    {{ f['isScheduled'].value ? 'Programar Notificación' : 'Enviar Notificación' }}
+  </button>
+</div>

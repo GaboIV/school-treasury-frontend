@@ -16,11 +16,17 @@ export class AuthHTTPService {
   constructor(private http: HttpClient) {}
 
   // public methods
-  login(username: string, password: string): Observable<AuthModel> {
+  login(username: string, password: string, fcmToken?: string): Observable<AuthModel> {
     console.log("AuthHTTPService: Consumiendo API real en", `${API_AUTH_URL}/login`);
+
+    // Si no se proporciona fcmToken como parámetro, intentar obtenerlo del localStorage
+    const token = fcmToken || localStorage.getItem('fcm_token') || '';
+    console.log("AuthHTTPService: FCM Token para login:", token);
+
     return this.http.post<any>(`${API_AUTH_URL}/login`, {
       username,
       password,
+      fcmToken: token
     }).pipe(
       tap(response => {
         console.log("AuthHTTPService: Respuesta completa del login", response);
@@ -37,6 +43,7 @@ export class AuthHTTPService {
         auth.fullName = response.fullName;
         auth.role = response.role;
         auth.studentId = response.studentId;
+        auth.fcmToken = token;
 
         // IMPORTANTE: Forzar el valor de hasChangedPassword a true/false explícito
         // Si viene en la respuesta del API como true, lo establecemos como true

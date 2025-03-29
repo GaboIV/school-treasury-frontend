@@ -8,6 +8,8 @@ import { locale as jpLang } from './modules/i18n/vocabs/jp';
 import { locale as deLang } from './modules/i18n/vocabs/de';
 import { locale as frLang } from './modules/i18n/vocabs/fr';
 import { ThemeModeService } from './_metronic/partials/layout/theme-mode-switcher/theme-mode.service';
+import { PushNotifications } from '@capacitor/push-notifications';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -35,5 +37,32 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.modeService.init();
+    this.registerPushNotifications();
+  }
+
+  registerPushNotifications() {
+    if (Capacitor.isNativePlatform()) {
+      console.log('Plataforma nativa detectada, registrando notificaciones push...');
+      PushNotifications.requestPermissions().then(permission => {
+        if (permission.receive === 'granted') {
+          PushNotifications.register();
+        }
+      });
+
+      PushNotifications.addListener('registration', (token) => {
+        console.log('Token de FCM:', token.value);
+        localStorage.setItem('fcm_token', token.value);
+      });
+
+      PushNotifications.addListener('pushNotificationReceived', (notification) => {
+        console.log('Notificación recibida:', notification);
+      });
+
+      PushNotifications.addListener('registrationError', (error: any) => {
+        console.error('Error en registro de notificaciones:', error);
+      });
+    } else {
+      console.log('Plataforma web detectada, no se registrarán notificaciones push nativas.');
+    }
   }
 }
