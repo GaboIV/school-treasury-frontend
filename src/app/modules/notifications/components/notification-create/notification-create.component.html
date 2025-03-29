@@ -63,18 +63,37 @@
           formControlName="type"
           [ngClass]="{'is-invalid': submitted && f['type'].errors}"
         >
-          <option [value]="notificationTypes.General">General (Todos los usuarios)</option>
-          <option [value]="notificationTypes.Administrator">Solo Administradores</option>
-          <option [value]="notificationTypes.Representative">Solo Representantes</option>
-          <option [value]="notificationTypes.Custom">Usuarios específicos</option>
+          <option [value]="notificationTypes.TopicNotification">Por tema</option>
+          <option [value]="notificationTypes.UserSpecificNotification">Usuarios específicos</option>
+          <option [value]="notificationTypes.ScheduledNotification">Programada</option>
         </select>
         <div *ngIf="submitted && f['type'].errors" class="invalid-feedback">
           <div *ngIf="f['type'].errors['required']">El tipo de notificación es obligatorio</div>
         </div>
       </div>
 
-      <!-- Destinatarios personalizados (solo visible si type es Custom) -->
-      <div class="mb-5" *ngIf="f['type'].value === notificationTypes.Custom">
+      <!-- Campo de tema (solo visible si type es TopicNotification) -->
+      <div class="mb-5" *ngIf="f['type'].value === notificationTypes.TopicNotification">
+        <label class="form-label required">Tópico</label>
+        <select
+          class="form-select form-select-solid"
+          formControlName="topic"
+          [ngClass]="{'is-invalid': submitted && f['topic'].errors}"
+        >
+          <option [value]="notificationTopics.General">General</option>
+          <option [value]="notificationTopics.Representative">Representantes</option>
+          <option [value]="notificationTopics.Administrator">Administradores</option>
+        </select>
+        <div *ngIf="submitted && f['topic'].errors" class="invalid-feedback">
+          <div *ngIf="f['topic'].errors['required']">El tópico es obligatorio</div>
+        </div>
+        <div class="form-text">
+          Los usuarios suscritos a este tópico recibirán la notificación
+        </div>
+      </div>
+
+      <!-- Destinatarios personalizados (solo visible si type es UserSpecificNotification) -->
+      <div class="mb-5" *ngIf="f['type'].value === notificationTypes.UserSpecificNotification">
         <label class="form-label">Buscar destinatarios</label>
         <div class="input-group mb-3">
           <input

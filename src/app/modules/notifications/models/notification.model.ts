@@ -1,8 +1,13 @@
 export enum NotificationType {
-  General = 'general',
-  Administrator = 'administrator',
-  Representative = 'representative',
-  Custom = 'custom'
+  TopicNotification = 0,
+  UserSpecificNotification = 1,
+  ScheduledNotification = 2
+}
+
+export enum NotificationTopic {
+  General = 'General',
+  Representative = 'Representative',
+  Administrator = 'Administrator'
 }
 
 export interface NotificationRecipient {
@@ -15,7 +20,7 @@ export interface Notification {
   id?: number;
   title: string;
   message: string;
-  type: NotificationType;
+  type: number;
   scheduledDate?: Date;
   sentDate?: Date;
   recipients?: NotificationRecipient[];
@@ -29,5 +34,7 @@ export interface NotificationRequest {
   message: string;
   type: NotificationType;
   scheduledDate?: Date;
-  recipientIds?: number[];
+  topic?: string;
+  targetUserIds?: string[];
+  additionalData?: Record<string, string>;
 }

@@ -1,0 +1,29 @@
+/* Estilos específicos del modal */
+:host {
+  .modal-header {
+    border-bottom: 1px solid #eff2f5;
+
+    .modal-title {
+      font-weight: 600;
+      color: #181c32;
+    }
+  }
+
+  .modal-footer {
+    padding: 1rem;
+    border-top: 1px solid #eff2f5;
+  }
+
+  .search-results {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .selected-recipients {
+    .badge {
+      padding: 0.5rem;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+}

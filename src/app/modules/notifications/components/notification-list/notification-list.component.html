@@ -5,7 +5,7 @@
       <span class="text-muted mt-1 fw-semibold fs-7">Listado de notificaciones del sistema</span>
     </h3>
     <div class="card-toolbar">
-      <button type="button" class="btn btn-sm btn-primary" routerLink="/notifications/crear" *ngIf="roleService.isAdmin()">
+      <button type="button" class="btn btn-sm btn-primary" (click)="openCreateModal()" *ngIf="roleService.isAdmin()">
         <i class="fas fa-plus fs-6"></i> Nueva Notificación
       </button>
     </div>
@@ -20,27 +20,22 @@
         Todas
       </button>
       <button type="button" class="btn btn-light-primary btn-sm me-3 mb-2"
-              [ngClass]="{'active': selectedType === notificationTypes.General}"
-              (click)="filterByType(notificationTypes.General)">
-        Generales
-      </button>
-      <button type="button" class="btn btn-light-primary btn-sm me-3 mb-2"
-              [ngClass]="{'active': selectedType === notificationTypes.Administrator}"
-              (click)="filterByType(notificationTypes.Administrator)"
+              [ngClass]="{'active': selectedType === notificationTypes.TopicNotification}"
+              (click)="filterByType(notificationTypes.TopicNotification)"
               *ngIf="roleService.isAdmin()">
-        Administradores
+        Por tema
       </button>
       <button type="button" class="btn btn-light-primary btn-sm me-3 mb-2"
-              [ngClass]="{'active': selectedType === notificationTypes.Representative}"
-              (click)="filterByType(notificationTypes.Representative)"
-              *ngIf="roleService.isAdmin() || roleService.isRepresentative()">
-        Representantes
-      </button>
-      <button type="button" class="btn btn-light-primary btn-sm me-3 mb-2"
-              [ngClass]="{'active': selectedType === notificationTypes.Custom}"
-              (click)="filterByType(notificationTypes.Custom)"
+              [ngClass]="{'active': selectedType === notificationTypes.UserSpecificNotification}"
+              (click)="filterByType(notificationTypes.UserSpecificNotification)"
               *ngIf="roleService.isAdmin()">
-        Personalizadas
+        Usuarios específicos
+      </button>
+      <button type="button" class="btn btn-light-primary btn-sm me-3 mb-2"
+              [ngClass]="{'active': selectedType === notificationTypes.ScheduledNotification}"
+              (click)="filterByType(notificationTypes.ScheduledNotification)"
+              *ngIf="roleService.isAdmin()">
+        Programadas
       </button>
     </div>
 
@@ -82,10 +77,9 @@
               <td>
                 <span class="badge"
                       [ngClass]="{
-                        'badge-light-primary': notification.type === notificationTypes.General,
-                        'badge-light-danger': notification.type === notificationTypes.Administrator,
-                        'badge-light-success': notification.type === notificationTypes.Representative,
-                        'badge-light-warning': notification.type === notificationTypes.Custom
+                        'badge-light-primary': notification.type == notificationTypes.TopicNotification,
+                        'badge-light-warning': notification.type == notificationTypes.UserSpecificNotification,
+                        'badge-light-info': notification.type == notificationTypes.ScheduledNotification
                       }">
                   {{ getTypeText(notification.type) }}
                 </span>

@@ -10,7 +10,7 @@ import { AuthService } from '../../auth/services/auth.service';
   providedIn: 'root'
 })
 export class NotificationService {
-  private apiUrl = `${environment.apiUrl}/notifications`;
+  private apiUrl = `${environment.apiUrl}/api/notifications`;
   private unreadNotificationsSubject = new BehaviorSubject<number>(0);
   unreadNotifications$ = this.unreadNotificationsSubject.asObservable();
 
@@ -51,17 +51,20 @@ export class NotificationService {
 
   // Crear una nueva notificación
   createNotification(notification: NotificationRequest): Observable<Notification> {
-    return this.http.post<Notification>(`${this.apiUrl}`, notification);
+    const backendNotification = this.transformToBackendFormat(notification);
+    return this.http.post<Notification>(`${this.apiUrl}`, backendNotification);
   }
 
   // Programar una notificación
   scheduleNotification(notification: NotificationRequest): Observable<Notification> {
-    return this.http.post<Notification>(`${this.apiUrl}/schedule`, notification);
+    const backendNotification = this.transformToBackendFormat(notification);
+    return this.http.post<Notification>(`${this.apiUrl}/schedule`, backendNotification);
   }
 
   // Actualizar una notificación
   updateNotification(id: number, notification: NotificationRequest): Observable<Notification> {
-    return this.http.put<Notification>(`${this.apiUrl}/${id}`, notification);
+    const backendNotification = this.transformToBackendFormat(notification);
+    return this.http.put<Notification>(`${this.apiUrl}/${id}`, backendNotification);
   }
 
   // Eliminar una notificación
@@ -103,5 +106,18 @@ export class NotificationService {
   // Buscar usuarios para envío personalizado
   searchUsers(query: string): Observable<any[]> {
     return this.http.get<any[]>(`${environment.apiUrl}/users/search?query=${query}`);
+  }
+
+  // Transformar modelo frontend al formato que espera el backend
+  private transformToBackendFormat(notification: NotificationRequest): any {
+    return {
+      title: notification.title,
+      body: notification.message, // En el backend se llama 'body'
+      scheduledFor: notification.scheduledDate, // En el backend se llama 'scheduledFor'
+      type: notification.type,
+      topic: notification.topic,
+      targetUserIds: notification.targetUserIds,
+      additionalData: notification.additionalData || {}
+    };
   }
 }

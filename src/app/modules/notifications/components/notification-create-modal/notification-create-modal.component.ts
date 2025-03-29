@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { NotificationType, NotificationRecipient, NotificationTopic } from '../../models/notification.model';
 import { NotificationService } from '../../services/notification.service';
 import { Observable, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'app-notification-create',
-  templateUrl: './notification-create.component.html',
-  styleUrls: ['./notification-create.component.scss']
+  selector: 'app-notification-create-modal',
+  templateUrl: './notification-create-modal.component.html',
+  styleUrls: ['./notification-create-modal.component.scss']
 })
-export class NotificationCreateComponent implements OnInit {
+export class NotificationCreateModalComponent implements OnInit {
+  @Output() notificationCreated = new EventEmitter<boolean>();
+
   notificationForm!: FormGroup;
   submitted = false;
   loading = false;
@@ -28,7 +30,7 @@ export class NotificationCreateComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private notificationService: NotificationService,
-    private router: Router
+    public activeModal: NgbActiveModal
   ) { }
 
   ngOnInit(): void {
@@ -71,6 +73,17 @@ export class NotificationCreateComponent implements OnInit {
       }
 
       this.notificationForm.get('topic')?.updateValueAndValidity();
+      this.notificationForm.get('scheduledDate')?.updateValueAndValidity();
+    });
+
+    // Observar cambios en isScheduled para habilitar/deshabilitar fecha
+    this.notificationForm.get('isScheduled')?.valueChanges.subscribe(value => {
+      this.showScheduleOptions = value;
+      if (value) {
+        this.notificationForm.get('scheduledDate')?.setValidators([Validators.required]);
+      } else {
+        this.notificationForm.get('scheduledDate')?.clearValidators();
+      }
       this.notificationForm.get('scheduledDate')?.updateValueAndValidity();
     });
 
@@ -149,7 +162,7 @@ export class NotificationCreateComponent implements OnInit {
       message: this.notificationForm.get('message')?.value,
       type: this.notificationForm.get('type')?.value,
       scheduledFor: (this.notificationForm.get('type')?.value === NotificationType.ScheduledNotification ||
-                  this.notificationForm.get('isScheduled')?.value)
+                   this.notificationForm.get('isScheduled')?.value)
         ? this.notificationForm.get('scheduledDate')?.value
         : undefined,
       topic: this.notificationForm.get('type')?.value === NotificationType.TopicNotification
@@ -173,9 +186,12 @@ export class NotificationCreateComponent implements OnInit {
           ? 'Notificación programada con éxito.'
           : 'Notificación enviada con éxito.';
 
-        // Redireccionar después de un breve tiempo
+        // Emitir evento de creación exitosa
+        this.notificationCreated.emit(true);
+
+        // Cerrar el modal después de un breve tiempo
         setTimeout(() => {
-          this.router.navigate(['/notifications']);
+          this.activeModal.close(true);
         }, 1500);
       },
       error => {
@@ -187,7 +203,7 @@ export class NotificationCreateComponent implements OnInit {
   }
 
   cancelar(): void {
-    this.router.navigate(['/notifications']);
+    this.activeModal.dismiss();
   }
 
   get f() { return this.notificationForm.controls; }

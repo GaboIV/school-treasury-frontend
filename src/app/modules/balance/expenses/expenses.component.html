@@ -167,7 +167,7 @@
             </div>
 
             <!-- Botones de acción -->
-            <div class="d-flex justify-content-end gap-2">
+            <div class="d-flex justify-content-end gap-2" *appHasRole="['Admin']">
               <button class="btn btn-light btn-sm" (click)="openUpdateModal(expense)">
                 <i class="bi bi-pencil me-1"></i> Editar
               </button>

@@ -3,6 +3,7 @@ import { Notification, NotificationType } from '../../models/notification.model'
 import { NotificationService } from '../../services/notification.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RoleService } from '../../../auth/services/role.service';
+import { NotificationCreateModalComponent } from '../notification-create-modal/notification-create-modal.component';
 
 @Component({
   selector: 'app-notification-list',
@@ -44,6 +45,29 @@ export class NotificationListComponent implements OnInit {
         this.error = 'No se pudieron cargar las notificaciones. Por favor, inténtalo de nuevo.';
         this.loading = false;
       }
+    );
+  }
+
+  openCreateModal(): void {
+    const modalRef = this.modalService.open(NotificationCreateModalComponent, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static',
+      windowClass: 'modal-rounded',
+      modalDialogClass: 'modal-dialog-scrollable'
+    });
+
+    modalRef.componentInstance.notificationCreated.subscribe(() => {
+      this.loadNotifications();
+    });
+
+    modalRef.result.then(
+      (result) => {
+        if (result) {
+          this.loadNotifications();
+        }
+      },
+      () => {}
     );
   }
 
@@ -93,13 +117,12 @@ export class NotificationListComponent implements OnInit {
     }
   }
 
-  getTypeText(type: string): string {
+  getTypeText(type: number): string {
     switch (type) {
-      case NotificationType.General: return 'General';
-      case NotificationType.Administrator: return 'Administradores';
-      case NotificationType.Representative: return 'Representantes';
-      case NotificationType.Custom: return 'Personalizada';
-      default: return type;
+      case NotificationType.TopicNotification: return 'Por tema';
+      case NotificationType.UserSpecificNotification: return 'Usuarios específicos';
+      case NotificationType.ScheduledNotification: return 'Programada';
+      default: return type.toString();
     }
   }
 }
