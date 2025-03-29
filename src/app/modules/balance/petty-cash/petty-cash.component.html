@@ -228,20 +228,57 @@
 
     <!-- Paginación -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-5" *ngIf="paginatedResult && paginatedResult.totalCount > 0">
-      <div class="d-flex justify-content-center mb-3 mb-md-0">
-        <ngb-pagination
-          [collectionSize]="paginatedResult.totalCount"
-          [page]="pageIndex + 1"
-          [pageSize]="pageSize"
-          [maxSize]="isSmallScreen ? 3 : 5"
-          [rotate]="true"
-          [boundaryLinks]="!isSmallScreen"
-          [ellipses]="!isSmallScreen"
-          size="sm"
-          (pageChange)="pageChanged($event)"
-          aria-label="Navegación de páginas">
-        </ngb-pagination>
+      <!-- Paginación personalizada -->
+      <div class="pagination-wrapper mb-3 mb-md-0">
+        <nav aria-label="Navegación de transacciones">
+          <ul class="pagination pagination-circle pagination-sm m-0">
+            <!-- Primera página -->
+            <li class="page-item" [class.disabled]="pageIndex === 0">
+              <a class="page-link" href="javascript:;" (click)="pageChanged('first')" aria-label="Primera">
+                <i class="bi bi-chevron-double-left fs-7"></i>
+              </a>
+            </li>
+
+            <!-- Anterior -->
+            <li class="page-item" [class.disabled]="pageIndex === 0">
+              <a class="page-link" href="javascript:;" (click)="pageChanged('prev')" aria-label="Anterior">
+                <i class="bi bi-chevron-left fs-7"></i>
+              </a>
+            </li>
+
+            <!-- Páginas (versión escritorio) -->
+            <ng-container *ngIf="!isSmallScreen">
+              <!-- Rango de páginas para mostrar -->
+              <ng-container *ngFor="let page of getPageNumbers()">
+                <li class="page-item" [class.active]="page === pageIndex + 1">
+                  <a class="page-link" href="javascript:;" (click)="pageChanged(page)">{{ page }}</a>
+                </li>
+              </ng-container>
+            </ng-container>
+
+            <!-- Versión móvil compacta -->
+            <li *ngIf="isSmallScreen" class="page-item active">
+              <span class="page-link">{{ pageIndex + 1 }}</span>
+            </li>
+
+            <!-- Siguiente -->
+            <li class="page-item" [class.disabled]="pageIndex >= Math.ceil(paginatedResult.totalCount / pageSize) - 1">
+              <a class="page-link" href="javascript:;" (click)="pageChanged('next')" aria-label="Siguiente">
+                <i class="bi bi-chevron-right fs-7"></i>
+              </a>
+            </li>
+
+            <!-- Última página -->
+            <li class="page-item" [class.disabled]="pageIndex >= Math.ceil(paginatedResult.totalCount / pageSize) - 1">
+              <a class="page-link" href="javascript:;" (click)="pageChanged('last')" aria-label="Última">
+                <i class="bi bi-chevron-double-right fs-7"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
+
+      <!-- Indicador de registros mostrados -->
       <div class="text-muted">
         Mostrando {{ (pageIndex * pageSize) + 1 }} - {{ Math.min((pageIndex + 1) * pageSize, paginatedResult.totalCount) }} de {{ paginatedResult.totalCount }} registros
       </div>

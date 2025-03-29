@@ -177,12 +177,75 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   }
 
   pageChanged(event: any): void {
-    this.pageIndex = event - 1;
-    this.loadTransactions(this.pageIndex);
+    // Si el evento es un número, lo consideramos como el número de página
+    let newPageIndex = typeof event === 'number' ? event - 1 : this.pageIndex;
+
+    // Si es el botón anterior
+    if (event === 'prev') {
+      newPageIndex = Math.max(0, this.pageIndex - 1);
+    }
+    // Si es el botón siguiente
+    else if (event === 'next') {
+      newPageIndex = this.pageIndex + 1;
+    }
+    // Si es el botón primera página
+    else if (event === 'first') {
+      newPageIndex = 0;
+    }
+    // Si es el botón última página y tenemos datos de paginación
+    else if (event === 'last' && this.paginatedResult) {
+      newPageIndex = Math.ceil(this.paginatedResult.totalCount / this.pageSize) - 1;
+    }
+
+    // Solo cargamos si hay cambio de página
+    if (newPageIndex !== this.pageIndex) {
+      this.pageIndex = newPageIndex;
+      this.loadTransactions(this.pageIndex);
+    }
   }
 
   getTransactionTypeClass(type: TransactionType): string {
     return type === TransactionType.Income ? 'badge badge-light-success' : 'badge badge-light-danger';
+  }
+
+  /**
+   * Genera un array con los números de página a mostrar en la paginación
+   * considerando la página actual y el total de páginas
+   */
+  getPageNumbers(): number[] {
+    if (!this.paginatedResult) {
+      return [];
+    }
+
+    const totalPages = Math.ceil(this.paginatedResult.totalCount / this.pageSize);
+    const currentPage = this.pageIndex + 1;
+    const maxPagesToShow = 5;
+    const pages: number[] = [];
+
+    // Para menos de 6 páginas, mostrar todas
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+      return pages;
+    }
+
+    // Calcular rango a mostrar considerando la página actual y dejándola en el centro
+    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = startPage + maxPagesToShow - 1;
+
+    // Ajustar si el rango se pasa del final
+    if (endPage > totalPages) {
+      endPage = totalPages;
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+
+    // Generar array con los números de página
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
 
   // Formateador de moneda

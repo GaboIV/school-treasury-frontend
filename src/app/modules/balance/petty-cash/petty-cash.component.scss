@@ -19,3 +19,54 @@
     font-size: 0.9rem;
   }
 }
+
+// Estilos para la paginación
+.pagination-wrapper {
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.15rem;
+
+    .page-item {
+      margin: 0 1px;
+
+      .page-link {
+        min-width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50% !important;
+        padding: 0.25rem;
+        transition: all 0.15s ease;
+      }
+
+      &.active .page-link {
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+        color: #fff;
+      }
+
+      &.disabled .page-link {
+        color: var(--bs-gray-500);
+        pointer-events: none;
+      }
+    }
+  }
+}
+
+// Estilos para móviles
+@media (max-width: 575.98px) {
+  .pagination-wrapper {
+    .pagination {
+      .page-item {
+        .page-link {
+          min-width: 32px;
+          height: 32px;
+          font-size: 0.85rem;
+        }
+      }
+    }
+  }
+}
