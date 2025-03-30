@@ -15,6 +15,8 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { LoggerService } from './services/logger.service';
 import { HttpErrorInterceptor } from './modules/auth/services/http-error.interceptor';
 import { TokenInterceptor } from './modules/auth/services/token.interceptor';
+import { UpdateModule } from './modules/update/update.module';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 // #fake-start#
 import { FakeAPIService } from './_fake/fake-api.service';
 // #fake-end#
@@ -56,6 +58,7 @@ function appInitializer(authService: AuthService) {
     InlineSVGModule.forRoot(),
     NgbModule,
     SweetAlert2Module.forRoot(),
+    UpdateModule,
   ],
   providers: [
     {
@@ -79,7 +82,8 @@ function appInitializer(authService: AuthService) {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpErrorInterceptor,
       multi: true
-    }
+    },
+    FileOpener
   ],
   bootstrap: [AppComponent],
 })
