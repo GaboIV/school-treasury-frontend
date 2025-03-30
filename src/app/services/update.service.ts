@@ -31,9 +31,10 @@ export class UpdateService {
   /**
    * Verifica si hay actualizaciones disponibles
    * @param currentVersion Versión actual de la aplicación
+   * @param platform Plataforma actual (android por defecto)
    */
-  checkForUpdates(currentVersion: string): Observable<UpdateInfo> {
-    return this.http.get<UpdateInfo>(`${this.API_URL}/check-update?currentVersion=${currentVersion}`);
+  checkForUpdates(currentVersion: string, platform: string = 'android'): Observable<UpdateInfo> {
+    return this.http.get<UpdateInfo>(`${this.API_URL}/check-update?currentVersion=${currentVersion}&platform=${platform}`);
   }
 
   /**
@@ -45,8 +46,9 @@ export class UpdateService {
 
   /**
    * Descarga e instala la última versión del APK
+   * @param platform Plataforma actual (android por defecto)
    */
-  downloadAndInstallAPK(): Observable<any> {
+  downloadAndInstallAPK(platform: string = 'android'): Observable<any> {
     // Reiniciamos el progreso
     this.downloadProgress.next(0);
 
@@ -55,7 +57,7 @@ export class UpdateService {
       throw new Error('Esta función solo está disponible en dispositivos Android');
     }
 
-    return this.http.get(`${this.API_URL}/lastest-apk`, {
+    return this.http.get(`${this.API_URL}/lastest-apk?platform=${platform}`, {
       responseType: 'blob',
       reportProgress: true,
       observe: 'events'

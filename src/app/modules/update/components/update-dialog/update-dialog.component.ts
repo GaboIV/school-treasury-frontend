@@ -3,6 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { UpdateInfo } from 'src/app/services/update.service';
 import { UpdateService } from 'src/app/services/update.service';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-update-dialog',
@@ -45,7 +46,10 @@ export class UpdateDialogComponent implements OnInit, OnDestroy {
     this.isDownloading = true;
     this.downloadError = null;
 
-    this.updateService.downloadAndInstallAPK().subscribe({
+    // Obtenemos la plataforma actual
+    const platform = Capacitor.getPlatform();
+
+    this.updateService.downloadAndInstallAPK(platform).subscribe({
       next: (result) => {
         if (result === true) {
           // La descarga e instalación se completó correctamente
