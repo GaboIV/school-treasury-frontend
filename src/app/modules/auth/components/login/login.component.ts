@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PasswordChangeRequiredModalComponent } from '../../../../_metronic/partials/layout/modals/password-change-required-modal/password-change-required-modal.component';
+import { VersionCheckService } from '../../../../services/version-check.service';
 
 @Component({
   selector: 'app-login',
@@ -34,7 +35,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private versionCheckService: VersionCheckService
   ) {
     this.isLoading$ = this.authService.isLoading$;
     // redirect to home if already logged in
@@ -48,6 +50,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     // get return url from route parameters or default to '/'
     this.returnUrl =
       this.route.snapshot.queryParams['returnUrl'.toString()] || '/';
+
+    // Verificar si hay actualizaciones disponibles
+    this.versionCheckService.checkForUpdates();
   }
 
   // convenience getter for easy access to form fields

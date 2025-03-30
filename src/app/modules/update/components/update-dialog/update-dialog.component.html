@@ -1,0 +1,67 @@
+<div class="modal-header">
+  <h4 class="modal-title">Nueva versión disponible</h4>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="skipUpdate()"
+    [disabled]="updateInfo.isRequired || isDownloading">
+  </button>
+</div>
+<div class="modal-body">
+  <div class="p-5 text-center">
+    <span class="svg-icon svg-icon-primary svg-icon-5x mb-5">
+      <i class="bi bi-cloud-download fs-4x text-primary"></i>
+    </span>
+
+    <h2 class="mb-4">Versión {{ updateInfo.latestVersion }} disponible</h2>
+
+    <!-- Changelog HTML -->
+    <div class="bg-light rounded p-4 mb-5" style="max-height: 200px; overflow-y: auto;">
+      <div [innerHTML]="updateInfo.changeLog"></div>
+    </div>
+
+    <!-- Mensaje de obligatorio -->
+    <div *ngIf="updateInfo.isRequired" class="alert alert-warning">
+      Esta actualización es obligatoria. Debes instalarla para continuar usando la aplicación.
+    </div>
+
+    <!-- Mensaje de error -->
+    <div *ngIf="downloadError" class="alert alert-danger">
+      {{ downloadError }}
+    </div>
+
+    <!-- Progreso de descarga -->
+    <div *ngIf="isDownloading" class="mb-3">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <span>Descargando actualización...</span>
+        <span>{{ downloadProgress }}%</span>
+      </div>
+      <div class="progress">
+        <div
+          class="progress-bar progress-bar-striped progress-bar-animated"
+          role="progressbar"
+          [style.width.%]="downloadProgress"
+          aria-valuemin="0"
+          aria-valuemax="100">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-secondary"
+    (click)="skipUpdate()"
+    [disabled]="updateInfo.isRequired || isDownloading">
+    Más tarde
+  </button>
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="downloadAndInstall()"
+    [disabled]="isDownloading">
+    {{ isDownloading ? 'Descargando...' : 'Instalar ahora' }}
+  </button>
+</div>

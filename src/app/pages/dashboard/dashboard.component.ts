@@ -2,6 +2,7 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import { ModalConfig, ModalComponent } from '../../_metronic/partials';
 import { DashboardService, DashboardData } from '../../services/dashboard.service';
 import { Router } from '@angular/router';
+import { VersionCheckService } from '../../services/version-check.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,11 +23,14 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private dashboardService: DashboardService,
-    private router: Router
+    private router: Router,
+    private versionCheckService: VersionCheckService
   ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
+    // Verificar si hay actualizaciones disponibles
+    this.versionCheckService.checkForUpdates(true, true);
   }
 
   loadDashboardData(): void {
