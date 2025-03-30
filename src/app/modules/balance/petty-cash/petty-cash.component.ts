@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild, HostListener, ElementRef } fro
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef, NgbToast } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { CreateTransactionDto, PaginatedResult, Transaction, TransactionSummary, TransactionType } from '../models/petty-cash.model';
+import { CreateTransactionDto, PaginatedResult, PettyCashCommentsDto, Transaction, TransactionSummary, TransactionType } from '../models/petty-cash.model';
 import { PettyCashService } from '../services/petty-cash.service';
 import { ScreenSizeService } from '../services/screen-size.service';
 import { CurrencyFormatService } from '../services/currency-format.service';
@@ -18,6 +18,7 @@ import { AuthService } from '../../auth';
 export class PettyCashComponent implements OnInit, OnDestroy {
   @ViewChild('transactionModal') transactionModal: any;
   @ViewChild('transactionsContainer') transactionsContainer: ElementRef;
+  @ViewChild('commentsModal') commentsModal: any;
 
   // Exponemos Math para usarlo en la plantilla
   Math = Math;
@@ -67,6 +68,30 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   // Para animación de transición entre páginas
   isPageChanging: boolean = false;
 
+  // Para los comentarios
+  comments: PettyCashCommentsDto | null = null;
+  commentsForm: FormGroup;
+  commentsLoading = false;
+  commentsSubmitting = false;
+  activeCommentType: 'balance' | 'income' | 'expense' = 'balance';
+
+  // Configuración del editor Quill
+  quillModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'align': [] }],
+      ['link'],
+      ['clean']
+    ],
+    keyboard: {
+      bindings: {
+        tab: false
+      }
+    }
+  };
+
   constructor(
     private pettyCashService: PettyCashService,
     private formBuilder: FormBuilder,
@@ -81,10 +106,15 @@ export class PettyCashComponent implements OnInit, OnDestroy {
       description: ['', [Validators.required, Validators.maxLength(250)]],
       type: [TransactionType.Income, Validators.required]
     });
+
+    this.commentsForm = this.formBuilder.group({
+      comment: ['', [Validators.maxLength(1000)]]
+    });
   }
 
   ngOnInit(): void {
     this.loadSummary();
+    this.loadComments();
 
     this.subscriptions.push(
       this.screenSizeService.isMobile$.subscribe((isMobile: boolean) => {
@@ -361,5 +391,126 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   // Formateador de moneda
   formatCurrency(amount: number): string {
     return this.currencyFormatService.formatCurrency(amount);
+  }
+
+  loadComments(): void {
+    this.commentsLoading = true;
+    this.pettyCashService.getComments().subscribe(
+      (comments) => {
+        this.comments = comments;
+        this.commentsLoading = false;
+      },
+      (error) => {
+        console.error('Error al cargar los comentarios:', error);
+        this.commentsLoading = false;
+      }
+    );
+  }
+
+  openCommentsModal(type: 'balance' | 'income' | 'expense'): void {
+    this.activeCommentType = type;
+
+    let currentComment = '';
+    if (this.comments) {
+      switch (type) {
+        case 'balance':
+          currentComment = this.comments.balanceComment || '';
+          break;
+        case 'income':
+          currentComment = this.comments.incomeComment || '';
+          break;
+        case 'expense':
+          currentComment = this.comments.expenseComment || '';
+          break;
+      }
+    }
+
+    this.commentsForm.reset({ comment: currentComment });
+
+    // Guardar referencia al modal y marcar como abierto
+    this.activeModalRef = this.modalService.open(this.commentsModal, {
+      centered: true,
+      size: 'lg',
+      scrollable: true,
+      fullscreen: 'md', // Modo pantalla completa en dispositivos medianos y pequeños
+      backdrop: 'static', // Evita que se cierre al hacer clic fuera
+      backdropClass: 'quill-modal-backdrop',
+      windowClass: 'quill-modal'
+    });
+    this.modalOpen = true;
+
+    // Prevenir navegación hacia atrás desde el modal
+    this.activeModalRef.result.finally(() => {
+      this.modalOpen = false;
+      this.activeModalRef = null;
+    });
+  }
+
+  submitComments(): void {
+    if (this.commentsForm.invalid) {
+      return;
+    }
+
+    this.commentsSubmitting = true;
+
+    const updatedComments: PettyCashCommentsDto = {
+      ...(this.comments || {}),
+    };
+
+    const comment = this.commentsForm.get('comment')?.value;
+
+    switch (this.activeCommentType) {
+      case 'balance':
+        updatedComments.balanceComment = comment;
+        break;
+      case 'income':
+        updatedComments.incomeComment = comment;
+        break;
+      case 'expense':
+        updatedComments.expenseComment = comment;
+        break;
+    }
+
+    this.pettyCashService.updateComments(updatedComments).subscribe(
+      (result) => {
+        this.comments = result;
+        this.commentsSubmitting = false;
+        if (this.activeModalRef) {
+          this.activeModalRef.close();
+        }
+      },
+      (error) => {
+        console.error('Error al guardar los comentarios:', error);
+        this.commentsSubmitting = false;
+      }
+    );
+  }
+
+  getCommentsTitle(): string {
+    switch (this.activeCommentType) {
+      case 'balance':
+        return 'Comentarios del Saldo';
+      case 'income':
+        return 'Comentarios de Ingresos';
+      case 'expense':
+        return 'Comentarios de Egresos';
+      default:
+        return 'Comentarios';
+    }
+  }
+
+  hasComments(type: 'balance' | 'income' | 'expense'): boolean {
+    if (!this.comments) return false;
+
+    switch (type) {
+      case 'balance':
+        return !!this.comments.balanceComment;
+      case 'income':
+        return !!this.comments.incomeComment;
+      case 'expense':
+        return !!this.comments.expenseComment;
+      default:
+        return false;
+    }
   }
 }

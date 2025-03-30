@@ -21,6 +21,20 @@
             {{ transactionSummary?.lastTransactionDate | date:'dd/MM/yyyy HH:mm' }}
           </span>
         </div>
+
+        <!-- Botón de comentarios para admin -->
+        <div *ngIf="isAdmin" class="mt-3">
+          <button class="btn btn-sm btn-light-primary w-100" (click)="openCommentsModal('balance')">
+            <i class="bi bi-pencil-square me-2"></i>Editar comentarios
+          </button>
+        </div>
+
+        <!-- Botón para representantes (solo visible si hay comentarios) -->
+        <div *ngIf="isRepresentative && hasComments('balance')" class="mt-3">
+          <button class="btn btn-sm btn-light-primary w-100" (click)="openCommentsModal('balance')">
+            <i class="bi bi-info-circle me-2"></i>Ver detalles de excedentes
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -43,6 +57,20 @@
             <i class="bi bi-arrow-up-right me-2"></i>Entrada
           </span>
         </div>
+
+        <!-- Botón de comentarios para admin -->
+        <div *ngIf="isAdmin" class="mt-3">
+          <button class="btn btn-sm btn-light-success w-100" (click)="openCommentsModal('income')">
+            <i class="bi bi-pencil-square me-2"></i>Editar comentarios
+          </button>
+        </div>
+
+        <!-- Botón para representantes (solo visible si hay comentarios) -->
+        <div *ngIf="isRepresentative && hasComments('income')" class="mt-3">
+          <button class="btn btn-sm btn-light-success w-100" (click)="openCommentsModal('income')">
+            <i class="bi bi-info-circle me-2"></i>Ver comentarios
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -64,6 +92,20 @@
           <span class="badge badge-danger fs-base">
             <i class="bi bi-arrow-down-right me-2"></i>Salida
           </span>
+        </div>
+
+        <!-- Botón de comentarios para admin -->
+        <div *ngIf="isAdmin" class="mt-3">
+          <button class="btn btn-sm btn-light-danger w-100" (click)="openCommentsModal('expense')">
+            <i class="bi bi-pencil-square me-2"></i>Editar comentarios
+          </button>
+        </div>
+
+        <!-- Botón para representantes (solo visible si hay comentarios) -->
+        <div *ngIf="isRepresentative && hasComments('expense')" class="mt-3">
+          <button class="btn btn-sm btn-light-danger w-100" (click)="openCommentsModal('expense')">
+            <i class="bi bi-info-circle me-2"></i>Ver comentarios
+          </button>
         </div>
       </div>
     </div>
@@ -376,6 +418,56 @@
     <button type="button" class="btn btn-primary" [disabled]="transactionForm.invalid || submitting" (click)="submitTransaction()">
       <span *ngIf="!submitting">Guardar</span>
       <span *ngIf="submitting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    </button>
+  </div>
+</ng-template>
+
+<!-- Modal para comentarios -->
+<ng-template #commentsModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">{{ getCommentsTitle() }}</h5>
+    <button type="button" class="btn-close" aria-label="Cerrar" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="commentsForm" class="h-100 d-flex flex-column">
+      <!-- Editor para admins -->
+      <div *ngIf="isAdmin" class="mb-3 flex-grow-1 d-flex flex-column">
+        <label class="form-label mb-2">Comentarios</label>
+        <div class="quill-wrapper flex-grow-1 d-flex flex-column">
+          <quill-editor
+            class="flex-grow-1"
+            formControlName="comment"
+            [modules]="quillModules"
+            placeholder="Ingrese comentarios o información adicional"></quill-editor>
+        </div>
+        <div *ngIf="commentsForm.get('comment')?.invalid && commentsForm.get('comment')?.touched" class="fv-plugins-message-container mt-2">
+          <div class="fv-help-block">
+            <span *ngIf="commentsForm.get('comment')?.errors?.['maxlength']">El comentario no puede tener más de 1000 caracteres</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista para representantes -->
+      <div *ngIf="!isAdmin && commentsForm.get('comment')?.value" class="p-4 bg-light-info rounded flex-grow-1">
+        <div [innerHTML]="commentsForm.get('comment')?.value || ''"></div>
+      </div>
+
+      <!-- Mensaje si no hay comentarios -->
+      <div *ngIf="!isAdmin && !commentsForm.get('comment')?.value" class="text-center py-5 flex-grow-1">
+        <i class="bi bi-info-circle fs-2 text-muted mb-3"></i>
+        <p class="text-muted">No hay información adicional disponible</p>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="modal.dismiss()">
+      {{ isAdmin ? 'Cancelar' : 'Cerrar' }}
+    </button>
+    <button *ngIf="isAdmin" type="button" class="btn btn-primary"
+      [disabled]="commentsForm.invalid || commentsSubmitting"
+      (click)="submitComments()">
+      <span *ngIf="!commentsSubmitting">Guardar</span>
+      <span *ngIf="commentsSubmitting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
     </button>
   </div>
 </ng-template>

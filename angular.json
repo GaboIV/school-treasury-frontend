@@ -27,7 +27,8 @@
               "clipboard.js",
               "prismjs",
               "sweetalert2",
-              "moment"
+              "moment",
+              "quill"
             ],
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -40,7 +41,8 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css"
+              "node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css",
+              "node_modules/quill/dist/quill.snow.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",

@@ -5,6 +5,8 @@ import { map } from 'rxjs/operators';
 import {
   CreateTransactionDto,
   PaginatedResult,
+  PettyCashCommentsDto,
+  PettyCashCommentsDtoApiResponse,
   Transaction,
   TransactionSummary,
   TransactionType
@@ -83,6 +85,28 @@ export class PettyCashService {
               date: new Date(item.date)
             }))
           };
+        }
+        throw new Error(response.message);
+      })
+    );
+  }
+
+  getComments(): Observable<PettyCashCommentsDto> {
+    return this.http.get<PettyCashCommentsDtoApiResponse>(`${this.API_URL}/comments`).pipe(
+      map(response => {
+        if (response.success) {
+          return response.data;
+        }
+        throw new Error(response.message);
+      })
+    );
+  }
+
+  updateComments(comments: PettyCashCommentsDto): Observable<PettyCashCommentsDto> {
+    return this.http.put<PettyCashCommentsDtoApiResponse>(`${this.API_URL}/comments`, comments).pipe(
+      map(response => {
+        if (response.success) {
+          return response.data;
         }
         throw new Error(response.message);
       })

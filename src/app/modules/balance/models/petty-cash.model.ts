@@ -97,3 +97,15 @@ export interface PaginatedTransactionDtoApiResponse {
   value: PaginatedResult<TransactionDto>;
   errors: string[];
 }
+
+export interface PettyCashCommentsDto {
+  balanceComment?: string | null;
+  incomeComment?: string | null;
+  expenseComment?: string | null;
+}
+
+export interface PettyCashCommentsDtoApiResponse {
+  success: boolean;
+  message: string;
+  data: PettyCashCommentsDto;
+}
