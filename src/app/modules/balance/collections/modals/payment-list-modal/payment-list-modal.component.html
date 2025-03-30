@@ -98,6 +98,9 @@
             <a href="javascript:;" class="btn btn-icon btn-bg-light btn-sm" (click)="openRegisterPaymentModal(payment)">
               <app-keenicon name="dollar" class="fs-3"></app-keenicon>
             </a>
+            <a href="javascript:;" class="btn btn-icon btn-bg-light btn-sm ms-1" *ngIf="payment.paymentStatus === PaymentStatus.Pending || payment.paymentStatus === PaymentStatus.Partial" (click)="openExoneratePaymentModal(payment)">
+              <app-keenicon name="shield" class="fs-3 text-warning"></app-keenicon>
+            </a>
           </td>
         </tr>
         <tr *ngIf="payments.length === 0">
@@ -213,6 +216,9 @@
 
           <!-- Botón de acción -->
           <div class="d-flex justify-content-end mt-3" *appHasRole="['Admin']">
+            <button class="btn btn-warning btn-sm me-2" *ngIf="payment.paymentStatus === PaymentStatus.Pending || payment.paymentStatus === PaymentStatus.Partial" (click)="openExoneratePaymentModal(payment)">
+              <i class="bi bi-shield-check me-1"></i> Exonerar Pago
+            </button>
             <button class="btn btn-primary btn-sm" (click)="openRegisterPaymentModal(payment)">
               <i class="bi bi-cash-coin me-1"></i> Registrar Pago
             </button>

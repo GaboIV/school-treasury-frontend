@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnDestroy, HostListener } from '@angular/core
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { StudentPaymentService } from '../../../services/student-payment.service';
-import { StudentPayment } from '../../../models/student-payment.model';
+import { StudentPayment, PaymentStatus } from '../../../models/student-payment.model';
 import { first } from 'rxjs/operators';
 import { LocationStrategy } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,6 +24,7 @@ export interface CollectionInfo {
 export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
   @Input() payment: StudentPayment;
   @Input() collection: CollectionInfo; // Nueva propiedad para recibir datos desde PaymentDetailsModal
+  @Input() isExoneration: boolean = false; // Indica si el modal es para exoneración de pago
 
   paymentForm: FormGroup;
   isLoading: boolean = false;
@@ -161,10 +162,15 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
 
       this.paymentForm = this.fb.group({
         id: [this.payment?.id || 0],
-        amountPaid: [defaultAmount, [Validators.required, Validators.min(0), Validators.max(pendingAmount)]],
+        amountPaid: [this.isExoneration ? 0 : defaultAmount, this.isExoneration ? [] : [Validators.required, Validators.min(0), Validators.max(pendingAmount)]],
         comment: [this.payment?.comment || ''],
         paymentDate: [paymentDateValue, Validators.required]
       });
+
+      // Si es exoneración, deshabilitamos el campo de monto
+      if (this.isExoneration) {
+        this.paymentForm.get('amountPaid')?.disable();
+      }
   }
 
   // Verificar si el formulario ha cambiado
@@ -242,8 +248,8 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
     formData.append('id', paymentData.id.toString());
 
     // Si es un pago completo (edición) o si hay un monto pendiente (nuevo pago)
-    // Solo enviamos amountPaid si es un nuevo pago o hay monto pendiente
-    if (this.getPendingAmount() > 0) {
+    // Solo enviamos amountPaid si es un nuevo pago o hay monto pendiente y no es exoneración
+    if (this.getPendingAmount() > 0 && !this.isExoneration) {
       formData.append('amountPaid', paymentData.amountPaid.toString());
     }
 
@@ -264,6 +270,11 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
       }
       formData.append('paymentDate', paymentDate.toISOString());
       console.log('Fecha enviada al servidor:', paymentDate.toISOString());
+    }
+
+    // Si es exoneración, establecer el estado del pago como Exonerado
+    if (this.isExoneration) {
+      formData.append('paymentStatus', PaymentStatus.Exonerated.toString());
     }
 
     // Agregar información sobre el monto ajustado si existe
@@ -290,10 +301,19 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
 
     console.log('Número total de imágenes:', this.existingImages.length + this.uploadedImages.length);
 
-    // Determinar si es una creación o actualización de pago
-    const saveOperation = this.getPendingAmount() > 0
-      ? this.studentPaymentService.registerPaymentWithImages(formData)
-      : this.studentPaymentService.updatePayment(formData, this.payment.id);
+    // Determinar qué operación realizar
+    let saveOperation;
+
+    if (this.isExoneration) {
+      // Exoneración de pago
+      saveOperation = this.studentPaymentService.exoneratePayment(formData, this.payment.id);
+    } else if (this.getPendingAmount() > 0) {
+      // Registro de pago
+      saveOperation = this.studentPaymentService.registerPaymentWithImages(formData);
+    } else {
+      // Actualización de pago
+      saveOperation = this.studentPaymentService.updatePayment(formData, this.payment.id);
+    }
 
     saveOperation
       .pipe(first())
@@ -317,8 +337,8 @@ export class RegisterPaymentModalComponent implements OnInit, OnDestroy {
         },
         error: (error: any) => {
           this.isLoading = false;
-          this.error = 'Error al registrar el pago';
-          console.error('Error al registrar el pago:', error);
+          this.error = this.isExoneration ? 'Error al exonerar el pago' : 'Error al registrar el pago';
+          console.error(this.isExoneration ? 'Error al exonerar el pago:' : 'Error al registrar el pago:', error);
         }
       });
   }

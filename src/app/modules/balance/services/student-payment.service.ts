@@ -42,4 +42,11 @@ export class StudentPaymentService {
       formData
     );
   }
+
+  exoneratePayment(formData: FormData, id: string): Observable<StudentPaymentResponse> {
+    return this.http.put<StudentPaymentResponse>(
+      `${this.apiUrl}/exonerate/${id}`,
+      formData
+    );
+  }
 }
