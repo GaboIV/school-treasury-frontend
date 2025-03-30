@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { QuillModule } from 'ngx-quill';
 
 import { BalanceRoutingModule } from './balance-routing.module';
 import { BalanceComponent } from './balance.component';
@@ -73,7 +74,6 @@ import { RequestPaymentModalComponent } from './payment-requests/modals/request-
   ],
   imports: [
     CommonModule,
-    HttpClientModule,
     BalanceRoutingModule,
     DropdownMenusModule,
     WidgetsModule,
@@ -83,6 +83,8 @@ import { RequestPaymentModalComponent } from './payment-requests/modals/request-
     NgbPaginationModule,
     TranslationModule,
     PipesModule,
+    HttpClientModule,
+    QuillModule.forRoot()
   ],
 })
 export class BalanceModule {}
