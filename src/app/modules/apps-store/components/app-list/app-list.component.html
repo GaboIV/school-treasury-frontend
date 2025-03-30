@@ -1,0 +1,71 @@
+<div class="card">
+  <div class="card-header border-0 pt-5">
+    <h3 class="card-title align-items-start flex-column">
+      <span class="card-label fw-bold fs-3 mb-1">Tienda de Aplicaciones</span>
+      <span class="text-muted mt-1 fw-semibold fs-7">Explora aplicaciones para tu escuela</span>
+    </h3>
+
+    <!-- Búsqueda -->
+    <div class="card-toolbar">
+      <div class="position-relative">
+        <span class="svg-icon svg-icon-3 svg-icon-gray-500 position-absolute top-50 translate-middle ms-6">
+          <i class="bi bi-search fs-4"></i>
+        </span>
+        <input type="text" class="form-control form-control w-250px ps-10"
+              name="search"
+              placeholder="Buscar aplicaciones"
+              #searchBox
+              (input)="search(searchBox.value)">
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body py-3">
+    <!-- Filtros de categoría -->
+    <div class="d-flex flex-wrap mb-5">
+      <button type="button" class="btn btn-light-primary btn-sm me-3 mb-2"
+              [ngClass]="{'active': selectedCategory === 'Todas'}"
+              (click)="filterByCategory('Todas')">
+        Todas
+      </button>
+      <button type="button" class="btn btn-light-primary btn-sm me-3 mb-2"
+              *ngFor="let category of categories"
+              [ngClass]="{'active': selectedCategory === category}"
+              (click)="filterByCategory(category)">
+        {{ category }}
+      </button>
+    </div>
+
+    <!-- Estado de carga -->
+    <div *ngIf="isLoading" class="d-flex justify-content-center my-10">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Cargando...</span>
+      </div>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <!-- Mensaje si no hay aplicaciones -->
+    <div *ngIf="!isLoading && !error && filteredApps.length === 0" class="text-center py-10">
+      <div class="text-muted fs-3">No se encontraron aplicaciones</div>
+      <div class="text-muted fs-6 mt-2">Intenta con otros filtros o términos de búsqueda</div>
+    </div>
+
+    <!-- Cuadrícula de apps -->
+    <div *ngIf="!isLoading && !error && filteredApps.length > 0">
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4 col-xl-3" *ngFor="let app of filteredApps">
+          <app-app-card
+            [app]="app"
+            (install)="installApp($event)"
+            (uninstall)="uninstallApp($event)"
+            (openApp)="onOpenApp($event)">
+          </app-app-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

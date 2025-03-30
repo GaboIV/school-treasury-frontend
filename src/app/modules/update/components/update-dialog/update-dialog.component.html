@@ -11,13 +11,23 @@
 <div class="modal-body">
   <div class="p-5 text-center">
     <span class="svg-icon svg-icon-primary svg-icon-5x mb-5">
-      <i class="bi bi-cloud-download fs-4x text-primary"></i>
+      <i class="bi"
+         [ngClass]="{
+           'bi-cloud-download': !isInstalling,
+           'bi-arrow-down-circle': isInstalling && downloadStarted
+         }"
+         class="fs-4x"
+         [ngClass]="{
+           'text-primary': !isInstalling,
+           'text-success': isInstalling && downloadStarted
+         }">
+      </i>
     </span>
 
     <h2 class="mb-4">Versión {{ updateInfo.latestVersion }} disponible</h2>
 
-    <!-- Changelog HTML -->
-    <div class="bg-light rounded p-4 mb-5" style="max-height: 200px; overflow-y: auto;">
+    <!-- Changelog HTML solo visible durante la descarga inicial -->
+    <div *ngIf="!isInstalling" class="bg-light rounded p-4 mb-5" style="max-height: 200px; overflow-y: auto;">
       <div [innerHTML]="updateInfo.changeLog"></div>
     </div>
 
@@ -26,25 +36,39 @@
       Esta actualización es obligatoria. Debes instalarla para continuar usando la aplicación.
     </div>
 
-    <!-- Mensaje de error -->
-    <div *ngIf="downloadError" class="alert alert-danger">
+    <!-- Mensaje de error o información -->
+    <div *ngIf="downloadError" class="alert"
+         [ngClass]="{'alert-danger': downloadError.includes('Error'), 'alert-info': !downloadError.includes('Error')}">
       {{ downloadError }}
     </div>
 
     <!-- Progreso de descarga -->
     <div *ngIf="isDownloading" class="mb-3">
       <div class="d-flex align-items-center justify-content-between mb-2">
-        <span>Descargando actualización...</span>
+        <span>
+          <span *ngIf="!isInstalling">Preparando descarga...</span>
+          <span *ngIf="isInstalling">Descarga iniciada con el gestor del sistema</span>
+        </span>
         <span>{{ downloadProgress }}%</span>
       </div>
       <div class="progress">
         <div
           class="progress-bar progress-bar-striped progress-bar-animated"
+          [ngClass]="{
+            'bg-primary': !isInstalling,
+            'bg-success': isInstalling
+          }"
           role="progressbar"
           [style.width.%]="downloadProgress"
           aria-valuemin="0"
           aria-valuemax="100">
         </div>
+      </div>
+
+      <!-- Mensaje cuando se está preparando la instalación -->
+      <div *ngIf="isInstalling && !downloadError" class="mt-3 alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>
+        <span>La descarga se ha iniciado. Busque en la barra de notificaciones de su dispositivo cuando se complete para instalar la actualización.</span>
       </div>
     </div>
   </div>
@@ -59,9 +83,15 @@
   </button>
   <button
     type="button"
-    class="btn btn-primary"
+    class="btn"
+    [ngClass]="{
+      'btn-primary': !isInstalling,
+      'btn-success': isInstalling
+    }"
     (click)="downloadAndInstall()"
     [disabled]="isDownloading">
-    {{ isDownloading ? 'Descargando...' : 'Instalar ahora' }}
+    <span *ngIf="!isDownloading">Instalar ahora</span>
+    <span *ngIf="isDownloading && !isInstalling">Preparando...</span>
+    <span *ngIf="isInstalling">Descargando...</span>
   </button>
 </div>
