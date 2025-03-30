@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CollectionResponse } from '../models/collection.model';
 import { ApiResponse } from '../models/api-response.model';
+import { Collection } from '../models/collection.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,8 @@ export class CollectionService {
     return this.http.post<CollectionResponse>(this.apiUrl, collection);
   }
 
-  updateCollection(collection: { id: string, name: string }): Observable<CollectionResponse> {
+  updateCollection(collection: Collection): Observable<CollectionResponse> {
+    console.log(`Permite exoneraciones: ${collection.allowsExemptions}`);
     return this.http.put<CollectionResponse>(`${this.apiUrl}`, collection);
   }
 

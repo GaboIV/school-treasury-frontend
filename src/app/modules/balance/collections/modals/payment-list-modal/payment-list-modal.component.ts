@@ -225,6 +225,8 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
         return 'Pagado';
       case PaymentStatus.Excedent:
         return 'Excedente';
+      case PaymentStatus.Exonerated:
+        return 'Exonerado';
       default:
         return 'Desconocido';
     }
@@ -240,6 +242,8 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
         return 'badge-light-success';
       case PaymentStatus.Excedent:
         return 'badge-light-info';
+      case PaymentStatus.Exonerated:
+        return 'badge-light-warning';
       default:
         return 'badge-light-dark';
     }
@@ -264,6 +268,40 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
     });
 
     modalRef.componentInstance.payment = payment;
+
+    modalRef.result.then(
+      (result) => {
+        // Marcar que el modal hijo se ha cerrado
+        this.childModalOpen = false;
+
+        if (result) {
+          // Verificar si el resultado contiene un indicador para refrescar las colecciones
+          if (typeof result === 'object' && result.refreshCollections) {
+            this.refreshCollections = true;
+          }
+          // Recargar los pagos
+          this.loadPayments();
+        }
+      },
+      () => {
+        // Modal dismissed
+        // Marcar que el modal hijo se ha cerrado
+        this.childModalOpen = false;
+      }
+    );
+  }
+
+  openExoneratePaymentModal(payment: StudentPayment): void {
+    // Marcar que se está abriendo un modal hijo
+    this.childModalOpen = true;
+
+    const modalRef = this.modalService.open(RegisterPaymentModalComponent, {
+      size: 'md',
+      centered: true,
+    });
+
+    modalRef.componentInstance.payment = payment;
+    modalRef.componentInstance.isExoneration = true;
 
     modalRef.result.then(
       (result) => {

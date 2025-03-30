@@ -30,6 +30,7 @@ export interface Collection {
   date: string;
   studentQuantity: string;
   percentagePaid: number;
+  allowsExemptions?: boolean;
   advance: {
     total: number;
     completed: number;

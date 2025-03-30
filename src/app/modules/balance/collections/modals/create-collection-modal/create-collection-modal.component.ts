@@ -37,7 +37,8 @@ export class CreateCollectionModalComponent implements OnInit {
       totalAmount: [null, [Validators.required]],
       studentQuantity: ['all', [Validators.required]],
       date: [null, [Validators.required]],
-      status: [true, [Validators.required]]
+      status: [true, [Validators.required]],
+      allowsExemptions: [false]
     });
   }
 

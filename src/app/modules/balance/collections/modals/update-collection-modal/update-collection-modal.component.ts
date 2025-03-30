@@ -30,6 +30,7 @@ export class UpdateCollectionModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initForm();
+    console.log(`Collection: ${this.collectionForm.controls.allowsExemptions.value}`);
     this.loadCollectionTypes();
 
     // Agregar una entrada al historial para manejar el botón de retroceso
@@ -65,7 +66,8 @@ export class UpdateCollectionModalComponent implements OnInit, OnDestroy {
       totalAmount: [this.collection.totalAmount, [Validators.required]],
       studentQuantity: [this.collection.studentQuantity, [Validators.required]],
       date: [this.collection.date, [Validators.required]],
-      status: [this.collection.status, [Validators.required]]
+      status: [this.collection.status, [Validators.required]],
+      allowsExemptions: [this.collection.allowsExemptions !== undefined ? this.collection.allowsExemptions : false]
     });
   }
 
@@ -88,6 +90,7 @@ export class UpdateCollectionModalComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     const collection = this.collectionForm.value;
+    console.log(`Collection: ${collection.allowsExemptions}`);
     // Convertir el campo status en bool antes de enviar a guardar
     collection.status = collection.status === 'true';
 

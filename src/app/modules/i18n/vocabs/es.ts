@@ -21,6 +21,8 @@ export const locale = {
       MYPAYMENTS: 'Mis Pagos',
       PAYMENTREQUESTS: 'Solicitudes de Pago',
       REGISTER_PAYMENT: 'Registrar Pago',
+      EXONERATE_PAYMENT: 'Exonerar Pago',
+      EXONERATION_NOTE: 'Se exonerará el pago pendiente por un monto de',
       REQUEST_PAYMENT_REGISTRATION: 'Solicitar Registro de Pago',
       AMOUNT_TO_PAY: 'Monto a Pagar',
       RECEIPT_IMAGES: 'Imágenes de comprobante',

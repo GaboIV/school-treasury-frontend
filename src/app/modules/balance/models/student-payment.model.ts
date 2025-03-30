@@ -31,5 +31,6 @@ export enum PaymentStatus {
   Pending = 0,
   Partial = 1,
   Paid = 2,
-  Excedent = 3
+  Excedent = 3,
+  Exonerated = 4
 }
