@@ -1,39 +1,13 @@
-.btn.active {
-  background-color: var(--bs-primary);
-  color: white;
-}
-
-.w-250px {
-  width: 250px !important;
-}
-
-// Animación fade-in para las tarjetas
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.col-md-6 {
-  animation: fadeInUp 0.4s ease forwards;
-  animation-delay: calc(var(--animation-order, 0) * 0.1s);
-}
-
 .app-image-container {
-  width: 160px;
-  height: 160px;
+  width: 200px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #f8f9fa;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
 }
 
 .app-image {
@@ -47,6 +21,12 @@
   font-size: 0.8rem;
 }
 
+.rating-stars {
+  i {
+    font-size: 1.1rem;
+  }
+}
+
 // Animación para cargar contenido
 @keyframes fadeIn {
   from {
@@ -57,25 +37,33 @@
   }
 }
 
-.app-info {
+.app-info,
+.app-changelog,
+.app-version-history {
   animation: fadeIn 0.5s ease-in-out;
+}
+
+// Estilo hover para las filas de la tabla
+tr:hover {
+  background-color: rgba(var(--bs-primary-rgb), 0.05);
 }
 
 // Diseño del botón de descarga principal
 .btn-primary {
+  padding: 0.75rem 1.5rem;
   transition: all 0.3s ease;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0.25rem 0.5rem rgba(var(--bs-primary-rgb), 0.2);
+    box-shadow: 0 0.5rem 1rem rgba(var(--bs-primary-rgb), 0.2);
   }
 }
 
 // Estilo para tablets y móviles
 @media (max-width: 768px) {
   .app-image-container {
-    width: 120px;
-    height: 120px;
+    width: 160px;
+    height: 160px;
     margin: 0 auto;
   }
 }

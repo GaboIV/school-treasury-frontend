@@ -7,12 +7,14 @@ import { AppsStoreRoutingModule } from './apps-store-routing.module';
 import { AppsStoreComponent } from './apps-store.component';
 import { AppCardComponent } from './components/app-card/app-card.component';
 import { AppListComponent } from './components/app-list/app-list.component';
+import { AppDetailComponent } from './components/app-detail/app-detail.component';
 
 @NgModule({
   declarations: [
     AppsStoreComponent,
     AppListComponent,
-    AppCardComponent
+    AppCardComponent,
+    AppDetailComponent
   ],
   imports: [
     CommonModule,

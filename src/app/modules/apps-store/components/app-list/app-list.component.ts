@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { App } from '../../models/app';
+import { DownloadStat } from '../../models/download-stat';
 import { AppsStoreService } from '../../services/apps-store.service';
-import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, switchMap, of } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-app-list',
@@ -9,132 +11,139 @@ import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
   styleUrls: ['./app-list.component.scss']
 })
 export class AppListComponent implements OnInit {
-  apps: App[] = [];
-  filteredApps: App[] = [];
+  app!: App;
   isLoading = true;
   error: string | null = null;
-  searchTerm = '';
-  categories: string[] = [];
-  selectedCategory = 'Todas';
 
-  private searchTerms = new Subject<string>();
-
-  constructor(private appsService: AppsStoreService) { }
+  constructor(
+    private appsService: AppsStoreService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
-    this.loadApps();
-
-    // Configurar búsqueda con debounce
-    this.searchTerms.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      switchMap(term => {
-        this.searchTerm = term;
-        return this.appsService.searchApps(term);
-      })
-    ).subscribe({
-      next: (apps) => {
-        this.filterAppsByCategory(apps);
-      },
-      error: (err) => {
-        this.error = 'Error al buscar aplicaciones: ' + err.message;
-      }
-    });
+    this.loadMainApp();
   }
 
   /**
-   * Cargar todas las aplicaciones
+   * Cargar la aplicación principal
    */
-  loadApps(): void {
+  loadMainApp(): void {
     this.isLoading = true;
-    this.appsService.getApps().subscribe({
-      next: (apps) => {
-        this.apps = apps;
-        this.filteredApps = apps;
-        this.extractCategories();
+    this.error = null;
+
+    this.appsService.getMainApp().subscribe({
+      next: (app) => {
+        this.app = app;
         this.isLoading = false;
       },
-      error: (err) => {
-        this.error = 'Error al cargar aplicaciones: ' + err.message;
+      error: (err: any) => {
+        console.error('Error al cargar la aplicación:', err);
+        this.error = 'Error al cargar la aplicación: ' + (err.message || 'Error desconocido');
         this.isLoading = false;
       }
     });
   }
 
   /**
-   * Extraer categorías únicas de las aplicaciones
+   * Descargar la última versión
    */
-  extractCategories(): void {
-    const uniqueCategories = new Set<string>();
-    this.apps.forEach(app => uniqueCategories.add(app.category));
-    this.categories = Array.from(uniqueCategories);
+  downloadLatestVersion(): void {
+    this.error = null;
+
+    this.appsService.downloadLatestVersion().subscribe({
+      next: (url) => {
+        // Registrar estadísticas de descarga
+        this.registerDownloadStats(this.app.id.toString(), this.app.version);
+
+        // Abrir la URL de descarga
+        window.open(url, '_blank');
+      },
+      error: (err: any) => {
+        console.error('Error al iniciar la descarga:', err);
+        this.error = 'Error al iniciar la descarga: ' + (err.message || 'Error desconocido');
+      }
+    });
   }
 
   /**
-   * Filtrar aplicaciones por categoría
+   * Registrar estadísticas de descarga
    */
-  filterByCategory(category: string): void {
-    this.selectedCategory = category;
-    this.filterAppsByCategory(this.apps);
+  private registerDownloadStats(versionId: string, version: string): void {
+    // Crear objeto de estadísticas
+    const downloadStat: DownloadStat = {
+      deviceModel: navigator.platform || 'Unknown',
+      deviceOs: this.getDeviceOs(),
+      deviceOsVersion: navigator.userAgent || 'Unknown',
+      previousVersion: version, // En este caso es la misma versión
+      isUpdate: false,
+      status: 'Success',
+      downloadDate: new Date()
+    };
+
+    // Registrar estadísticas
+    this.appsService.registerDownloadStats(versionId, version, downloadStat).subscribe({
+      error: (err) => console.error('Error al registrar estadísticas:', err)
+    });
   }
 
   /**
-   * Filtrar aplicaciones por categoría (función interna)
+   * Obtener sistema operativo del dispositivo
    */
-  private filterAppsByCategory(apps: App[]): void {
-    if (this.selectedCategory === 'Todas') {
-      this.filteredApps = apps;
-    } else {
-      this.filteredApps = apps.filter(app => app.category === this.selectedCategory);
+  private getDeviceOs(): string {
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+
+    if (/android/i.test(userAgent)) {
+      return 'Android';
     }
+
+    if (/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream) {
+      return 'iOS';
+    }
+
+    if (/windows/i.test(userAgent)) {
+      return 'Windows';
+    }
+
+    if (/mac/i.test(userAgent)) {
+      return 'MacOS';
+    }
+
+    return 'Unknown';
   }
 
   /**
-   * Manejar la búsqueda
+   * Navegar al detalle de la aplicación
    */
-  search(term: string): void {
-    this.searchTerms.next(term);
+  goToAppDetail(): void {
+    this.router.navigate(['/apps/details']);
   }
 
   /**
-   * Instalar una aplicación
+   * Comprobar si hay actualizaciones disponibles
    */
-  installApp(appId: number): void {
-    this.appsService.toggleInstallation(appId).subscribe({
-      next: (updatedApp) => {
-        const index = this.apps.findIndex(app => app.id === updatedApp.id);
-        if (index !== -1) {
-          this.apps[index] = updatedApp;
+  checkForUpdates(): void {
+    if (!this.app || !this.app.version) {
+      return;
+    }
+
+    this.error = null;
+
+    this.appsService.checkForUpdates(this.app.version).subscribe({
+      next: (result) => {
+        if (result.hasUpdate) {
+          // Si hay una actualización disponible, mostrar mensaje y opción de descarga
+          this.error = null;
+          alert(`Hay una nueva versión disponible: ${result.latestVersion}. ¿Desea descargarla?`);
+          // Aquí podrías mostrar un modal o un mensaje más elegante
+        } else {
+          // Si no hay actualizaciones, mostrar mensaje
+          alert('Su aplicación está actualizada.');
         }
       },
       error: (err) => {
-        this.error = 'Error al instalar la aplicación: ' + err.message;
+        console.error('Error al comprobar actualizaciones:', err);
+        this.error = 'Error al comprobar actualizaciones: ' + (err.message || 'Error desconocido');
       }
     });
-  }
-
-  /**
-   * Desinstalar una aplicación
-   */
-  uninstallApp(appId: number): void {
-    this.appsService.toggleInstallation(appId).subscribe({
-      next: (updatedApp) => {
-        const index = this.apps.findIndex(app => app.id === updatedApp.id);
-        if (index !== -1) {
-          this.apps[index] = updatedApp;
-        }
-      },
-      error: (err) => {
-        this.error = 'Error al desinstalar la aplicación: ' + err.message;
-      }
-    });
-  }
-
-  /**
-   * Manejar la apertura de una aplicación
-   */
-  onOpenApp(app: App): void {
-    console.log('Abriendo aplicación:', app.name);
-    // La navegación se maneja en el componente de tarjeta
   }
 }

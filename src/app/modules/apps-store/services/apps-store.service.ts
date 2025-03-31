@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { App } from '../models/app';
-import { HttpClient } from '@angular/common/http';
+import { DownloadStat } from '../models/download-stat';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -9,124 +10,192 @@ import { environment } from 'src/environments/environment';
 })
 export class AppsStoreService {
   // URL base para la API
-  private apiUrl = `${environment.apiUrl}/apps`;
+  private apiUrl = `${environment.apiUrl}/api/apps`;
 
-  // Lista de aplicaciones de ejemplo para desarrollo
-  private mockApps: App[] = [
+  // Datos de la aplicación principal
+  private mainApp: App = {
+    id: 1,
+    name: 'Sistema de Tesorería Escolar',
+    description: 'Aplicación oficial para la gestión de tesorería en instituciones educativas. Permite administrar ingresos, gastos, reportes y comunicados a padres.',
+    imageUrl: 'assets/media/apps/treasury.svg',
+    appUrl: '/',
+    category: 'Finanzas',
+    rating: 4.8,
+    downloads: 1560,
+    isInstalled: true,
+    version: '2.3.0',
+    apkUrl: 'https://example.com/treasuryapp-2.3.0.apk',
+    releaseDate: '2023-10-15',
+    changeLog: [
+      'Mejoras en el rendimiento general de la aplicación',
+      'Corrección de errores en el módulo de reportes',
+      'Nueva funcionalidad para exportar datos a Excel',
+      'Interfaz renovada con mejor experiencia de usuario',
+      'Soporte para dispositivos con pantallas plegables'
+    ],
+    minAndroidVersion: '6.0',
+    size: '25.4'
+  };
+
+  // Historial de versiones
+  private versionHistory: Partial<App>[] = [
     {
-      id: 1,
-      name: 'Sistema de Tesorería',
-      description: 'Aplicación principal para gestión de tesorería escolar',
-      imageUrl: 'assets/media/apps/treasury.svg',
-      appUrl: '/',
-      category: 'Finanzas',
-      rating: 4.5,
-      downloads: 1200,
-      isInstalled: true
+      id: 101,
+      version: '2.2.0',
+      releaseDate: '2023-08-20',
+      apkUrl: 'https://example.com/treasuryapp-2.2.0.apk',
+      changeLog: [
+        'Nuevo módulo de presupuestos',
+        'Corrección de errores menores',
+        'Mejoras en la seguridad'
+      ],
+      size: '24.8'
     },
     {
-      id: 2,
-      name: 'Control de Asistencia',
-      description: 'Registra la asistencia de estudiantes y genera reportes',
-      imageUrl: 'assets/media/apps/attendance.svg',
-      appUrl: '/attendance',
-      category: 'Académico',
-      rating: 4.2,
-      downloads: 980,
-      isInstalled: false
+      id: 102,
+      version: '2.1.5',
+      releaseDate: '2023-07-05',
+      apkUrl: 'https://example.com/treasuryapp-2.1.5.apk',
+      changeLog: [
+        'Corrección de error crítico en sincronización',
+        'Mejoras en el rendimiento'
+      ],
+      size: '24.1'
     },
     {
-      id: 3,
-      name: 'Calendario Escolar',
-      description: 'Administra eventos, exámenes y actividades del calendario escolar',
-      imageUrl: 'assets/media/apps/calendar.svg',
-      appUrl: '/calendar',
-      category: 'Planificación',
-      rating: 4.7,
-      downloads: 1450,
-      isInstalled: true
-    },
-    {
-      id: 4,
-      name: 'Comunicados',
-      description: 'Sistema de comunicación entre profesores, padres y administración',
-      imageUrl: 'assets/media/apps/communication.svg',
-      appUrl: '/communications',
-      category: 'Comunicación',
-      rating: 4.0,
-      downloads: 890,
-      isInstalled: false
-    },
-    {
-      id: 5,
-      name: 'Biblioteca Digital',
-      description: 'Acceso a recursos educativos digitales',
-      imageUrl: 'assets/media/apps/library.svg',
-      appUrl: '/library',
-      category: 'Académico',
-      rating: 4.3,
-      downloads: 760,
-      isInstalled: false
-    },
-    {
-      id: 6,
-      name: 'Reportes Académicos',
-      description: 'Generación de informes y estadísticas de rendimiento',
-      imageUrl: 'assets/media/apps/reports.svg',
-      appUrl: '/reports',
-      category: 'Académico',
-      rating: 4.6,
-      downloads: 1100,
-      isInstalled: true
+      id: 103,
+      version: '2.1.0',
+      releaseDate: '2023-06-10',
+      apkUrl: 'https://example.com/treasuryapp-2.1.0.apk',
+      changeLog: [
+        'Integración con servicios de pagos',
+        'Nueva interfaz para el módulo de cobros',
+        'Mejoras en accesibilidad'
+      ],
+      size: '23.5'
     }
   ];
 
   constructor(private http: HttpClient) { }
 
   /**
-   * Obtiene todas las aplicaciones disponibles
+   * Obtiene la información de la aplicación principal
    */
-  getApps(): Observable<App[]> {
-    // En producción, descomentar la siguiente línea
-    // return this.http.get<App[]>(this.apiUrl);
-
-    // Datos de prueba para desarrollo
-    return of(this.mockApps);
+  getMainApp(): Observable<App> {
+    return this.http.get<App>(`${this.apiUrl}/main`);
   }
 
   /**
-   * Obtiene aplicaciones por categoría
+   * Obtiene el historial de versiones de la aplicación
    */
-  getAppsByCategory(category: string): Observable<App[]> {
-    // Usar datos de prueba para desarrollo
-    const filteredApps = this.mockApps.filter(app => app.category === category);
-    return of(filteredApps);
+  getVersionHistory(): Observable<Partial<App>[]> {
+    return this.http.get<Partial<App>[]>(`${this.apiUrl}/versions`);
   }
 
   /**
-   * Buscar aplicaciones por nombre o descripción
+   * Descarga directa de la última versión
    */
-  searchApps(term: string): Observable<App[]> {
-    const searchTerm = term.toLowerCase();
-    const filteredApps = this.mockApps.filter(app =>
-      app.name.toLowerCase().includes(searchTerm) ||
-      app.description.toLowerCase().includes(searchTerm)
-    );
-    return of(filteredApps);
+  downloadLatestVersion(): Observable<string> {
+    // Crear los parámetros para el dispositivo actual
+    const params = this.getDeviceParams();
+
+    return this.http.get<string>(`${this.apiUrl}/download/latest`, { params });
   }
 
   /**
-   * Instalar o desinstalar una aplicación
+   * Descargar una versión específica
    */
-  toggleInstallation(appId: number): Observable<App> {
-    // En un entorno real, esto se haría con una llamada PUT/POST a la API
-    const appIndex = this.mockApps.findIndex(app => app.id === appId);
-    if (appIndex !== -1) {
-      this.mockApps[appIndex].isInstalled = !this.mockApps[appIndex].isInstalled;
-      return of(this.mockApps[appIndex]);
+  downloadVersion(versionId: number): Observable<string> {
+    // Crear los parámetros para el dispositivo actual
+    const params = this.getDeviceParams();
+
+    return this.http.get<string>(`${this.apiUrl}/download/${versionId}`, { params });
+  }
+
+  /**
+   * Verifica si hay una actualización disponible
+   * @param currentVersion La versión actual de la aplicación
+   */
+  checkForUpdates(currentVersion: string): Observable<{hasUpdate: boolean, latestVersion: string, apkUrl: string}> {
+    const params = new HttpParams().set('currentVersion', currentVersion);
+
+    return this.http.get<{hasUpdate: boolean, latestVersion: string, apkUrl: string}>(`${this.apiUrl}/check-update`, { params });
+  }
+
+  /**
+   * Registra estadísticas de descarga
+   * @param versionId ID de la versión
+   * @param version Número de versión
+   * @param statsData Datos de estadísticas
+   */
+  registerDownloadStats(versionId: string, version: string, statsData: DownloadStat): Observable<any> {
+    const params = new HttpParams()
+      .set('versionId', versionId)
+      .set('version', version);
+
+    return this.http.post(`${this.apiUrl}/download/stats`, statsData, { params });
+  }
+
+  /**
+   * Obtiene estadísticas de descarga
+   * @param startDate Fecha de inicio
+   * @param endDate Fecha de fin
+   * @param version Versión específica (opcional)
+   */
+  getStats(startDate?: Date, endDate?: Date, version?: string): Observable<DownloadStat[]> {
+    let params = new HttpParams();
+
+    if (startDate) {
+      params = params.set('startDate', startDate.toISOString());
     }
 
-    // Si no se encuentra la app
-    throw new Error('Aplicación no encontrada');
+    if (endDate) {
+      params = params.set('endDate', endDate.toISOString());
+    }
+
+    if (version) {
+      params = params.set('version', version);
+    }
+
+    return this.http.get<DownloadStat[]>(`${this.apiUrl}/stats`, { params });
+  }
+
+  /**
+   * Obtiene los parámetros de dispositivo para las descargas
+   */
+  private getDeviceParams(): HttpParams {
+    // Aquí se podrían detectar los datos reales del dispositivo
+    // Por ahora usamos valores predeterminados
+    return new HttpParams()
+      .set('DeviceModel', navigator.platform || 'Unknown')
+      .set('DeviceOs', this.getDeviceOs())
+      .set('DeviceOsVersion', navigator.userAgent || 'Unknown')
+      .set('PreviousVersion', this.mainApp.version || '1.0.0')
+      .set('IsUpdate', 'true');
+  }
+
+  /**
+   * Detecta el sistema operativo del dispositivo
+   */
+  private getDeviceOs(): string {
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+
+    if (/android/i.test(userAgent)) {
+      return 'Android';
+    }
+
+    if (/iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream) {
+      return 'iOS';
+    }
+
+    if (/windows/i.test(userAgent)) {
+      return 'Windows';
+    }
+
+    if (/mac/i.test(userAgent)) {
+      return 'MacOS';
+    }
+
+    return 'Unknown';
   }
 }
