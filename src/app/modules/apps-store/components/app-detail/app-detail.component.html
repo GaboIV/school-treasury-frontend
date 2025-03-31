@@ -19,7 +19,7 @@
     <div class="d-flex flex-column flex-md-row mb-5">
       <!-- Imagen de la app -->
       <div class="app-image-container me-md-7 mb-4 mb-md-0">
-        <img [src]="app.imageUrl" class="app-image" [alt]="app.name">
+        <img [src]="app.imageUrl" class="app-image" [alt]="app.name" (error)="handleImageError($event)">
       </div>
 
       <!-- Información principal -->

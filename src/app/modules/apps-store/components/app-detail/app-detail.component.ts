@@ -18,6 +18,7 @@ export class AppDetailComponent implements OnInit {
   isDirectDownload = false;
   showAllChangelog = false;
   maxChangesDisplay = 3;
+  defaultLogoPath = 'assets/media/logos/adj_512.png'; // Ruta al logo por defecto
 
   constructor(
     private appsService: AppsStoreService,
@@ -192,5 +193,14 @@ export class AppDetailComponent implements OnInit {
       return changeLog;
     }
     return changeLog.slice(0, this.maxChangesDisplay);
+  }
+
+  /**
+   * Manejar error de carga de imagen
+   */
+  handleImageError(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.src = this.defaultLogoPath;
+    imgElement.classList.add('fallback-image');
   }
 }
