@@ -47,7 +47,7 @@
       <div class="d-flex align-items-center justify-content-between mb-2">
         <span>
           <span *ngIf="!isInstalling">Preparando descarga...</span>
-          <span *ngIf="isInstalling">Descarga iniciada con el gestor del sistema</span>
+          <span *ngIf="isInstalling">Descarga iniciada en el navegador</span>
         </span>
         <span>{{ downloadProgress }}%</span>
       </div>
@@ -68,7 +68,7 @@
       <!-- Mensaje cuando se está preparando la instalación -->
       <div *ngIf="isInstalling && !downloadError" class="mt-3 alert alert-info">
         <i class="bi bi-info-circle me-2"></i>
-        <span>La descarga se ha iniciado. Busque en la barra de notificaciones de su dispositivo cuando se complete para instalar la actualización.</span>
+        <span>La descarga se ha iniciado en una nueva pestaña de su navegador. Por favor, complete el proceso de instalación una vez finalizada la descarga.</span>
       </div>
     </div>
   </div>

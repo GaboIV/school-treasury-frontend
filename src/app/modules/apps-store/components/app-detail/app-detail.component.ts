@@ -4,6 +4,7 @@ import { DownloadStat } from '../../models/download-stat';
 import { AppsStoreService } from '../../services/apps-store.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-app-detail',
@@ -83,19 +84,19 @@ export class AppDetailComponent implements OnInit {
   downloadLatestVersion(): void {
     this.error = null;
 
-    this.appsService.downloadLatestVersion().subscribe({
-      next: (url) => {
-        // Registrar estadísticas de descarga
-        this.registerDownloadStats(this.app.id.toString(), this.app.version);
+    try {
+      // URL directa a la API para descargar la última versión
+      const downloadUrl = environment.apiUrl + '/api/Update/lastest-apk';
 
-        // Abrir la URL de descarga
-        window.open(url, '_blank');
-      },
-      error: (err) => {
-        console.error('Error al iniciar la descarga:', err);
-        this.error = 'Error al iniciar la descarga: ' + (err.message || 'Error desconocido');
-      }
-    });
+      // Registrar estadísticas de descarga
+      this.registerDownloadStats(this.app.id.toString(), this.app.version);
+
+      // Abrir la URL de descarga
+      window.open(downloadUrl, '_blank');
+    } catch (err: any) {
+      console.error('Error al iniciar la descarga:', err);
+      this.error = 'Error al iniciar la descarga: ' + (err.message || 'Error desconocido');
+    }
   }
 
   /**
@@ -110,19 +111,19 @@ export class AppDetailComponent implements OnInit {
       return;
     }
 
-    this.appsService.downloadVersion(versionId).subscribe({
-      next: (url) => {
-        // Registrar estadísticas de descarga
-        this.registerDownloadStats(versionId.toString(), version.version!);
+    try {
+      // URL directa a la API para descargar una versión específica
+      const downloadUrl = environment.apiUrl + `/api/Update/version-apk/${versionId}`;
 
-        // Abrir la URL de descarga
-        window.open(url, '_blank');
-      },
-      error: (err) => {
-        console.error('Error al descargar la versión específica:', err);
-        this.error = 'Error al descargar la versión específica: ' + (err.message || 'Error desconocido');
-      }
-    });
+      // Registrar estadísticas de descarga
+      this.registerDownloadStats(versionId.toString(), version.version!);
+
+      // Abrir la URL de descarga
+      window.open(downloadUrl, '_blank');
+    } catch (err: any) {
+      console.error('Error al descargar la versión específica:', err);
+      this.error = 'Error al descargar la versión específica: ' + (err.message || 'Error desconocido');
+    }
   }
 
   /**

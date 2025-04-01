@@ -11,6 +11,7 @@ export interface UpdateInfo {
   changeLog: string;
   releaseDate: string;
   isRequired: boolean;
+  downloadUrl?: string; // URL para descargar directamente la actualización
 }
 
 @Injectable({

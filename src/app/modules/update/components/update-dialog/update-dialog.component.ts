@@ -3,7 +3,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { UpdateInfo } from 'src/app/services/update.service';
 import { UpdateService } from 'src/app/services/update.service';
-import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-update-dialog',
@@ -41,7 +40,7 @@ export class UpdateDialogComponent implements OnInit, OnDestroy {
           this.installationCheckTimeout = setTimeout(() => {
             // Si después de cierto tiempo seguimos en la misma pantalla, mostrar información
             if (this.isInstalling) {
-              this.downloadError = 'La descarga ha sido iniciada. Por favor, revise la barra de notificaciones de su dispositivo para instalar el APK cuando termine la descarga.';
+              this.downloadError = 'La descarga ha sido iniciada. Por favor, revise la barra de notificaciones de su dispositivo para instalar cuando termine la descarga.';
             }
           }, 3000);
         }
@@ -61,61 +60,69 @@ export class UpdateDialogComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Iniciar la descarga e instalación del APK
+   * Iniciar la descarga e instalación directamente desde la URL proporcionada
    */
   downloadAndInstall(): void {
     this.isDownloading = true;
     this.downloadError = null;
     this.downloadStarted = false;
 
-    console.log('Iniciando descarga y actualización a la versión:', this.updateInfo.latestVersion);
+    console.log('Iniciando descarga desde URL:', this.updateInfo.downloadUrl);
 
-    // Obtenemos la plataforma actual
-    const platform = Capacitor.getPlatform();
+    try {
+      // Redireccionamos directamente a la URL de descarga
+      window.open(this.updateInfo.downloadUrl, '_blank');
 
-    this.updateService.downloadAndInstallAPK(platform).subscribe({
-      next: (result) => {
-        if (result === true) {
-          // La descarga se ha iniciado correctamente
-          console.log('Descarga iniciada con el gestor de descargas del sistema');
-          this.downloadProgress = 100;
-          this.isInstalling = true;
-          this.downloadStarted = true;
+      // Simulamos progreso para la interfaz de usuario
+      this.simulateDownloadProgress();
 
-          // Mostrar mensaje informativo sobre notificación
-          this.downloadError = 'La descarga ha comenzado. Una vez completada, busque la notificación en la barra de notificaciones para instalar la aplicación.';
+      // Consideramos esto como éxito
+      setTimeout(() => {
+        this.downloadProgress = 100;
+        this.isInstalling = true;
+        this.downloadStarted = true;
 
-          // Después de unos segundos, cerramos el diálogo
-          setTimeout(() => {
-            this.activeModal.close(true);
-          }, 7000);
-        }
-      },
-      error: (error) => {
-        console.error('Error al iniciar la descarga:', error);
+        // Mostrar mensaje informativo
+        this.downloadError = 'La descarga ha comenzado. Revise su navegador para continuar con la instalación.';
 
-        // Limpiar temporizador si existe
-        if (this.installationCheckTimeout) {
-          clearTimeout(this.installationCheckTimeout);
-        }
+        // Después de unos segundos, cerramos el diálogo
+        setTimeout(() => {
+          this.activeModal.close(true);
+        }, 5000);
+      }, 1500);
+    } catch (error) {
+      console.error('Error al abrir URL de descarga:', error);
 
-        let errorMessage = 'Error al iniciar la descarga.';
-
-        // Intentar extraer un mensaje de error más específico
-        if (error && typeof error === 'object') {
-          if (error.message) {
-            errorMessage += ' ' + error.message;
-          } else if (error.toString) {
-            errorMessage += ' ' + error.toString();
-          }
-        }
-
-        this.downloadError = errorMessage + ' Por favor, inténtelo de nuevo.';
-        this.isDownloading = false;
-        this.isInstalling = false;
-        this.downloadStarted = false;
+      // Limpiar temporizador si existe
+      if (this.installationCheckTimeout) {
+        clearTimeout(this.installationCheckTimeout);
       }
-    });
+
+      this.downloadError = 'Error al iniciar la descarga. Por favor, inténtelo de nuevo.';
+      this.isDownloading = false;
+      this.isInstalling = false;
+      this.downloadStarted = false;
+    }
+  }
+
+  /**
+   * Simula el progreso de descarga para la interfaz de usuario
+   */
+  private simulateDownloadProgress(): void {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.floor(Math.random() * 10) + 1;
+      if (progress > 95) {
+        progress = 95; // Mantenemos en 95% hasta que se complete realmente
+        clearInterval(interval);
+      }
+      this.downloadProgress = progress;
+    }, 300);
+
+    // Aseguramos que se limpie el intervalo después de un tiempo razonable
+    setTimeout(() => {
+      clearInterval(interval);
+    }, 10000);
   }
 
   /**

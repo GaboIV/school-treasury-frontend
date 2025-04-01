@@ -26,9 +26,9 @@ export class VersionCheckService {
   async checkForUpdates(showDialog = true, forceCheck = false): Promise<boolean> {
     console.log("Version actual: ", this.currentVersion);
     // Solo verificamos en dispositivos Android
-    // if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'android') {
-    //   return false;
-    // }
+    if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'android') {
+      return false;
+    }
 
     // Para evitar verificaciones excesivas, solo verificamos cada 30 minutos
     const currentTime = new Date();
