@@ -164,7 +164,11 @@
             </td>
             <td class="text-end">
               <span class="text-dark fw-bolder fs-6 mb-1"
-                [ngClass]="{'text-success': transaction.type === TransactionType.Income, 'text-danger': transaction.type === TransactionType.Expense}">
+                [ngClass]="{
+                  'text-success': transaction.type === TransactionType.Income,
+                  'text-danger': transaction.type === TransactionType.Expense,
+                  'text-warning': transaction.type === TransactionType.Exoneration
+                }">
                 {{ transaction.amount | currencyPEN }}
               </span>
             </td>
@@ -219,10 +223,14 @@
         </div>
       </div>
 
-      <div class="row g-3">
+      <div class="row g-3 mt-5">
         <div class="col-12" *ngFor="let transaction of transactions">
           <div class="card card-stretch mb-5 card-bordered border-1"
-               [ngClass]="{'border-success': transaction.type === TransactionType.Income, 'border-danger': transaction.type === TransactionType.Expense}">
+               [ngClass]="{
+                 'border-success': transaction.type === TransactionType.Income,
+                 'border-danger': transaction.type === TransactionType.Expense,
+                 'border-warning': transaction.type === TransactionType.Exoneration
+               }">
             <div class="card-body p-4">
               <div class="d-flex justify-content-between mb-3">
                 <div>
@@ -231,7 +239,11 @@
                   </span>
                 </div>
                 <div class="fw-bolder"
-                     [ngClass]="{'text-success': transaction.type === TransactionType.Income, 'text-danger': transaction.type === TransactionType.Expense}">
+                     [ngClass]="{
+                       'text-success': transaction.type === TransactionType.Income,
+                       'text-danger': transaction.type === TransactionType.Expense,
+                       'text-warning': transaction.type === TransactionType.Exoneration
+                     }">
                   {{ transaction.amount | currencyPEN }}
                 </div>
               </div>
