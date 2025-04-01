@@ -264,7 +264,16 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   }
 
   getTransactionTypeText(type: TransactionType): string {
-    return type === TransactionType.Income ? 'Ingreso' : 'Egreso';
+    switch (type) {
+      case TransactionType.Income:
+        return 'Ingreso';
+      case TransactionType.Expense:
+        return 'Egreso';
+      case TransactionType.Exoneration:
+        return 'Exoneración';
+      default:
+        return 'Desconocido';
+    }
   }
 
   openNewTransactionModal(): void {
@@ -345,7 +354,16 @@ export class PettyCashComponent implements OnInit, OnDestroy {
   }
 
   getTransactionTypeClass(type: TransactionType): string {
-    return type === TransactionType.Income ? 'badge badge-light-success' : 'badge badge-light-danger';
+    switch (type) {
+      case TransactionType.Income:
+        return 'badge badge-light-success';
+      case TransactionType.Expense:
+        return 'badge badge-light-danger';
+      case TransactionType.Exoneration:
+        return 'badge badge-light-warning';
+      default:
+        return 'badge badge-light-dark';
+    }
   }
 
   /**

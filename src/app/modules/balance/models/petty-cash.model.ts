@@ -64,7 +64,8 @@ export interface TransactionSummaryDto {
 
 export enum TransactionType {
   Income = 0,
-  Expense = 1
+  Expense = 1,
+  Exoneration = 3
 }
 
 export interface PaginatedResult<T> {
