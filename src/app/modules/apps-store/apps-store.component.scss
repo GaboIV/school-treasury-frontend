@@ -1,0 +1,21 @@
+// Estilos para la miga de pan
+.breadcrumb-item {
+  &:not(:first-child) {
+    padding-left: 0.5rem;
+  }
+}
+
+// Ajustes para el título de la página
+.page-heading {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background-color: var(--bs-primary);
+  }
+}

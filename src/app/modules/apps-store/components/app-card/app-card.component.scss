@@ -1,0 +1,64 @@
+.app-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 100%;
+  cursor: pointer;
+  border: 1px solid #eee;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  &.app-installed {
+    border-left: 4px solid var(--bs-success);
+  }
+
+  .app-image-container {
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    overflow: hidden;
+  }
+
+  .app-image {
+    max-height: 120px;
+    max-width: 80%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover .app-image {
+    transform: scale(1.1);
+  }
+
+  .app-name {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    height: 2.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .app-description {
+    height: 3.6rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  .rating-stars {
+    line-height: 1;
+  }
+
+  .badge {
+    font-weight: 500;
+  }
+}

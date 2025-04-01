@@ -16,6 +16,11 @@ export const routes: Routes = [
       import('./modules/errors/errors.module').then((m) => m.ErrorsModule),
   },
   {
+    path: 'apps',
+    loadChildren: () =>
+      import('./modules/apps-store/apps-store.module').then((m) => m.AppsStoreModule),
+  },
+  {
     path: '',
     canActivate: [
       AuthGuard,

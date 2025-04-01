@@ -1,0 +1,43 @@
+<div class="app-card card hover-elevate-up shadow-sm" [ngClass]="getStatusClass()">
+  <div class="position-relative">
+    <div class="app-badge position-absolute top-0 end-0 m-3" *ngIf="app.isInstalled">
+      <span class="badge badge-success">Instalada</span>
+    </div>
+    <div class="app-image-container">
+      <img [src]="app.imageUrl" class="app-image card-img-top" [alt]="app.name">
+    </div>
+  </div>
+  <div class="card-body d-flex flex-column">
+    <div class="app-info">
+      <h5 class="app-name card-title fw-bold mb-1">{{ app.name }}</h5>
+      <div class="category text-muted small mb-2">
+        <span class="badge badge-light-primary">{{ app.category }}</span>
+      </div>
+      <div class="ratings d-flex align-items-center mb-2" *ngIf="app.rating">
+        <div class="rating-stars me-2">
+          <i class="bi bi-star-fill text-warning" *ngFor="let i of [1,2,3,4,5].slice(0, app.rating)"></i>
+          <i class="bi bi-star text-muted" *ngFor="let i of [1,2,3,4,5].slice(app.rating)"></i>
+        </div>
+        <span class="rating-value small text-muted">{{ app.rating }}/5</span>
+      </div>
+      <p class="app-description card-text small text-muted mb-3">{{ app.description }}</p>
+    </div>
+    <div class="mt-auto d-flex justify-content-between align-items-center">
+      <button class="btn btn-sm"
+              [ngClass]="app.isInstalled ? 'btn-light-danger' : 'btn-light-success'"
+              (click)="toggleInstallation()">
+        <i class="bi" [ngClass]="app.isInstalled ? 'bi-trash' : 'bi-download'"></i>
+        {{ app.isInstalled ? 'Desinstalar' : 'Instalar' }}
+      </button>
+      <button class="btn btn-sm btn-primary"
+              (click)="launchApp()"
+              [disabled]="!app.isInstalled">
+        <i class="bi bi-box-arrow-up-right"></i>
+        Abrir
+      </button>
+    </div>
+    <div class="downloads small text-muted mt-2 text-end" *ngIf="app.downloads">
+      <i class="bi bi-arrow-down-circle"></i> {{ app.downloads }} descargas
+    </div>
+  </div>
+</div>

@@ -9,7 +9,7 @@ import { firstValueFrom } from 'rxjs';
   providedIn: 'root'
 })
 export class VersionCheckService {
-  private readonly currentVersion: string = environment.appVersion;
+  private readonly currentVersion: string = environment.appVersion.replace('v', '');
   private lastChecked: Date | null = null;
 
   constructor(
@@ -24,6 +24,7 @@ export class VersionCheckService {
    * @returns Promesa que se resuelve con true si hay una actualización
    */
   async checkForUpdates(showDialog = true, forceCheck = false): Promise<boolean> {
+    console.log("Version actual: ", this.currentVersion);
     // Solo verificamos en dispositivos Android
     if (!Capacitor.isNativePlatform() || Capacitor.getPlatform() !== 'android') {
       return false;
@@ -39,7 +40,14 @@ export class VersionCheckService {
     this.lastChecked = currentTime;
 
     try {
-      const updateInfo = await firstValueFrom(this.updateService.checkForUpdates(this.currentVersion));
+      // Obtenemos la plataforma actual
+      const platform = Capacitor.getPlatform();
+      console.log("Plataforma actual: ", platform);
+
+      // Enviamos la versión actual y la plataforma
+      const updateInfo = await firstValueFrom(
+        this.updateService.checkForUpdates(this.currentVersion, platform)
+      );
 
       if (updateInfo && updateInfo.isUpdateAvailable) {
         if (showDialog) {

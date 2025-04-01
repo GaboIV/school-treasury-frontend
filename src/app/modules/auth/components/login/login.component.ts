@@ -8,6 +8,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PasswordChangeRequiredModalComponent } from '../../../../_metronic/partials/layout/modals/password-change-required-modal/password-change-required-modal.component';
 import { VersionCheckService } from '../../../../services/version-check.service';
+import { environment } from 'src/environments/environment';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-login',
@@ -26,6 +28,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   returnUrl: string;
   isLoading$: Observable<boolean>;
   showPassword: boolean = false;
+  appVersion: string = environment.appVersion;
 
   // private fields
   private unsubscribe: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
@@ -42,6 +45,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     // redirect to home if already logged in
     if (this.authService.currentUserValue) {
       this.router.navigate(['/']);
+    }
+
+    // Obtener la versión de la aplicación dependiendo de la plataforma
+    if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
+      // En Android mostraremos la versión sin el prefijo 'v'
+      this.appVersion = environment.appVersion.replace('v', '');
     }
   }
 

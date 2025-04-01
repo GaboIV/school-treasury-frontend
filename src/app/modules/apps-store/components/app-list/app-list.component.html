@@ -1,0 +1,72 @@
+<div class="card">
+  <div class="card-header border-0 pt-10">
+    <h3 class="card-title align-items-start flex-column">
+      <span class="card-label fw-bold fs-3 mb-1">Descargar Aplicación</span>
+      <span class="text-muted mt-1 fw-semibold fs-7">Aplicación oficial para tu escuela</span>
+    </h3>
+  </div>
+
+  <div class="card-body py-3">
+    <!-- Estado de carga -->
+    <div *ngIf="isLoading" class="d-flex justify-content-center my-10">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Cargando...</span>
+      </div>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <!-- Información de la aplicación -->
+    <div *ngIf="!isLoading && !error && app" class="card-body">
+      <div class="d-flex flex-column flex-md-row">
+        <!-- Imagen de la app -->
+        <div class="app-image-container me-md-5 mb-4 mb-md-0">
+          <img [src]="app.imageUrl" class="app-image" [alt]="app.name">
+        </div>
+
+        <!-- Información básica -->
+        <div class="app-info flex-grow-1">
+          <div class="d-flex align-items-center mb-2">
+            <h3 class="fs-2 fw-bold me-3 mb-0">{{ app.name }}</h3>
+            <span class="badge badge-light-primary">{{ app.category }}</span>
+          </div>
+
+          <p class="fs-6 text-gray-700 mb-4">{{ app.description }}</p>
+
+          <div class="d-flex flex-wrap mb-4">
+            <!-- Versión -->
+            <div class="border border-dashed border-gray-300 rounded py-2 px-3 me-3 mb-2">
+              <div class="fs-7 text-gray-600 mb-1">Versión</div>
+              <div class="fs-6 fw-bold">{{ app.version }}</div>
+            </div>
+
+            <!-- Tamaño -->
+            <div class="border border-dashed border-gray-300 rounded py-2 px-3 me-3 mb-2">
+              <div class="fs-7 text-gray-600 mb-1">Tamaño</div>
+              <div class="fs-6 fw-bold">{{ app.size }} MB</div>
+            </div>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="d-flex flex-wrap mt-4">
+            <button class="btn btn-primary me-3 mb-2" (click)="downloadLatestVersion()">
+              <i class="bi bi-download me-2"></i>
+              Descargar APK
+            </button>
+            <button class="btn btn-success me-3 mb-2" (click)="checkForUpdates()">
+              <i class="bi bi-arrow-repeat me-2"></i>
+              Comprobar actualizaciones
+            </button>
+            <button class="btn btn-info mb-2" (click)="goToAppDetail()">
+              <i class="bi bi-info-circle me-2"></i>
+              Más información
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
