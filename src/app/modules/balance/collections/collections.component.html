@@ -26,8 +26,6 @@
             <th class="min-w-140px">Nombre</th>
             <th class="min-w-120px">Monto Total</th>
             <th class="min-w-120px">Monto Individual</th>
-            <th class="min-w-120px">Monto Ajustado</th>
-            <th class="min-w-120px">Excedente</th>
             <th class="min-w-120px">Fecha</th>
             <th class="min-w-100px">Estado</th>
             <th class="min-w-150px">Avance de Pago</th>
@@ -41,23 +39,9 @@
               <span class="text-muted fw-bold text-muted d-block fs-7">{{ collection.collectionType.name }}</span>
             </td>
             <td>{{ collection.totalAmount | currency: 'S/ ' }}</td>
-            <td>{{ collection.individualAmount | currency: 'S/ ' }}</td>
             <td>
-              {{ (collection.adjustedIndividualAmount || collection.individualAmount) | currency: 'S/ ' }}
-              <span *ngIf="collection.adjustedIndividualAmount && collection.adjustedIndividualAmount !== collection.individualAmount"
-                    [ngClass]="collection.adjustedIndividualAmount < collection.individualAmount ? 'text-success' : 'text-danger'"
-                    class="fw-bold d-block fs-7">
-                {{ collection.adjustedIndividualAmount < collection.individualAmount ? '↓' : '↑' }}
-                {{ getPercentageDifference(collection.individualAmount, collection.adjustedIndividualAmount) }}%
-              </span>
-            </td>
-            <td>
-              <span *ngIf="collection.totalSurplus && collection.totalSurplus > 0" class="text-success fw-bold">
-                {{ collection.totalSurplus | currency: 'S/ ' }}
-              </span>
-              <span *ngIf="!collection.totalSurplus || collection.totalSurplus <= 0" class="text-muted">
-                S/ 0.00
-              </span>
+              {{ collection.individualAmount | currency: 'S/ ' }}
+              <small class="text-muted d-block">Calculado automáticamente</small>
             </td>
             <td>{{ collection.date | date: 'dd/MM/yyyy' }}</td>
             <td>
@@ -98,9 +82,6 @@
               </div>
             </td>
             <td class="text-end" >
-              <a *ngIf="isAdmin" href="javascript:;" class="btn btn-icon btn-bg-light btn-sm me-1" (click)="openAdjustAmountModal(collection)">
-                <app-keenicon name="setting-2" class="fs-3"></app-keenicon>
-              </a>
               <a href="javascript:;" class="btn btn-icon btn-bg-light btn-sm me-1" (click)="openPaymentListModal(collection)">
                 <app-keenicon name="dollar" class="fs-3"></app-keenicon>
               </a>
@@ -113,7 +94,7 @@
             </td>
           </tr>
           <tr *ngIf="collections.length === 0">
-            <td colspan="9" class="text-center py-5">
+            <td colspan="7" class="text-center py-5">
               <span class="text-muted">No hay cobros registrados</span>
             </td>
           </tr>
@@ -161,29 +142,9 @@
               </div>
               <div class="col-6">
                 <div class="text-muted small">Monto Individual</div>
-                <div class="fw-bold">{{ collection.individualAmount | currency: 'S/ ' }}</div>
-              </div>
-              <div class="col-6">
-                <div class="text-muted small">Monto Ajustado</div>
                 <div class="fw-bold">
-                  {{ (collection.adjustedIndividualAmount || collection.individualAmount) | currency: 'S/ ' }}
-                  <span *ngIf="collection.adjustedIndividualAmount && collection.adjustedIndividualAmount !== collection.individualAmount"
-                        [ngClass]="collection.adjustedIndividualAmount < collection.individualAmount ? 'text-success' : 'text-danger'"
-                        class="small">
-                    {{ collection.adjustedIndividualAmount < collection.individualAmount ? '↓' : '↑' }}
-                    {{ getPercentageDifference(collection.individualAmount, collection.adjustedIndividualAmount) }}%
-                  </span>
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="text-muted small">Excedente</div>
-                <div>
-                  <span *ngIf="collection.totalSurplus && collection.totalSurplus > 0" class="text-success fw-bold">
-                    {{ collection.totalSurplus | currency: 'S/ ' }}
-                  </span>
-                  <span *ngIf="!collection.totalSurplus || collection.totalSurplus <= 0" class="text-muted">
-                    S/ 0.00
-                  </span>
+                  {{ collection.individualAmount | currency: 'S/ ' }}
+                  <div class="text-muted" style="font-size: 0.7rem;">Calculado automáticamente</div>
                 </div>
               </div>
               <div class="col-6">
@@ -229,9 +190,6 @@
 
             <!-- Botones de acción -->
             <div class="d-flex justify-content-end gap-2">
-              <button *appHasRole="['Admin']" class="btn btn-primary btn-sm" (click)="openAdjustAmountModal(collection)">
-                <i class="bi bi-gear me-1"></i> Ajustar
-              </button>
               <button class="btn btn-primary btn-sm" (click)="openPaymentListModal(collection)">
                 <i class="bi bi-cash-coin me-1"></i> Pagos
               </button>

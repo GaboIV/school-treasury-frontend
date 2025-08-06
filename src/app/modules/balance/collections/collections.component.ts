@@ -6,7 +6,7 @@ import { DeleteCollectionModalComponent } from './modals/delete-collection-modal
 import { UpdateCollectionModalComponent } from './modals/update-collection-modal/update-collection-modal.component';
 import { CreateCollectionModalComponent } from './modals/create-collection-modal/create-collection-modal.component';
 import { PaymentListModalComponent } from './modals/payment-list-modal/payment-list-modal.component';
-import { AdjustAmountModalComponent } from './modals/adjust-amount-modal/adjust-amount-modal.component';
+// AdjustAmountModalComponent import removed - functionality no longer needed
 import { ScreenSizeService } from '../services/screen-size.service';
 import { Subscription } from 'rxjs';
 import { UserRole } from '../../auth/services/role.service';
@@ -242,36 +242,9 @@ export class CollectionsComponent implements OnInit, OnDestroy {
     );
   }
 
-  openAdjustAmountModal(collection: Collection): void {
-    const modalRef = this.modalService.open(AdjustAmountModalComponent, {
-      size: 'md',
-      centered: true,
-    });
+  // openAdjustAmountModal method removed - functionality moved to update modal
 
-    modalRef.componentInstance.collection = collection;
-
-    modalRef.result.then(
-      (result) => {
-        // Si el modal se cierra con éxito (después de ajustar)
-        if (result) {
-          // Recargar la lista de cobros
-          this.loadCollections();
-        }
-      },
-      () => {
-        // Si el modal se cierra sin ajustar (dismiss)
-      }
-    );
-  }
-
-  getPercentageDifference(originalValue: number, newValue: number): string {
-    if (!originalValue || !newValue) {
-      return '0';
-    }
-
-    const difference = ((newValue - originalValue) / originalValue) * 100;
-    return Math.abs(difference).toFixed(1);
-  }
+  // Function removed - no longer needed with simplified backend
 
   getStatusClass(status: boolean): string {
     return status ? 'status-active' : 'status-inactive';
