@@ -223,8 +223,7 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
         return 'Parcial';
       case PaymentStatus.Paid:
         return 'Pagado';
-      case PaymentStatus.Excedent:
-        return 'Excedente';
+      // Excedent status removed in simplified backend
       case PaymentStatus.Exonerated:
         return 'Exonerado';
       default:
@@ -240,8 +239,7 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
         return 'badge-light-warning';
       case PaymentStatus.Paid:
         return 'badge-light-success';
-      case PaymentStatus.Excedent:
-        return 'badge-light-info';
+      // Excedent status removed in simplified backend
       case PaymentStatus.Exonerated:
         return 'badge-light-warning';
       default:
@@ -249,14 +247,7 @@ export class PaymentListModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  getPercentageDifference(originalValue: number, newValue: number): string {
-    if (!originalValue || !newValue) {
-      return '0';
-    }
-
-    const difference = ((newValue - originalValue) / originalValue) * 100;
-    return Math.abs(difference).toFixed(1);
-  }
+  // getPercentageDifference function removed - no longer needed with simplified backend
 
   openRegisterPaymentModal(payment: StudentPayment): void {
     // Marcar que se está abriendo un modal hijo
